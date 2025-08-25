@@ -1,4 +1,5 @@
-# Merchants
-HTML5 card game about managing a dock, delivering cargo.
+# MerchantsJS
+
+HTML5 and Javascript card game about managing a dock, delivering cargo.
 
 # In progress ...
