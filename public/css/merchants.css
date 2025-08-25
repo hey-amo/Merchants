@@ -1,0 +1,201 @@
+/* Merchants.css  */
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
+    min-height: 100vh;
+}
+
+.game-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.game-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.marketplace {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    border: 2px solid #3498db;
+}
+
+.card {
+    width: 80px;
+    height: 120px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card.white { background: #ecf0f1; color: #2c3e50; }
+.card.blue { background: #3498db; color: white; }
+.card.red { background: #e74c3c; color: white; }
+.card.green { background: #27ae60; color: white; }
+.card.yellow { background: #f1c40f; color: #2c3e50; }
+.card.brown { background: #8b4513; color: white; }
+
+.players-area {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.player {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    min-width: 250px;
+    border: 2px solid transparent;
+}
+
+.player.active {
+    border-color: #f39c12;
+    box-shadow: 0 0 20px rgba(243, 156, 18, 0.5);
+}
+
+.player-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.coins {
+    background: #f39c12;
+    color: #2c3e50;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-weight: bold;
+}
+
+.ships {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.ship {
+    width: 60px;
+    height: 40px;
+    background: #34495e;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 2px solid #7f8c8d;
+}
+
+.cube {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.cube.white { background: #ecf0f1; }
+.cube.blue { background: #3498db; }
+.cube.red { background: #e74c3c; }
+.cube.green { background: #27ae60; }
+.cube.yellow { background: #f1c40f; }
+.cube.brown { background: #8b4513; }
+
+.hand {
+    margin-top: 15px;
+}
+
+.hand-cards {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.hand .card {
+    width: 40px;
+    height: 60px;
+    font-size: 10px;
+}
+
+.actions {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background: #2980b9;
+}
+
+.btn:disabled {
+    background: #7f8c8d;
+    cursor: not-allowed;
+}
+
+.special-cards {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.special-card {
+    background: #9b59b6;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.game-info {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.phase-indicator {
+    background: #e74c3c;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 15px;
+    display: inline-block;
+    margin: 10px;
+    font-weight: bold;
+}

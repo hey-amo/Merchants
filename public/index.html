@@ -3,10 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Merchants</title>
+    <title>Merchants - Card Game</title>
+    <link rel="stylesheet" href="css/merchants.css">
 </head>
 <body>
-    <h1>Merchants</h1>
-    <canvas></canvas>
+    <div class="game-container">
+        <section class="game-header">
+            <h1>Merchants</h1>
+            <div class="game-info">
+                <div class="phase-indicator" id="phaseIndicator">Phase 1: Purchase</div>
+                <div>Cards remaining: <span id="cardsRemaining">54</span></div>
+            </div>
+        </section>
+
+        <section class="marketplace" id="marketplace">
+            <!-- Marketplace cards will be rendered here -->
+        </section>
+
+        <section class="players-area" id="playersArea">
+            <!-- Players will be rendered here -->
+        </section>
+
+        <section class="actions">
+            <button class="btn" id="exchangeBtn">Exchange Cube</button>
+            <button class="btn" id="buySpecialBtn">Buy Special Card</button>
+            <button class="btn" id="passBtn">Pass</button>
+            <button class="btn" id="deliverBtn">Make Delivery</button>
+            <button class="btn" id="drawBtn">Draw 2 Cards</button>
+            <button class="btn" id="nextPhaseBtn" style="display: none;">Next Phase</button>
+        </section>
+    </div>
+
+    <script type="text/javascript" src="js/merchants.js" defer></script>
 </body>
 </html>
