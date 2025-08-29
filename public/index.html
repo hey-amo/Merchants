@@ -3,16 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Amarjit">
+    <meta name="description" content="A digital implementation of the card game Merchants.">
+    <meta name="keywords" content="Merchants, Card Game, JavaScript, HTML">
+    <meta name="robots" content="index,follow">
+    <meta property="article:published_time" content="2025-08-29T09:12:00+01:00"/>
     <title>Merchants - Card Game</title>
     <link rel="stylesheet" href="css/merchants.css">
 </head>
 <body>
-    <div class="game-container">
-        <section class="game-header">
+
+    <section class=""game-container">
+    
+        <section class="notifications">
+            <button class="game-log-toggle" id="gameLogToggle">🔔</button>
+            
+            <div class="game-log-panel" id="gameLogPanel">
+                <div class="game-log-header">
+                    <h3>Game Log</h3>
+                    <div>
+                        <button class="btn" style="margin-right: 10px; padding: 5px 10px; font-size: 12px;" onclick="gameUI.clearLog()">Clear</button>
+                        <button class="btn" style="padding: 5px 10px; font-size: 12px;" onclick="gameUI.toggleGameLog()">Close</button>
+                    </div>
+                </div>
+                <div class="game-log-content" id="gameLogContent">
+                    <!-- Log entries will be rendered here -->
+                </div>
+            </div>
+        </section>
+
+        <header class="game-header">
             <h1>Merchants</h1>
             <div class="game-info">
                 <div class="phase-indicator" id="phaseIndicator">Phase 1: Purchase</div>
                 <div>Cards remaining: <span id="cardsRemaining">54</span></div>
+            </div>
+        </header>
+
+        <section class="cube-supply">
+            <h3>Cube Supply</h3>
+            <div class="supply-grid" id="cubeSupply">
+                <!-- Cube supply will be rendered here -->
             </div>
         </section>
 
@@ -20,19 +51,20 @@
             <!-- Marketplace cards will be rendered here -->
         </section>
 
-        <section class="players-area" id="playersArea">
-            <!-- Players will be rendered here -->
-        </section>
-
         <section class="actions">
             <button class="btn" id="exchangeBtn">Exchange Cube</button>
             <button class="btn" id="buySpecialBtn">Buy Special Card</button>
             <button class="btn" id="passBtn">Pass</button>
-            <button class="btn" id="deliverBtn">Make Delivery</button>
+            <button class="btn" id="deliverBtn">Make delivery of card(s)</button>
             <button class="btn" id="drawBtn">Draw 2 Cards</button>
             <button class="btn" id="nextPhaseBtn" style="display: none;">Next Phase</button>
         </section>
-    </div>
+
+        <section class="players-area" id="playersArea">
+            <!-- Players will be rendered here -->
+        </section>
+        
+    </section><!--End: Game Container -->
 
     <script type="text/javascript" src="js/merchants.js" defer></script>
 </body>
