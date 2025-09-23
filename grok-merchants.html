@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merchants Card Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    #game-container {
+      max-width: 1200px;
+      width: 100%;
+    }
+    #cubes, #special-cards, #deck {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    #marketplace {
+      display: grid;
+      grid-template-columns: repeat(3, 120px);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .card {
+      width: 100px;
+      height: 140px;
+      border: 2px solid #000;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 14px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.5s ease;
+    }
+    .card.red { background-color: #ffcccc; }
+    .card.white { background-color: #ffffff; }
+    .card.green { background-color: #ccffcc; }
+    .card.purple { background-color: #e6ccff; }
+    .card.yellow { background-color: #ffffcc; }
+    .card.brown { background-color: #d9b38c; }
+    .card.special { background-color: #cccccc; }
+    .card:hover:not(.disabled) { border-color: #ffd700; }
+    .card.delivering {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+    .card.disabled {
+      background-color: #e0e0e0;
+      cursor: not-allowed;
+    }
+    .special-card {
+      width: 120px;
+      height: 180px;
+      padding: 5px;
+      text-align: center;
+    }
+    .special-card p {
+      font-size: 12px;
+      margin: 5px 0;
+    }
+    .player-area {
+      border: 1px solid #000;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      position: relative;
+    }
+    .player-area.active {
+      border-color: #ffd700;
+      background-color: #fffde7;
+    }
+    .player-hand {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+    #actions, #selection-ui {
+      margin-top: 10px;
+    }
+    #actions-label {
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    button, select {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    button:hover:not(:disabled), select:hover:not(:disabled) {
+      background-color: #45a049;
+    }
+    button:disabled, select:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .cube {
+      width: 30px;
+      height: 30px;
+      display: inline-block;
+      margin-right: 5px;
+    }
+    .cube.selected {
+      border: 2px solid #ffd700;
+    }
+    .hidden-card {
+      background-color: #666;
+      color: transparent;
+    }
+    #logs {
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background-color: #fff;
+      width: 100%;
+      max-width: 600px;
+    }
+    .log-entry {
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    .payout-animation {
+      position: absolute;
+      color: green;
+      font-weight: bold;
+      animation: payout 1s ease-out forwards;
+    }
+    @keyframes payout {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+    #setup-ui {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border: 1px solid #000;
+      border-radius: 8px;
+      z-index: 1000;
+    }
+    .cube-container {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      margin-right: 10px;
+    }
+    .cube-label {
+      font-size: 12px;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <h1>Merchants</h1>
+    <div id="status">Setting up game...</div>
+    <div id="cubes"></div>
+    <div id="special-cards"></div>
+    <div id="deck"></div>
+    <div id="marketplace"></div>
+    <div id="players"></div>
+    <div id="actions-label"></div>
+    <div id="actions"></div>
+    <div id="selection-ui"></div>
+    <div id="logs"></div>
+  </div>
+  <script>
+    // Game constants
+    const COLORS = ['red', 'white', 'green', 'purple', 'yellow', 'brown'];
+    const SPECIAL_CARDS = [
+      { type: 'Ship', cost: 10, count: 5, effect: '+1 cube capacity' },
+      { type: 'Office', cost: 12, count: 2, effect: '+2 coins per sale' },
+      { type: 'Warehouse', cost: 14, count: 2, effect: '+2 hand limit' },
+      { type: 'Customs House', cost: 18, count: 2, effect: '+1 card draw' },
+      { type: 'Crane', cost: 20, count: 3, effect: '+1 cube exchange' }
+    ];
+    const CUBES_PER_COLOR = 5;
+    const MAX_HAND = 6;
+
+    // SVG for isometric cube
+    function getCubeSvg(color) {
+      return `
+        <svg width="30" height="30" viewBox="0 0 100 100">
+          <polygon points="50,10 90,30 90,70 50,90 10,70 10,30" fill="${color}" stroke="#000" stroke-width="2"/>
+          <polygon points="50,10 90,30 50,50" fill="${color === 'white' ? '#e0e0e0' : color}" fill-opacity="0.8"/>
+          <polygon points="50,10 10,30 50,50" fill="${color === 'white' ? '#f0f0f0' : color}" fill-opacity="0.6"/>
+        </svg>
+      `;
+    }
+
+    // Game state
+    let game = {
+      deck: [],
+      specialCards: SPECIAL_CARDS.map(card => ({ ...card, available: card.count })),
+      marketplace: Array(6).fill().map(() => []),
+      players: [],
+      currentPlayer: 0,
+      phase: 1,
+      numPlayers: 2,
+      firstPlayer: 0,
+      gameOver: false,
+      setupPhase: true,
+      setupPlayerIndex: 0,
+      cubeChoices: COLORS.map(color => ({ color, count: CUBES_PER_COLOR })),
+      currentExchanges: [],
+      currentDeliveries: []
+    };
+
+    // Initialize deck (60 good cards only)
+    function createDeck() {
+      let deck = [];
+      COLORS.forEach(color => {
+        for (let i = 0; i < 10; i++) {
+          deck.push({ type: 'good', color });
+        }
+      });
+      return deck;
+    }
+
+    // Shuffle array
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    // Draw a card
+    function drawCard() {
+      if (game.deck.length === 0) {
+        triggerGameEnd();
+        return null;
+      }
+      return game.deck.pop();
+    }
+
+    // Log action
+    function logAction(message) {
+      let logsDiv = document.getElementById('logs');
+      let logEntry = document.createElement('div');
+      logEntry.className = 'log-entry';
+      logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      logsDiv.appendChild(logEntry);
+      logsDiv.scrollTop = logsDiv.scrollHeight;
+    }
+
+    // Initialize game setup
+    function initGame(numPlayers = 2) {
+      game.numPlayers = Math.max(2, Math.min(4, numPlayers));
+      game.deck = shuffle(createDeck());
+      game.players = [];
+      game.firstPlayer = Math.floor(Math.random() * game.numPlayers);
+      game.currentPlayer = game.firstPlayer;
+      game.phase = 1;
+      game.gameOver = false;
+      game.setupPhase = true;
+      game.setupPlayerIndex = 0;
+      game.cubeChoices = COLORS.map(color => ({ color, count: CUBES_PER_COLOR }));
+      game.currentExchanges = [];
+      game.currentDeliveries = [];
+
+      // Initialize players
+      for (let i = 0; i < game.numPlayers; i++) {
+        game.players.push({
+          id: i,
+          coins: 5,
+          hand: [],
+          specialCards: [{ type: 'Ship', cubes: [], capacity: 1 }, { type: 'Ship', cubes: [], capacity: 1 }],
+          cubes: []
+        });
+      }
+
+      // Initialize marketplace
+      for (let i = 0; i < 6; i++) {
+        let card = drawCard();
+        if (card) game.marketplace[i].push(card);
+      }
+
+      // Start cube selection
+      showCubeSelectionUI();
+    }
+
+    // Show cube selection UI
+    function showCubeSelectionUI() {
+      let player = game.players[game.setupPlayerIndex];
+      let selectionDiv = document.getElementById('selection-ui');
+      selectionDiv.innerHTML = `
+        <div id="setup-ui">
+          <h3>Player ${game.setupPlayerIndex + 1}: Pick ${2 - player.cubes.length} cube(s)</h3>
+          <div style="display: flex; gap: 10px;">
+            ${game.cubeChoices.map(c => `
+              <div class="cube-container">
+                ${Array(c.count).fill().map(() => `<div class="cube${player.cubes.includes(c.color) ? ' selected' : ''}" onclick="selectCube('${c.color}')">${getCubeSvg(c.color)}</div>`).join('')}
+                <div class="cube-label">${c.color}</div>
+              </div>
+            `).join('')}
+          </div>
+          <button id="finish-cube" onclick="finishCubeSelection()" ${player.cubes.length === 0 ? 'disabled' : ''}>Finished</button>
+        </div>
+      `;
+      logAction(`Player ${game.setupPlayerIndex + 1} is selecting cubes.`);
+    }
+
+    // Select cube during setup
+    function selectCube(color) {
+      let player = game.players[game.setupPlayerIndex];
+      let cubeChoice = game.cubeChoices.find(c => c.color === color);
+      if (player.cubes.includes(color)) {
+        player.cubes = player.cubes.filter(c => c !== color);
+        cubeChoice.count++;
+        let ship = player.specialCards.find(card => card.type === 'Ship' && card.cubes.includes(color));
+        if (ship) ship.cubes = ship.cubes.filter(c => c !== color);
+        logAction(`Player ${game.setupPlayerIndex + 1} deselected ${color} cube.`);
+      } else if (cubeChoice.count > 0 && player.cubes.length < 2) {
+        player.cubes.push(color);
+        cubeChoice.count--;
+        let ship = player.specialCards.find(card => card.type === 'Ship' && card.cubes.length < card.capacity);
+        if (ship) ship.cubes.push(color);
+        logAction(`Player ${game.setupPlayerIndex + 1} selected ${color} cube.`);
+      } else {
+        logAction(`Cannot select ${color} cube: none available or limit reached.`);
+      }
+      showCubeSelectionUI();
+    }
+
+    // Finish cube selection
+    function finishCubeSelection() {
+      let player = game.players[game.setupPlayerIndex];
+      if (player.cubes.length === 0) {
+        logAction(`Player ${game.setupPlayerIndex + 1} must select at least 1 cube.`);
+        return;
+      }
+      logAction(`Player ${game.setupPlayerIndex + 1} finished cube selection: ${player.cubes.join(', ')}.`);
+      game.setupPlayerIndex++;
+      if (game.setupPlayerIndex >= game.numPlayers) {
+        // Deal 3 cards to each player
+        game.players.forEach((player, index) => {
+          let handLimit = getHandLimit(player);
+          let cardsToDraw = Math.min(3, handLimit);
+          let drawn = [];
+          for (let i = 0; i < cardsToDraw; i++) {
+            let card = drawCard();
+            if (card) {
+              player.hand.push(card);
+              drawn.push(card.color);
+            }
+          }
+          if (drawn.length > 0) {
+            logAction(`Player ${index + 1} drew ${drawn.length} initial card(s): ${drawn.join(', ')}.`);
+          }
+        });
+        game.setupPhase = false;
+        document.getElementById('selection-ui').innerHTML = '';
+        logAction('Setup complete. Game starting.');
+        logAction(`It is Player ${game.currentPlayer + 1}'s turn.`);
+        updateUI();
+      } else {
+        showCubeSelectionUI();
+      }
+    }
+
+    // Get player hand limit
+    function getHandLimit(player) {
+      let warehouses = player.specialCards.filter(card => card.type === 'Warehouse').length;
+      return MAX_HAND + (warehouses * 2);
+    }
+
+    // Get player draw amount
+    function getDrawAmount(player) {
+      let customsHouses = player.specialCards.filter(card => card.type === 'Customs House').length;
+      return 2 + customsHouses;
+    }
+
+    // Get player cube capacity
+    function getCubeCapacity(player) {
+      let ships = player.specialCards.filter(card => card.type === 'Ship');
+      return ships.reduce((total, ship) => total + ship.capacity, 0);
+    }
+
+    // Buy a special card
+    function buyCard(playerIndex, cardType) {
+      let player = game.players[playerIndex];
+      let specialCard = game.specialCards.find(card => card.type === cardType);
+      if (!specialCard || specialCard.available === 0) {
+        logAction(`Player ${playerIndex + 1} cannot buy ${cardType}: none available.`);
+        return;
+      }
+      let cost = specialCard.cost;
+      if (player.coins >= cost) {
+        player.coins -= cost;
+        let newCard = { type: cardType };
+        if (cardType === 'Ship') newCard.cubes = [];
+        player.specialCards.push(newCard);
+        specialCard.available--;
+        logAction(`Player ${playerIndex + 1} bought ${cardType} card for ${cost} coins.`);
+        game.phase = 2;
+        updateUI();
+      } else {
+        logAction(`Player ${playerIndex + 1} cannot buy ${cardType}: insufficient coins.`);
+      }
+    }
+
+    // Show cube exchange UI
+    function showCubeExchangeUI() {
+      let player = game.players[game.currentPlayer];
+      let cranes = player.specialCards.filter(card => card.type === 'Crane').length;
+      let maxExchanges = 1 + cranes;
+      let remainingExchanges = maxExchanges - game.currentExchanges.length;
+      let ships = player.specialCards.filter(card => card.type === 'Ship' && card.cubes.length > 0);
+      let validSlots = game.marketplace.filter(slot => slot.length > 0 && slot[slot.length - 1].type === 'good');
+      let canExchange = ships.length > 0 && validSlots.length > 0 && remainingExchanges > 0;
+      let selectionDiv = document.getElementById('selection-ui');
+      selectionDiv.innerHTML = `
+        <div id="setup-ui">
+          <h3>Exchange Cube (${remainingExchanges} remaining)</h3>
+          ${ships.length === 0 ? '<p>No cubes on ships to exchange.</p>' : `
+            <select id="ship-select">
+              ${ships.map((ship, index) => `<option value="${index}">${ship.type} (${ship.cubes.join(', ') || 'Empty'})</option>`).join('')}
+            </select>
+            <select id="slot-select">
+              ${game.marketplace.map((slot, index) => slot.length > 0 && slot[slot.length - 1].type === 'good' ? `<option value="${index}">Slot ${index + 1} (${slot[slot.length - 1].color})</option>` : '').join('')}
+            </select>
+            <button onclick="addExchange()" ${!canExchange ? 'disabled' : ''}>Add Exchange</button>
+          `}
+          <button onclick="confirmExchanges()" ${game.currentExchanges.length === 0 ? 'disabled' : ''}>Confirm Exchanges</button>
+          <button onclick="cancelSelection()">Cancel</button>
+          <p>Selected Exchanges: <span id="exchange-list"></span></p>
+          ${!canExchange && validSlots.length === 0 ? '<p>No marketplace cards available for exchange.</p>' : ''}
+        </div>
+      `;
+      document.getElementById('exchange-list').textContent = game.currentExchanges.map(e => `${e.ship.cubes[0]} to slot ${e.slotIndex + 1} (${e.marketColor})`).join(', ');
+      logAction(`Player ${game.currentPlayer + 1} is selecting ship and slot for cube exchange.`);
+    }
+
+    // Add exchange to list
+    function addExchange() {
+      let player = game.players[game.currentPlayer];
+      let shipIndex = parseInt(document.getElementById('ship-select').value);
+      let slotIndex = parseInt(document.getElementById('slot-select').value);
+      let ship = player.specialCards.filter(card => card.type === 'Ship' && card.cubes.length > 0)[shipIndex];
+      let slot = game.marketplace[slotIndex];
+      if (!ship || !slot || slot.length === 0 || slot[slot.length - 1].type !== 'good') {
+        logAction('Invalid exchange selection.');
+        return;
+      }
+      let marketColor = slot[slot.length - 1].color;
+      if (ship.cubes[0] === marketColor || game.currentExchanges.some(e => e.ship === ship)) {
+        logAction('Invalid exchange: same color or ship already selected.');
+        return;
+      }
+      game.currentExchanges.push({ ship, slotIndex, marketColor });
+      logAction(`Player ${game.currentPlayer + 1} selected ${ship.cubes[0]} cube on ship for slot ${slotIndex + 1} (${marketColor}).`);
+      document.getElementById('exchange-list').textContent = game.currentExchanges.map(e => `${e.ship.cubes[0]} to slot ${e.slotIndex + 1} (${e.marketColor})`).join(', ');
+      showCubeExchangeUI();
+    }
+
+    // Confirm cube exchanges
+    function confirmExchanges() {
+      let player = game.players[game.currentPlayer];
+      game.currentExchanges.forEach(({ ship, slotIndex, marketColor }) => {
+        let cubeIndex = player.cubes.indexOf(ship.cubes[0]);
+        if (cubeIndex !== -1) {
+          let cubeChoice = game.cubeChoices.find(c => c.color === ship.cubes[0]);
+          if (cubeChoice) cubeChoice.count++;
+          player.cubes[cubeIndex] = marketColor;
+          ship.cubes[0] = marketColor;
+          let newCubeChoice = game.cubeChoices.find(c => c.color === marketColor);
+          if (newCubeChoice) newCubeChoice.count--;
+          logAction(`Player ${game.currentPlayer + 1} exchanged ${ship.cubes[0]} cube for ${marketColor} cube.`);
+        }
+      });
+      game.currentExchanges = [];
+      document.getElementById('selection-ui').innerHTML = '';
+      game.phase = 2;
+      updateUI();
+    }
+
+    // Cancel selection
+    function cancelSelection() {
+      game.currentExchanges = [];
+      game.currentDeliveries = [];
+      document.getElementById('selection-ui').innerHTML = '';
+      logAction(`Player ${game.currentPlayer + 1} canceled selection.`);
+      updateUI();
+    }
+
+    // Show delivery UI
+    function showDeliveryUI() {
+      let player = game.players[game.currentPlayer];
+      let validCards = player.hand.filter(card => card.type === 'good');
+      let selectionDiv = document.getElementById('selection-ui');
+      selectionDiv.innerHTML = `
+        <div id="setup-ui">
+          <h3>Deliver Cards</h3>
+          ${validCards.length === 0 ? '<p>No goods to deliver.</p>' : `
+            <select id="card-select">
+              ${validCards.map((card, index) => `<option value="${index}">${card.color}</option>`).join('')}
+            </select>
+            <button onclick="addCardToDelivery()">Add Card</button>
+            <p>Selected Cards: <span id="delivery-cards"></span></p>
+            <button id="select-slots" onclick="showSlotSelectionUI()" disabled>Select Slots</button>
+          `}
+          <button onclick="confirmDelivery()" ${game.currentDeliveries.length === 0 ? 'disabled' : ''}>Confirm Delivery</button>
+          <button onclick="cancelSelection()">Cancel</button>
+        </div>
+      `;
+      game.currentDeliveries = [];
+      document.getElementById('delivery-cards').textContent = game.currentDeliveries.map(d => d.card.color).join(', ');
+      logAction(`Player ${game.currentPlayer + 1} is selecting cards to deliver.`);
+    }
+
+    // Add card to delivery
+    function addCardToDelivery() {
+      let player = game.players[game.currentPlayer];
+      let cardIndex = parseInt(document.getElementById('card-select').value);
+      let card = player.hand.filter(card => card.type === 'good')[cardIndex];
+      if (game.currentDeliveries.length > 0 && card.color !== game.currentDeliveries[0].card.color) {
+        logAction('All delivered cards must be the same color.');
+        return;
+      }
+      let globalCardIndex = player.hand.indexOf(card);
+      game.currentDeliveries.push({ cardIndex: globalCardIndex, card });
+      logAction(`Player ${game.currentPlayer + 1} selected ${card.color} card for delivery.`);
+      document.getElementById('delivery-cards').textContent = game.currentDeliveries.map(d => d.card.color).join(', ');
+      document.getElementById('select-slots').disabled = game.currentDeliveries.length === 0;
+      updateCardSelectOptions();
+    }
+
+    // Update card select options
+    function updateCardSelectOptions() {
+      let player = game.players[game.currentPlayer];
+      let validCards = player.hand.filter(card => card.type === 'good' && !game.currentDeliveries.some(d => d.cardIndex === player.hand.indexOf(card)));
+      if (game.currentDeliveries.length > 0) {
+        validCards = validCards.filter(card => card.color === game.currentDeliveries[0].card.color);
+      }
+      let select = document.getElementById('card-select');
+      select.innerHTML = validCards.map((card, index) => `<option value="${index}">${card.color}</option>`).join('');
+      if (validCards.length === 0) {
+        document.getElementById('card-select').disabled = true;
+        document.getElementById('add-card').disabled = true;
+      }
+    }
+
+    // Show slot selection UI
+    function showSlotSelectionUI() {
+      let usedSlots = new Set(game.currentDeliveries.map(d => d.slotIndex).filter(s => s !== undefined));
+      let selectionDiv = document.getElementById('selection-ui');
+      selectionDiv.innerHTML = `
+        <div id="setup-ui">
+          <h3>Select ${game.currentDeliveries.length} Marketplace Slots</h3>
+          <select id="slot-select">
+            ${game.marketplace.map((slot, index) => !usedSlots.has(index) ? `<option value="${index}">Slot ${index + 1} (${slot.length > 0 ? slot[slot.length - 1].color : 'Empty'})</option>` : '').join('')}
+          </select>
+          <button onclick="addSlotToDelivery()">Add Slot</button>
+          <button onclick="confirmDelivery()" ${game.currentDeliveries.some(d => d.slotIndex === undefined) ? 'disabled' : ''}>Confirm Delivery</button>
+          <button onclick="showDeliveryUI()">Back to Cards</button>
+          <p>Selected Slots: <span id="delivery-slots"></span></p>
+        </div>
+      `;
+      document.getElementById('delivery-slots').textContent = game.currentDeliveries.filter(d => d.slotIndex !== undefined).map(d => `Slot ${d.slotIndex + 1}`).join(', ');
+      logAction(`Player ${game.currentPlayer + 1} is selecting marketplace slots for delivery.`);
+    }
+
+    // Add slot to delivery
+    function addSlotToDelivery() {
+      let slotIndex = parseInt(document.getElementById('slot-select').value);
+      let unassigned = game.currentDeliveries.find(d => d.slotIndex === undefined);
+      if (!unassigned) {
+        logAction('No more cards need slots.');
+        return;
+      }
+      unassigned.slotIndex = slotIndex;
+      logAction(`Player ${game.currentPlayer + 1} selected slot ${slotIndex + 1} for delivery.`);
+      document.getElementById('delivery-slots').textContent = game.currentDeliveries.filter(d => d.slotIndex !== undefined).map(d => `Slot ${d.slotIndex + 1}`).join(', ');
+      if (game.currentDeliveries.every(d => d.slotIndex !== undefined)) {
+        document.getElementById('selection-ui').innerHTML = `
+          <div id="setup-ui">
+            <h3>Confirm Delivery</h3>
+            <p>Deliver ${game.currentDeliveries.map(d => `${d.card.color} to slot ${d.slotIndex + 1}`).join(', ')}</p>
+            <button onclick="confirmDelivery()">Confirm</button>
+            <button onclick="showDeliveryUI()">Back to Cards</button>
+          </div>
+        `;
+      } else {
+        showSlotSelectionUI();
+      }
+    }
+
+    // Confirm delivery
+    function confirmDelivery() {
+      if (!game.currentDeliveries || game.currentDeliveries.length === 0 || game.currentDeliveries.some(d => d.slotIndex === undefined)) {
+        logAction('Incomplete delivery selection.');
+        return;
+      }
+      makeDelivery(game.currentPlayer, game.currentDeliveries);
+      document.getElementById('selection-ui').innerHTML = '';
+      game.currentDeliveries = [];
+    }
+
+    // Make a delivery
+    function makeDelivery(playerIndex, selections) {
+      let player = game.players[playerIndex];
+      let usedSlots = new Set();
+      let valid = true;
+      let deliveries = [];
+
+      selections.forEach(({ cardIndex, slotIndex, card }) => {
+        if (cardIndex < 0 || cardIndex >= player.hand.length || slotIndex < 0 || slotIndex >= 6 || usedSlots.has(slotIndex)) {
+          valid = false;
+          return;
+        }
+        usedSlots.add(slotIndex);
+        deliveries.push({ card, slotIndex });
+      });
+
+      if (!valid || deliveries.length === 0) {
+        logAction('Invalid delivery selection.');
+        return;
+      }
+
+      let color = deliveries[0].card.color;
+      if (deliveries.some(d => d.card.color !== color)) {
+        logAction('All delivered cards must be the same color.');
+        return;
+      }
+
+      // Animate deliveries
+      deliveries.forEach(({ card, slotIndex }, index) => {
+        let cardElement = document.querySelector(`#player-${playerIndex} .player-hand .card:nth-child(${player.hand.indexOf(card) + 1})`);
+        if (cardElement) {
+          cardElement.classList.add('delivering');
+          setTimeout(() => {
+            cardElement.remove();
+            let slot = game.marketplace[slotIndex];
+            slot.push(card);
+            let cardIndices = selections.map(s => s.cardIndex).sort((a, b) => b - a);
+            if (index === deliveries.length - 1) {
+              cardIndices.forEach(i => player.hand.splice(i, 1));
+              processPayouts(playerIndex, color);
+            }
+          }, 500);
+        }
+      });
+
+      logAction(`Player ${playerIndex + 1} delivered ${deliveries.length} ${color} card(s) to slots ${deliveries.map(d => d.slotIndex + 1).join(', ')}.`);
+    }
+
+    // Process payouts
+    function processPayouts(playerIndex, color) {
+      let marketCounts = COLORS.map(c => ({
+        color: c,
+        count: game.marketplace.reduce((sum, slot) => {
+          let topCard = slot[slot.length - 1];
+          return sum + (topCard && topCard.type === 'good' && topCard.color === c ? slot.length : 0);
+        }, 0)
+      }));
+      let deliveryCount = marketCounts.find(c => c.color === color).count;
+
+      game.players.forEach((p, index) => {
+        let cubes = p.cubes.filter(c => c === color).length;
+        let offices = index === playerIndex ? p.specialCards.filter(card => card.type === 'Office').length : 0;
+        let payout = (deliveryCount * cubes) + (offices * 2);
+        if (payout > 0) {
+          p.coins += payout;
+          let playerDiv = document.getElementById(`player-${index}`);
+          let payoutDiv = document.createElement('div');
+          payoutDiv.className = 'payout-animation';
+          payoutDiv.textContent = `+${payout} coins`;
+          payoutDiv.style.left = '100px';
+          payoutDiv.style.top = '20px';
+          playerDiv.appendChild(payoutDiv);
+          setTimeout(() => payoutDiv.remove(), 1000);
+          logAction(`Player ${index + 1} received ${payout} coins (${deliveryCount} ${color} cards x ${cubes} cubes${index === playerIndex ? ` + ${offices * 2} from offices` : ''}).`);
+        }
+      });
+
+      endTurn();
+    }
+
+    // Draw cards
+    function drawCards(playerIndex) {
+      let player = game.players[playerIndex];
+      let drawAmount = getDrawAmount(player);
+      let handLimit = getHandLimit(player);
+      let cardsToDraw = Math.min(drawAmount, handLimit - player.hand.length);
+      let drawn = [];
+      for (let i = 0; i < cardsToDraw; i++) {
+        let card = drawCard();
+        if (card) {
+          player.hand.push(card);
+          drawn.push(card.color);
+        }
+      }
+      if (drawn.length > 0) {
+        logAction(`Player ${playerIndex + 1} drew ${drawn.length} card(s): ${drawn.join(', ')}.`);
+      } else {
+        logAction(`Player ${playerIndex + 1} could not draw cards: deck empty or hand full.`);
+      }
+      endTurn();
+    }
+
+    // End turn
+    function endTurn() {
+      game.currentPlayer = (game.currentPlayer + 1) % game.numPlayers;
+      game.phase = 1;
+      if (game.deck.length === 0 && !game.gameOver && game.currentPlayer === game.firstPlayer) {
+        triggerGameEnd();
+      } else {
+        logAction(`It is Player ${game.currentPlayer + 1}'s turn.`);
+        updateUI();
+      }
+    }
+
+    // Trigger game end
+    function triggerGameEnd() {
+      game.gameOver = true;
+      logAction('Deck is empty. Finishing round.');
+      if (game.currentPlayer !== game.firstPlayer) {
+        logAction(`It is Player ${game.currentPlayer + 1}'s turn.`);
+        updateUI();
+      } else {
+        determineWinner();
+      }
+    }
+
+    // Determine winner
+    function determineWinner() {
+      let maxCoins = Math.max(...game.players.map(p => p.coins));
+      let winners = game.players.filter(p => p.coins === maxCoins);
+      let winnerText = winners.length > 1
+        ? `Tie! Players ${winners.map(p => p.id + 1).join(', ')} win with ${maxCoins} coins!`
+        : `Player ${winners[0].id + 1} wins with ${maxCoins} coins!`;
+      logAction(winnerText);
+      updateStatus(winnerText);
+      document.getElementById('actions').innerHTML = '';
+      document.getElementById('selection-ui').innerHTML = '';
+    }
+
+    // Update UI
+    function updateUI() {
+      if (game.setupPhase) return;
+      let statusText = game.gameOver
+        ? 'Game Over'
+        : `Player ${game.currentPlayer + 1}'s Turn - Phase ${game.phase}`;
+      updateStatus(statusText);
+
+      // Update actions label
+      document.getElementById('actions-label').textContent = `It's Player ${game.currentPlayer + 1}'s turn, choose an action`;
+
+      // Update cubes
+      let cubesDiv = document.getElementById('cubes');
+      cubesDiv.innerHTML = '<strong>Available Cubes:</strong> ';
+      game.cubeChoices.forEach(c => {
+        let cubeContainer = document.createElement('div');
+        cubeContainer.className = 'cube-container';
+        cubeContainer.innerHTML = `
+          ${Array(c.count).fill().map(() => `<div class="cube">${getCubeSvg(c.color)}</div>`).join('')}
+          <div class="cube-label">${c.color}</div>
+        `;
+        cubesDiv.appendChild(cubeContainer);
+      });
+
+      // Update special cards
+      let specialCardsDiv = document.getElementById('special-cards');
+      specialCardsDiv.innerHTML = '';
+      game.specialCards.forEach(card => {
+        let cardDiv = document.createElement('div');
+        let canBuy = game.phase === 1 && !game.gameOver && card.available > 0 && game.players[game.currentPlayer].coins >= card.cost;
+        cardDiv.className = `card special special-card ${!canBuy ? 'disabled' : ''}`;
+        cardDiv.innerHTML = `
+          ${card.type} (${card.available})<br>
+          Cost: ${card.cost}<br>
+          <p>${card.effect}</p>
+        `;
+        cardDiv.onclick = () => {
+          if (!canBuy) {
+            logAction(`Player ${game.currentPlayer + 1} cannot buy ${card.type}: ${card.available === 0 ? 'none available' : 'insufficient coins'}.`);
+            return;
+          }
+          logAction(`Player ${game.currentPlayer + 1} clicked ${card.type} special card.`);
+          buyCard(game.currentPlayer, card.type);
+        };
+        specialCardsDiv.appendChild(cardDiv);
+      });
+
+      // Update deck
+      let deckDiv = document.getElementById('deck');
+      deckDiv.innerHTML = '';
+      let deckCard = document.createElement('div');
+      deckCard.className = 'card';
+      deckCard.textContent = `Deck: ${game.deck.length} cards`;
+      deckDiv.appendChild(deckCard);
+
+      // Update marketplace
+      let marketplaceDiv = document.getElementById('marketplace');
+      marketplaceDiv.innerHTML = '';
+      game.marketplace.forEach((slot, index) => {
+        let cardDiv = document.createElement('div');
+        cardDiv.className = 'card';
+        if (slot.length > 0) {
+          let card = slot[slot.length - 1];
+          cardDiv.className += ` ${card.color}`;
+          cardDiv.textContent = card.color;
+          if (game.phase === 1 && !game.gameOver) {
+            cardDiv.onclick = () => {
+              logAction(`Player ${game.currentPlayer + 1} clicked marketplace slot ${index + 1} (${card.color}).`);
+              showCubeExchangeUI();
+            };
+          }
+        } else {
+          cardDiv.textContent = 'Empty';
+        }
+        marketplaceDiv.appendChild(cardDiv);
+      });
+
+      // Update players
+      let playersDiv = document.getElementById('players');
+      playersDiv.innerHTML = '';
+      game.players.forEach((player, index) => {
+        let playerDiv = document.createElement('div');
+        playerDiv.className = `player-area${index === game.currentPlayer && !game.gameOver ? ' active' : ''}`;
+        playerDiv.id = `player-${index}`;
+        let avatarColor = ['#ff5555', '#55ff55', '#5555ff', '#ff55ff'][index % 4];
+        let shipCubes = player.specialCards
+          .filter(card => card.type === 'Ship')
+          .map(card => `${card.type} (${card.cubes.map(c => `<span class="cube">${getCubeSvg(c)}</span>`).join('') || 'Empty'})`)
+          .join(', ');
+        playerDiv.innerHTML = `
+          <div class="avatar" style="background-color: ${avatarColor};">P${index + 1}</div>
+          <strong>Player ${index + 1}</strong>: ${player.coins} coins<br>
+          Cubes: ${player.cubes.map(c => `<span class="cube">${getCubeSvg(c)}</span>`).join('') || 'None'}<br>
+          Ships: ${shipCubes}<br>
+          Specials: ${player.specialCards.filter(card => card.type !== 'Ship').map(card => card.type).join(', ') || 'None'}<br>
+          Hand: ${player.hand.length}/${getHandLimit(player)} cards
+        `;
+        if (index === game.currentPlayer && !game.gameOver) {
+          let handDiv = document.createElement('div');
+          handDiv.className = 'player-hand';
+          player.hand.forEach((card, cardIndex) => {
+            let cardDiv = document.createElement('div');
+            cardDiv.className = `card ${card.color}`;
+            cardDiv.textContent = card.color;
+            if (game.phase === 2) {
+              cardDiv.onclick = () => {
+                logAction(`Player ${game.currentPlayer + 1} clicked ${card.color} card in hand.`);
+                showDeliveryUI();
+              };
+            }
+            handDiv.appendChild(cardDiv);
+          });
+          playerDiv.appendChild(handDiv);
+        } else {
+          let handDiv = document.createElement('div');
+          handDiv.className = 'player-hand';
+          for (let i = 0; i < player.hand.length; i++) {
+            let cardDiv = document.createElement('div');
+            cardDiv.className = 'card hidden-card';
+            cardDiv.textContent = 'Hidden';
+            handDiv.appendChild(cardDiv);
+          }
+          playerDiv.appendChild(handDiv);
+        }
+        playersDiv.appendChild(playerDiv);
+      });
+
+      // Update actions
+      let actionsDiv = document.getElementById('actions');
+      actionsDiv.innerHTML = '';
+      if (!game.gameOver && !game.setupPhase) {
+        if (game.phase === 1) {
+          let exchangeButton = document.createElement('button');
+          exchangeButton.textContent = 'Exchange Cube';
+          exchangeButton.onclick = () => showCubeExchangeUI();
+          actionsDiv.appendChild(exchangeButton);
+
+          let passButton = document.createElement('button');
+          passButton.textContent = 'Pass';
+          passButton.onclick = () => {
+            logAction(`Player ${game.currentPlayer + 1} passed.`);
+            game.phase = 2;
+            updateUI();
+          };
+          actionsDiv.appendChild(passButton);
+        } else {
+          let deliverButton = document.createElement('button');
+          deliverButton.textContent = 'Start Delivery';
+          deliverButton.disabled = game.players[game.currentPlayer].hand.length === 0;
+          deliverButton.onclick = () => showDeliveryUI();
+          actionsDiv.appendChild(deliverButton);
+
+          let drawButton = document.createElement('button');
+          drawButton.textContent = 'Draw Cards';
+          let player = game.players[game.currentPlayer];
+          drawButton.disabled = player.hand.length >= getHandLimit(player);
+          drawButton.onclick = () => drawCards(game.currentPlayer);
+          actionsDiv.appendChild(drawButton);
+        }
+      }
+    }
+
+    // Update status
+    function updateStatus(message) {
+      document.getElementById('status').textContent = message;
+    }
+
+    // Start the game
+    initGame(2); // Start with 2 players; modify for 2-4 players
+  </script>
+</body>
+</html>
