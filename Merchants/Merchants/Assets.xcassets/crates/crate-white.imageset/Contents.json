@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "crate-brown@1x.png",
+      "filename" : "crate-white.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "crate-brown@2x.png",
+      "filename" : "crate-white@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "crate-brown@3x.png",
+      "filename" : "crate-white@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
