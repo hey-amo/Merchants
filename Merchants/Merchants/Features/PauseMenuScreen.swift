@@ -28,7 +28,7 @@ struct PauseMenuScreen: View {
             VStack(spacing: 0) {
                 // Header
                 VStack(spacing: 8) {
-                    Text("Paused")
+                    Text("Settings")
                         .font(.system(size: 32, weight: .bold))
                         .foregroundColor(.primary)
                 }

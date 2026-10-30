@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+// Replace player names (1,2,3,4,5) with Avatars
+// redesign the screen
+
 struct WinnerScreenView: View {
     private let players: [Player]
     private let onPlayAgain: () -> Void

@@ -8,6 +8,8 @@
 import SwiftUI
 //import SwiftData
 
+// Make the play button bigger and chunkier
+
 struct MainMenuView: View {
     @State private var navigation = NavigationHandler()
 
@@ -24,10 +26,11 @@ struct MainMenuView: View {
                 VStack(spacing: 24) {
                     Text("Merchants")
                         .font(.largeTitle.bold())
+                    Text("Build 1.0").font(.subheadline)
                     Image("ship-nobg")
                         .resizable()
                         .scaledToFit()
-                        .frame(maxHeight: 320)
+                        .frame(maxHeight: 200)
                     Button("Play") {
                         navigation.push(.playerSelection)
                     }
