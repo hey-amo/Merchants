@@ -1,29 +1,12 @@
-import Observation
 import Foundation
+import Observation
 
 enum Route: Hashable {
     case playerSelection
+    case cubeSelection(GameSession)
     case game(GameSession)
     case pause(GameSession)
     case winner(GameSession)
-}
-
-final class GameSession: Hashable {
-    let id: UUID
-    let players: [Player]
-
-    init(players: [Player], id: UUID = UUID()) {
-        self.players = players
-        self.id = id
-    }
-
-    static func == (lhs: GameSession, rhs: GameSession) -> Bool {
-        lhs.id == rhs.id
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
 }
 
 @Observable

@@ -10,54 +10,22 @@ struct GameHeaderView: View {
     }
 
     var body: some View {
-        HStack(spacing: 12) {
-
-            // List players in turn order
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 16) {
-                    ForEach(players, id: \.playerId) { player in
-                        Button {
-                            print("Selected player \(player.playerId)")
-                        } label: {
-                            VStack(spacing: 4) {
-                                playerAvatar(for: player)
-                                Text("Player \(player.playerId)")
-                                    .font(.caption2)
-                                    .lineLimit(1)
-                            }
-                            .frame(minWidth: 56)
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel("Player \(player.playerId)")
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 16) {
+                ForEach(players, id: \.playerId) { player in
+                    VStack(spacing: 4) {
+                        playerAvatar(for: player)
+                        Text("Player \(player.playerId)")
+                            .font(.caption2)
+                            .lineLimit(1)
+                        Text(player.state.displayName)
+                            .font(.caption2)
+                            .foregroundStyle(stateColor(for: player))
                     }
+                    .frame(minWidth: 56)
                 }
-                .padding(.horizontal, 4)
             }
-
-            // Notifications bell
-            Button {
-                print("Notifications tapped")
-            } label: {
-                Image(systemName: "bell")
-                    .font(.system(size: 20, weight: .medium))
-                    .frame(width: 44, height: 44)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Notifications")
-
-            // Menu button
-            Button {
-                print("Menu tapped")
-            } label: {
-                Image(systemName: "line.3.horizontal")
-                    .font(.system(size: 20, weight: .medium))
-                    .frame(width: 44, height: 44)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Menu")
+            .padding(.horizontal, 4)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
@@ -83,6 +51,15 @@ struct GameHeaderView: View {
                             lineWidth: 2
                         )
                 }
+        }
+    }
+
+    private func stateColor(for player: Player) -> Color {
+        switch player.state {
+        case .thinking: .blue
+        case .busy: .orange
+        case .done: .green
+        case .idle: .secondary
         }
     }
 }

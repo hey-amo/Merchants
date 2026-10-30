@@ -13,6 +13,15 @@ enum GameState: Int, CaseIterable, Codable {
 
 enum PlayerState: Int, CaseIterable, Codable {
     case idle, busy, thinking, done
+
+    var displayName: String {
+        switch self {
+        case .idle: "Idle"
+        case .busy: "Busy"
+        case .thinking: "Thinking"
+        case .done: "Done"
+        }
+    }
 }
 
 struct TurnPhase: Equatable, Codable {
@@ -60,11 +69,11 @@ extension TurnPhase {
  30 good cubes in the 6 different goods
      - 5x Sugar (White), 5x Indigo (Blue), 5x Spices (Red), 5x Tea (Green), 5x Silk (Purple), 5x Lumber (Brown)
 
- 16 building cards
-     - 14x ship (10 coins) - each player starts with 1 ship. Each ship can carry 1 goods cube. After purchasing a ship, the player immediatley takes a goods cube and places it on the purchased ship.
-     - 2x office (8 coins) - makes 1 more coin when you deliver
-     - 2x crane (12 coins) - allows a player to exchange 1 extra goods cube in phase 1
-     - 2x warehouse (10 coins) - allows a player to take 1 more card in phase 1
+ 20 special cards
+     - 14x ship (10 coins) - players start with 2 ships; each ship carries 1 goods cube
+     - 2x office (8 coins) - draw 1 goods card at the end of Phase 2
+     - 2x docker (12 coins) - exchange an extra goods cube during Phase 1
+     - 2x trade agreement (11 coins) - receive 2 additional coins when you deliver
 */
 
 // In-game constants
@@ -76,10 +85,10 @@ struct GameConstants {
     // building card count
     public static let shipCardsCount = 14
     public static let officeCardsCount = 2
-    public static let craneCardsCount = 2
-    public static let warehouseCardsCount = 2
+    public static let dockerCardsCount = 2
+    public static let tradeAgreementCardsCount = 2
     // max hand size
-    public static let maxHandSize = 5
+    public static let maxHandSize = 6
     public static let marketplaceSize = 6
 }
 
@@ -141,9 +150,9 @@ extension BuildingDefinition {
     static func makeDeck() -> [BuildingDefinition] {
         [
             BuildingDefinition(name: "Ship", details: "Each ship can hold 1 goods cube. After purchasing a ship, the player immediately takes a goods cube and places it on the ship.", cost: 10, cubeCapacity: 1, cubeSlots: [], quantity: GameConstants.shipCardsCount),            
-            BuildingDefinition(name: "Office", details: "Generates 1 additional coin when you deliver good cards.", cost: 8, quantity: GameConstants.officeCardsCount),
-            BuildingDefinition(name: "Crane", details: "Allows a player to exchange 1 extra goods cube during Phase 1.", cost: 12, quantity: GameConstants.craneCardsCount),
-            BuildingDefinition(name: "Warehouse", details: "Allows a player to draw 1 additional card during Phase 1.", cost: 10, quantity: GameConstants.warehouseCardsCount)
+            BuildingDefinition(name: "Office", details: "Draw 1 goods card at the end of Phase 2, regardless of the action taken.", cost: 8, quantity: GameConstants.officeCardsCount),
+            BuildingDefinition(name: "Docker", details: "Allows the player to exchange an extra goods cube during Phase 1.", cost: 12, quantity: GameConstants.dockerCardsCount),
+            BuildingDefinition(name: "Trade agreement", details: "Receive 2 additional coins when you deliver goods.", cost: 11, quantity: GameConstants.tradeAgreementCardsCount)
         ].flatMap { definition in
             Array(repeating: definition, count: definition.quantity)
         }
@@ -183,12 +192,15 @@ class MerchantsGame {
         let setup = makeDefaultGameSetup()
         self.drawPile = setup.drawPile
         self.cubePile = setup.cubePile
+        self.marketplace.removeAll()
         self.marketplace = setup.marketplace
 
         resetPlayersForNewGame()
         dealInitialHands()
         assignStartingShips()
         fillMarketplace(with: GameConstants.marketplaceSize)
+        currentState = .phase1
+        currentTurnPhase = .phase1
     }
 
     @discardableResult
@@ -209,6 +221,7 @@ class MerchantsGame {
     func resetPlayersForNewGame() {
         for player in self.players {
             player.hand = []
+            player.tableau = []
             player.cubes = []
             player.coins = 0
         }

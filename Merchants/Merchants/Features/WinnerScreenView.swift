@@ -11,10 +11,22 @@ struct WinnerScreenView: View {
     private let players: [Player]
     private let onPlayAgain: () -> Void
 
-    init(players: [Player], onPlayAgain: @escaping () -> Void = {}) {
-        self.players = players
+    init(
+        players: [Player],
+        onPlayAgain: @escaping () -> Void = {},
+        useSamplePlayers: Bool = false
+    ) {
+        self.players = useSamplePlayers ? Self.samplePlayers : players
         self.onPlayAgain = onPlayAgain
     }
+
+    private static let samplePlayers = [
+        Player(playerId: 1, coins: 10),
+        Player(playerId: 2, coins: 14),
+        Player(playerId: 3, coins: 3),
+        Player(playerId: 4, coins: 7),
+        Player(playerId: 5, coins: 1)
+    ]
     
     var sortedPlayers: [Player] {
         players.sorted { $0.coins > $1.coins }
@@ -115,12 +127,5 @@ struct WinnerScreenView: View {
 }
 
 #Preview {
-    let samplePlayers = [
-        Player(playerId: 1, coins: 10),
-        Player(playerId: 2, coins: 14),
-        Player(playerId: 3, coins: 3),
-        Player(playerId: 4, coins: 7),
-        Player(playerId: 5, coins: 1)
-    ]
-    WinnerScreenView(players: samplePlayers)
+    WinnerScreenView(players: [], useSamplePlayers: true)
 }

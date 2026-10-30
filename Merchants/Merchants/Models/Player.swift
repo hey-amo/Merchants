@@ -17,11 +17,13 @@ class Player: NSObject, GKGameModelPlayer, Codable {
     var cubes: [GoodsCube] // cubes in possession
     var isAI: Bool
     var isStartPlayer: Bool = false
+    var state: PlayerState
     var avatar: String
     private var maxHandSize: Int = GameConstants.maxHandSize
     
     init(playerId: Int, coins: Int, hand: [GoodsCube] = [], tableau: [BuildingDefinition] = [], 
-        cubes: [GoodsCube] = [], isAI: Bool = false, avatar: String = "", isStartPlayer: Bool = false) {
+        cubes: [GoodsCube] = [], isAI: Bool = false, avatar: String = "", isStartPlayer: Bool = false,
+        state: PlayerState = .idle) {
         self.playerId = playerId
         self.coins = coins
         self.hand = hand
@@ -30,13 +32,14 @@ class Player: NSObject, GKGameModelPlayer, Codable {
         self.isAI = isAI
         self.avatar = avatar
         self.isStartPlayer = isStartPlayer
+        self.state = state
     }
 
 
 
     func copy(with zone: NSZone? = nil) -> Any {
         return Player(playerId: playerId, coins: coins, hand: hand, tableau: tableau, cubes: cubes, 
-            isAI: isAI, avatar: avatar, isStartPlayer: isStartPlayer)
+            isAI: isAI, avatar: avatar, isStartPlayer: isStartPlayer, state: state)
     }
 }
 

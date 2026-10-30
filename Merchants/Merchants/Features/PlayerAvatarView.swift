@@ -9,7 +9,7 @@ import SwiftUI
 
 // Displays a single player avatar
 
-enum AvatarResource: String {
+enum AvatarResource: String, CaseIterable {
     case avt1 = "avt-1"
     case avt2 = "avt-2"
     case avt3 = "avt-3"

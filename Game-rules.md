@@ -11,8 +11,13 @@ Players act as a 16th century merchant family and try to maximise profits throug
 ## Components
 
 6 different goods:
- - Sugar (White), Indigo (Blue), Spices (Red), 10x Tea (Green), 10x Silk (Purple), 10x Lumber (Brown)
- 
+:sugar (White)
+:indigo (Blue)
+:spices (Red)
+:tea (Green)
+:silk (Purple)
+:lumber (Brown)
+
 60 good cards
  - 10x Sugar, 10x Indigo, 10x Spices, 10x Tea, 10x Silk, 10x Lumber
 
@@ -50,13 +55,13 @@ Starting with the last player, and going counter clockwise, each player now sele
 
 ## Sequence of play
 
-The game is played over a series of rounds until the market draw deck exhausts.  When it exhausts, it triggers end of the game.
+The game is played over a series of rounds until the market draw deck exhausts. The active player completes both phases and ends their turn before the game checks for an empty draw deck. If the deck is empty, the game ends before the next player starts a turn.
 
 In a round, a player will take a single `turn`.
 
 Play always proceeds clockwise from the First player.
 
-Starting with the First player, and continuing clockwise, each player will become the active player (on turn), and MUST perform each game phase (Purchase, Deliver), in sequential order.
+Starting with the First player, and continuing clockwise, each player will become the active player (on turn), and MUST perform each game phase (Purchase, Deliver), in sequential order. After the active player completes Phase 2 and ends their turn, check the end-game condition; only if the game continues does play move clockwise to the next player.
 
 *Important: The first player never changes*
 
@@ -132,6 +137,6 @@ When a delivery occurs by the owner of this card, they receive 2 coins
 
 # Game end
 
-The game ends immediately hen the card draw is exhausted.  The player with the most coins wins.  
+After the active player completes their turn, the game ends if the card draw deck is empty. The player with the most coins wins.
 
 Special cards purchased during the game do not count towards victory.

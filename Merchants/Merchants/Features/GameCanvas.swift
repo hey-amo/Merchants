@@ -1,57 +1,77 @@
-//
-//  Canvas.swift
-//  Merchants
-//
-//  Created by Amarjit on 02/07/2026.
-//
-
-import Foundation
 import SwiftUI
 
 struct GameCanvas: View {
-    let players: [Player]
-    let activePlayerID: Int?
+    @State private var session: GameSession
     let onPause: () -> Void
-    let onEndGame: () -> Void
+    let onGameOver: () -> Void
 
     init(
-        players: [Player],
-        activePlayerID: Int? = nil,
-        onPause: @escaping () -> Void = {},
-        onEndGame: @escaping () -> Void = {}
+        session: GameSession,
+        onPause: @escaping () -> Void,
+        onGameOver: @escaping () -> Void
     ) {
-        self.players = players
-        self.activePlayerID = activePlayerID
+        _session = State(initialValue: session)
         self.onPause = onPause
-        self.onEndGame = onEndGame
+        self.onGameOver = onGameOver
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            GameHeaderView(players: players, activePlayerID: activePlayerID)
-            Spacer(minLength: 0)
+        let _ = session.revision
+
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                GameHeaderView(
+                    players: session.players,
+                    activePlayerID: session.activePlayer?.playerId
+                )
+
+                HStack {
+                    Text("Marketplace")
+                        .font(.title2.bold())
+                    Spacer()
+                    Text("Draw pile: \(session.game.drawPile.count)")
+                        .foregroundStyle(.secondary)
+                }
+
+                if session.stage != .phase2 {
+                    GameMarketplaceView(session: session)
+                }
+
+                if let player = session.activePlayer {
+                    Text("Player \(player.playerId) · \(player.coins) coins")
+                        .font(.headline)
+                }
+
+                switch session.stage {
+                case .cubeDraft:
+                    Text("Finish selecting cubes before starting the game.")
+                case .phase1:
+                    GamePhaseOneView(session: session)
+                case .phase2:
+                    GamePhaseTwoView(session: session, onGameOver: onGameOver)
+                case .finished:
+                    Text("Game over")
+                }
+            }
+            .padding()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Color(.systemBackground))
+        .navigationTitle("Game")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Pause", action: onPause)
             }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("End game", action: onEndGame)
-            }
+        }
+        .alert(
+            "Unable to complete action",
+            isPresented: Binding(
+                get: { session.errorMessage != nil },
+                set: { if !$0 { session.errorMessage = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) { session.errorMessage = nil }
+        } message: {
+            Text(session.errorMessage ?? "")
         }
     }
-}
-
-#Preview {
-    GameCanvas(
-        players: [
-            Player(playerId: 1, coins: 0, avatar: AvatarResource.avt1.rawValue),
-            Player(playerId: 2, coins: 0, avatar: AvatarResource.avt2.rawValue),
-            Player(playerId: 3, coins: 0, avatar: AvatarResource.avt3.rawValue),
-            Player(playerId: 4, coins: 0, avatar: AvatarResource.avt4.rawValue)
-        ],
-        activePlayerID: 1
-    )
 }
