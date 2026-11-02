@@ -26,14 +26,10 @@ final class GameWinnerTests: XCTestCase {
         XCTAssertEqual(Set(view.winners.map(\.playerId)), Set([2, 3]))
     }
 
-    func testSamplePlayersCanBeEnabledAndDisabled() {
-        let realPlayers = [Player(playerId: 6, coins: 30)]
+    func testEmptyPlayerListHasNoWinners() {
+        let view = WinnerScreenView(players: [])
 
-        let sampleView = WinnerScreenView(players: realPlayers, useSamplePlayers: true)
-        XCTAssertEqual(sampleView.sortedPlayers.map(\.playerId), [2, 1, 4, 3, 5])
-
-        let realPlayersView = WinnerScreenView(players: realPlayers)
-        XCTAssertEqual(realPlayersView.sortedPlayers.map(\.playerId), [6])
-        XCTAssertEqual(realPlayersView.winners.map(\.playerId), [6])
+        XCTAssertTrue(view.sortedPlayers.isEmpty)
+        XCTAssertTrue(view.winners.isEmpty)
     }
 }
