@@ -5,6 +5,11 @@ import PackageDescription
 
 let package = Package(
     name: "MerchantsPackage",
+    platforms: [
+           .iOS(.v15),
+           .macOS(.v12),
+           .tvOS(.v18)
+       ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
