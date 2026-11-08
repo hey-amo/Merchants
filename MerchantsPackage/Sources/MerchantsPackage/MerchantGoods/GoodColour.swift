@@ -2,6 +2,9 @@
 //  GoodColour.swift
 //  MerchantsPackage
 //
-//  Created by Amarjit on 08/11/2026.
-//
 
+public extension Good {
+    func goodColourAsString() -> String {
+        return ""
+    }
+}
