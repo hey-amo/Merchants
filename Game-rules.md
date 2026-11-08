@@ -47,6 +47,8 @@ Players act as a 16th century merchant family and try to maximise profits throug
 
 Prior to game start, each player will now pick 1 cube to load each of their ships.
 
+#### Snake draft cubes
+
 Cubes are now drafted using a snake order until all players have exactly two goods cubes.
 
 Starting with the last player, and going counter clockwise, each player now selects one available goods cube from the supply until the first player takes one goods cube and loads it onto one of their empty ships.  Then, the order reverses and now, going clockwise and starting from the first player, each player now selects their second available goods cube to load onto of one their empty ships.
