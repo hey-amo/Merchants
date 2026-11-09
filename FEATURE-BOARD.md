@@ -6,13 +6,14 @@ to the full requirement, including its acceptance criteria and tests.
 
 ## How to use
 
-- **Integration branch:** `working-on-package`. Create feature branches from
-  it and target it with pull requests; do not merge this work into `main`.
+- **Integration branch:** `feature/fr`. Create a micro-branch for each
+  requirement from `feature/fr`, push it once tests pass, and open a pull
+  request targeting `feature/fr`; do not merge this work into `main`.
 - **Planned:** not started or not yet assessed.
 - **In progress:** started, but not complete against the PRD.
 - **Ready to merge:** implemented and tested on a separate branch, but not yet
-  present on `working-on-package`.
-- **Done:** present on `working-on-package` and verified against the requirement.
+  present on `feature/fr`.
+- **Done:** present on `feature/fr` and verified against the requirement.
 
 Move cards between sections as their status changes. Record the branch and
 remaining work for partially completed cards; do not mark a feature done solely
@@ -20,7 +21,9 @@ because a component or placeholder exists.
 
 ## Ready to merge
 
-No features ready to merge yet.
+- **[FR5 - Goods and cards vocabulary](PRD.md#fr5-goods-and-cards-vocabulary)**
+  Implemented and tested on `feature/fr5-goods-and-cards-vocabulary`. Four
+  targeted tests and all 44 package tests passed on 2026-11-09.
 
 ## In progress
 
@@ -34,9 +37,6 @@ No features ready to merge yet.
 
 ## Planned
 
-- [FR5 - Goods and cards vocabulary](PRD.md#fr5-goods-and-cards-vocabulary)
-  - `GoodType` exists as a prerequisite for banking; cards, cubes and tests
-    remain.
 - [FR6 - Draw deck](PRD.md#fr6-draw-deck)
 - [FR7 - Hand](PRD.md#fr7-hand)
 - [FR8 - Cube supply](PRD.md#fr8-cube-supply)
@@ -80,7 +80,8 @@ No features ready to merge yet.
 ## Verification
 
 On 2026-11-09, the full `MerchantsGame` package regression suite passed on
-`working-on-package`: 40 tests, including 14 Coins and 12 Banking tests.
+`working-on-package` (the starting point for `feature/fr`): 40 tests, including 14
+Coins and 12 Banking tests.
 
 ## Baseline and PRD discrepancy
 
