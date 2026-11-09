@@ -28,6 +28,22 @@ struct EngineErrorTests {
         #expect(EngineError(TurnFlowError.wrongPhase).description.contains("turnFlow"))
     }
 
+    @Test func addedContextAndPlanningMappingsPreserveErrors() {
+        #expect(EngineError(CubeDraftError.notDraftingSeat) == .draft(.notDraftingSeat))
+        #expect(EngineError(TradingPhaseError.invalidPlayerState) == .trading(.invalidPlayerState))
+        #expect(EngineError(DeliveryScoringError.overflow) == .deliveryScoring(.overflow))
+        #expect(EngineError(GameEndingError.alreadyEnded) == .gameEnding(.alreadyEnded))
+        #expect(EngineError(GameStateError.cardCountMismatch) == .state(.cardCountMismatch))
+        #expect(EngineError(PlanningError.turn(.wrongPhase)) == .turnFlow(.wrongPhase))
+        #expect(EngineError(PlanningError.banking(.coin(player: .overflow))) == .banking(.coin(player: .overflow)))
+        #expect(EngineError(PlanningError.supply(.noneAvailable(.tea))) == .cubeSupply(.noneAvailable(.tea)))
+        #expect(EngineError(PlanningError.ship(.sameGood)) == .ships(.sameGood))
+        #expect(EngineError(PlanningError.specialCard(.outOfStock(.office))) == .specialCards(.outOfStock(.office)))
+        #expect(EngineError(PlanningError.unknownPlayer) == .unknownPlayer)
+        #expect(EngineError(PlanningError.invalidState) == .planning(.invalidState))
+        #expect(EngineError(PlanningError.invalidShipLoad) == .planning(.invalidShipLoad))
+    }
+
     @Test func mappedBankRejectionPreservesState() throws {
         let player = PlayerID("player")
         var bank = try Bank(playerIDs: [player])

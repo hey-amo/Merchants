@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import MerchantsGame
 
@@ -93,6 +94,13 @@ struct GameReplayTests {
             let (next, events) = try GameEngine.apply(action, by: player, to: state)
             #expect(!events.isEmpty)
             #expect(next.random == before.random)
+            if actionCount.isMultiple(of: 20) {
+                let restored = try JSONDecoder().decode(GameState.self, from: JSONEncoder().encode(before))
+                let (restoredNext, restoredEvents) = try GameEngine.apply(action, by: player, to: restored)
+                #expect(restored == before)
+                #expect(restoredNext == next)
+                #expect(restoredEvents == events)
+            }
             let beforeCoins = before.bank.standings.values.reduce(0) { $0 + $1.available }
             let afterCoins = next.bank.standings.values.reduce(0) { $0 + $1.available }
             let credited = events.reduce(0) { total, event in

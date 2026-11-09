@@ -23,6 +23,12 @@ public enum GameInvariants {
                 + state.marketplace.totalCardCount == totalGoodsCards else {
             throw .cardCountMismatch
         }
+        for good in GoodType.allCases {
+            let count = state.deck.count(of: good)
+                + state.hands.reduce(0) { $0 + $1.count(of: good) }
+                + state.marketplace.count(of: good)
+            guard count == 10 else { throw .cardCountMismatch }
+        }
 
         for seat in players.indices {
             let effects = SpecialCardEffects(
@@ -54,17 +60,6 @@ public enum GameInvariants {
             }
         }
 
-        for seat in players.indices {
-            let fleet = state.fleets[seat]
-            let tableau = state.tableaux[seat]
-            let standardShips = fleet.ships.filter { $0.kind == .standard }.count
-            let largeShips = fleet.ships.filter { $0.kind == .large }.count
-            guard standardShips == 2 + tableau.count(of: .ship),
-                  largeShips == tableau.count(of: .largeShip) else {
-                throw .invalidFleet
-            }
-        }
-
         for kind in SpecialCardKind.allCases {
             guard let initial = try? state.stock.catalog.stock(
                 for: kind,
@@ -72,13 +67,29 @@ public enum GameInvariants {
             ) else {
                 throw .invalidSpecialCardStock
             }
-            let owned = state.tableaux.reduce(0) { $0 + $1.count(of: kind) }
-            guard state.stock.available(of: kind) + owned == initial else {
+            var remaining = initial
+            for tableau in state.tableaux {
+                let count = tableau.count(of: kind)
+                guard count <= remaining,
+                      state.stock.catalog.entry(for: kind).ownershipLimit.map({ count <= $0 }) ?? true else {
+                    throw .invalidSpecialCardStock
+                }
+                remaining -= count
+            }
+            guard state.stock.available(of: kind) == remaining else {
                 throw .invalidSpecialCardStock
             }
-            if let limit = state.stock.catalog.entry(for: kind).ownershipLimit,
-               state.tableaux.contains(where: { $0.count(of: kind) > limit }) {
-                throw .invalidSpecialCardStock
+        }
+
+        for seat in players.indices {
+            let fleet = state.fleets[seat]
+            let tableau = state.tableaux[seat]
+            let standardShips = fleet.ships.filter { $0.kind == .standard }.count
+            let largeShips = fleet.ships.filter { $0.kind == .large }.count
+            guard standardShips >= 2,
+                  standardShips - 2 == tableau.count(of: .ship),
+                  largeShips == tableau.count(of: .largeShip) else {
+                throw .invalidFleet
             }
         }
 
@@ -103,7 +114,11 @@ public enum GameInvariants {
                   state.supply == state.draft.supply,
                   state.ending.status == .ongoing,
                   state.hands.allSatisfy({ $0.count == 3 }),
-                  state.marketplace.totalCardCount == Marketplace.slotCount else {
+                  state.marketplace.totalCardCount == Marketplace.slotCount,
+                  state.bank.standings.values.allSatisfy({ $0.available == 0 }),
+                  state.tableaux.allSatisfy({ tableau in
+                      SpecialCardKind.allCases.allSatisfy { tableau.count(of: $0) == 0 }
+                  }) else {
                 throw .invalidTurnState
             }
             return

@@ -14,6 +14,7 @@ public enum EngineError: Error, Equatable, Sendable, CustomStringConvertible {
     case trading(TradingPhaseError)
     case deliveryScoring(DeliveryScoringError)
     case gameEnding(GameEndingError)
+    case state(GameStateError)
     case unknownPlayer
     case invalidAction
     case unexpected(String)
@@ -28,6 +29,22 @@ public enum EngineError: Error, Equatable, Sendable, CustomStringConvertible {
     public init(_ error: SpecialCardError) { self = .specialCards(error) }
     public init(_ error: TurnFlowError) { self = .turnFlow(error) }
     public init(_ error: GameSetupError) { self = .setup(error) }
+    public init(_ error: CubeDraftError) { self = .draft(error) }
+    public init(_ error: TradingPhaseError) { self = .trading(error) }
+    public init(_ error: DeliveryScoringError) { self = .deliveryScoring(error) }
+    public init(_ error: GameEndingError) { self = .gameEnding(error) }
+    public init(_ error: GameStateError) { self = .state(error) }
+    public init(_ error: PlanningError) {
+        switch error {
+        case .turn(let cause): self = .turnFlow(cause)
+        case .banking(let cause): self = .banking(cause)
+        case .supply(let cause): self = .cubeSupply(cause)
+        case .ship(let cause): self = .ships(cause)
+        case .specialCard(let cause): self = .specialCards(cause)
+        case .unknownPlayer: self = .unknownPlayer
+        case .invalidState, .invalidShipLoad: self = .planning(error)
+        }
+    }
 
     public var description: String {
         switch self {
@@ -46,6 +63,7 @@ public enum EngineError: Error, Equatable, Sendable, CustomStringConvertible {
         case .trading(let error): "trading: \(error)"
         case .deliveryScoring(let error): "deliveryScoring: \(error)"
         case .gameEnding(let error): "gameEnding: \(error)"
+        case .state(let error): "state: \(error)"
         case .unknownPlayer: "unknown player"
         case .invalidAction: "invalid action"
         case .unexpected(let detail): "unexpected error: \(detail)"

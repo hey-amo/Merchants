@@ -9,6 +9,10 @@ public struct DrawDeck: Codable, Equatable, Sendable {
         cards.isEmpty
     }
 
+    func count(of good: GoodType) -> Int {
+        cards.filter { $0.good == good }.count
+    }
+
     public init(cards: [GoodsCard]) {
         self.cards = cards
     }
