@@ -35,8 +35,17 @@ because a component or placeholder exists.
   **[FR19 - Game engine and player view](PRD.md#fr19-game-engine-and-player-view)**
   Core action pipeline, data-only player projection, legal actions, and
   deterministic setup are implemented on `feature/FR16-FR18-FR19-engine`.
-  Full per-action acceptance, error localization, restoration, and extensive
-  replay/invariant tests remain outstanding.
+  The bundle branch adds restoration and seeded replay/invariant coverage;
+  full per-action acceptance and error localization remain outstanding.
+- **[FR23 - Testing and replay](PRD.md#fr23-testing-and-replay)**
+  `feature/FR20-FR23-FR24-FR25-bundle` adds seeded random games, per-action
+  invariants, deterministic replay, and passive and delivery-first strategy
+  tests for 2–4 players under both end-game rules. Exhaustive rule-by-rule
+  rejection, boundary, and EC-ID coverage remains.
+- **[FR24 - State restoration](PRD.md#fr24-state-restoration)**
+  The bundle branch adds validating `GameState` decoding, cross-owner
+  invariants, corruption tests, and deterministic continuation. A broader
+  audit of all owner decoders and malformed combinations remains.
 - **[FR21 - Bot placeholders](PRD.md#fr21-bot-placeholders)**
   Generic passive bot is on local `feature/F21-Bot-Placeholders`; adaptation to
   concrete engine action and player projection types remains.
@@ -46,22 +55,26 @@ because a component or placeholder exists.
   tests still need work.
 - **F26 - Game session**
   Setup and ending experiments remain uncommitted in the separate
-  `feature/F26-Game-Session` worktree. A live store and end-to-end session
-  lifecycle remain outstanding.
+  `feature/F26-Game-Session` worktree. The bundle branch adds a live store,
+  but an end-to-end session lifecycle remains outstanding.
 - **[FR2 - Deterministic randomness](PRD.md#fr2-deterministic-randomness)**  
   `working-on-package` at `3a69ddd` has a seeded generator, Fisher-Yates
   shuffle and first-player selection; six targeted tests passed on 2026-11-09.
-  Remaining: integrate random state into `GameState`, use it for the actual
-  deck and first-player setup, and verify the end-to-end randomness and replay
-  requirements. The implementation is on the integration branch; the remaining
-  integration work is not.
+  The engine and bundle branches integrate random state into `GameState`,
+  seeded setup and replay; these changes are not yet on `working-branch`.
 
 ## Planned
 
-- [FR20 - Game store](PRD.md#fr20-game-store)
-- [FR23 - Testing and replay](PRD.md#fr23-testing-and-replay)
-- [FR24 - State restoration](PRD.md#fr24-state-restoration)
-- [FR25 - Game rules](PRD.md#fr25-game-rules)
+No unstarted PRD section 7 requirements are currently tracked here.
+
+## Ready to merge
+
+- **[FR20 - Game store](PRD.md#fr20-game-store)**
+  Actor-serialized actions and ordered `AsyncStream` updates are implemented
+  and tested on `feature/FR20-FR23-FR24-FR25-bundle`.
+- **[FR25 - Game rules](PRD.md#fr25-game-rules)**
+  Configurable, validated and serializable rules, including hand limits and
+  special-card catalog overrides, are tested on the same bundle branch.
 
 ## Done
 
@@ -103,6 +116,10 @@ because a component or placeholder exists.
   Merged into `working-branch` in PR #24.
 
 ## Verification
+
+The full `MerchantsGame` regression suite passed on
+`feature/FR20-FR23-FR24-FR25-bundle`: 119 XCTest tests and 57 Swift Testing
+tests. The package remains free of SwiftUI, UIKit, and AppKit.
 
 The full `MerchantsGame` regression suite passed on
 `feature/FR16-FR18-FR19-engine`: 112 XCTest tests and 35 Swift Testing tests.

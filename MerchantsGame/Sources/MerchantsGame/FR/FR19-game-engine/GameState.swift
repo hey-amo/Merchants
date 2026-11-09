@@ -1,4 +1,6 @@
-public struct GameState: Equatable, Sendable {
+// The complete serializable game state and the read-only player projection.
+// Owns composition of domain values, but does not implement game rules.
+public struct GameState: Codable, Equatable, Sendable {
     public let configuration: GameConfiguration
     public let random: SeededRandomSource
     public internal(set) var deck: DrawDeck
@@ -42,6 +44,55 @@ public struct GameState: Equatable, Sendable {
         ending = GameEnding(rule: configuration.rules.endGameRule, order: order)
         fleets = draft.fleets
         supply = draft.supply
+        try GameInvariants.validate(self)
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let configuration = try container.decode(GameConfiguration.self, forKey: .configuration)
+        let random = try container.decode(SeededRandomSource.self, forKey: .random)
+        let deck = try container.decode(DrawDeck.self, forKey: .deck)
+        let hands = try container.decode([Hand].self, forKey: .hands)
+        let marketplace = try container.decode(Marketplace.self, forKey: .marketplace)
+        let bank: Bank
+        do {
+            bank = try container.decode(Bank.self, forKey: .bank)
+        } catch let error as CoinError where error == .isNegativeNumber {
+            throw GameStateError.negativeBalance
+        }
+        let stock = try container.decode(SpecialCardStock.self, forKey: .stock)
+        let tableaux = try container.decode([Tableau].self, forKey: .tableaux)
+        let draft: CubeDraft
+        do {
+            draft = try container.decode(CubeDraft.self, forKey: .draft)
+        } catch let error as ShipError where error == .capacityExceeded {
+            throw GameStateError.shipOverCapacity
+        }
+        let turn = try container.decodeIfPresent(TurnFlow.self, forKey: .turn)
+        let ending = try container.decode(GameEnding.self, forKey: .ending)
+        let fleets: [Fleet]
+        do {
+            fleets = try container.decode([Fleet].self, forKey: .fleets)
+        } catch let error as ShipError where error == .capacityExceeded {
+            throw GameStateError.shipOverCapacity
+        }
+        let supply = try container.decode(CubeSupply.self, forKey: .supply)
+
+        self.configuration = configuration
+        self.random = random
+        self.deck = deck
+        self.hands = hands
+        self.marketplace = marketplace
+        self.bank = bank
+        self.stock = stock
+        self.tableaux = tableaux
+        self.draft = draft
+        self.turn = turn
+        self.ending = ending
+        self.fleets = fleets
+        self.supply = supply
+
+        try GameInvariants.validate(self)
     }
 
     public func playerView(for player: PlayerID) throws -> PlayerView {
@@ -50,6 +101,11 @@ public struct GameState: Equatable, Sendable {
                           deckCount: deck.remaining, marketplaceCards: marketplace.visibleCards, bank: bank, fleets: fleets,
                           supply: supply, tableaux: tableaux, stock: stock, turn: turn, ending: ending,
                           draft: turn == nil ? draft : nil)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case configuration, random, deck, hands, marketplace, bank, stock, tableaux
+        case draft, turn, ending, fleets, supply
     }
 }
 
