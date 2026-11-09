@@ -264,19 +264,112 @@ struct GameStateRestorationTests {
         for key in required {
             var missing = original
             missing.removeValue(forKey: key)
-            #expect(throws: DecodingError.self, "Missing \(key)") {
-                try JSONDecoder().decode(GameState.self, from: encodedData(missing))
-            }
+            expectFieldError(try encodedData(missing), key: key, kind: .missing)
             var null = original
             null[key] = NSNull()
-            #expect(throws: DecodingError.self, "Null \(key)") {
-                try JSONDecoder().decode(GameState.self, from: encodedData(null))
-            }
+            expectFieldError(try encodedData(null), key: key, kind: .null)
             var wrongType = original
             wrongType[key] = "not a valid value"
-            #expect(throws: DecodingError.self, "Wrong type for \(key)") {
-                try JSONDecoder().decode(GameState.self, from: encodedData(wrongType))
+            expectFieldError(try encodedData(wrongType), key: key, kind: .wrongType)
+        }
+    }
+
+    @Test func optionalTurnIsAbsentDuringDraftButRequiredAfterDraft() throws {
+        let configuration = try GameConfiguration(playerIDs: players, seed: 42)
+        let draft = try GameState(configuration: configuration)
+        var object = try encodedObject(draft)
+        object.removeValue(forKey: "turn")
+        #expect(try JSONDecoder().decode(GameState.self, from: encodedData(object)) == draft)
+        object["turn"] = NSNull()
+        #expect(try JSONDecoder().decode(GameState.self, from: encodedData(object)) == draft)
+        object["turn"] = "invalid"
+        expectFieldError(try encodedData(object), key: "turn", kind: .wrongType)
+
+        var startedObject = try encodedObject(started())
+        startedObject.removeValue(forKey: "turn")
+        expectDecodeError(try encodedData(startedObject), .invalidTurnState)
+    }
+
+    @Test func rejectsInvalidNestedOwnerValues() throws {
+        let original = try encodedObject(started())
+
+        var duplicatePlayers = original
+        var configuration = try #require(duplicatePlayers["configuration"] as? [String: Any])
+        configuration["playerIDs"] = ["first", "first"]
+        duplicatePlayers["configuration"] = configuration
+        #expect(throws: GameSetupError.duplicatePlayerID) {
+            try JSONDecoder().decode(GameState.self, from: encodedData(duplicatePlayers))
+        }
+
+        var invalidSupply = original
+        var supply = try #require(invalidSupply["supply"] as? [String: Any])
+        supply["tea"] = 6
+        invalidSupply["supply"] = supply
+        #expect(throws: CubeSupplyError.invalidCount(good: .tea, count: 6)) {
+            try JSONDecoder().decode(GameState.self, from: encodedData(invalidSupply))
+        }
+
+        var invalidDraft = original
+        var draft = try #require(invalidDraft["draft"] as? [String: Any])
+        draft["picksMade"] = Int.max
+        invalidDraft["draft"] = draft
+        #expect(throws: CubeDraftError.invalidState) {
+            try JSONDecoder().decode(GameState.self, from: encodedData(invalidDraft))
+        }
+
+        var invalidTurn = original
+        var turn = try #require(invalidTurn["turn"] as? [String: Any])
+        turn["currentSeat"] = -1
+        invalidTurn["turn"] = turn
+        #expect(throws: TurnFlowError.invalidProgress) {
+            try JSONDecoder().decode(GameState.self, from: encodedData(invalidTurn))
+        }
+    }
+
+    @Test func rejectsFinishedFinalRoundWithWrongTurnSeat() throws {
+        var state = try started()
+        var actions = 0
+        while state.ending.status != .finished && actions < 500 {
+            let seat = try #require(state.turn?.currentSeat)
+            let player = players[seat]
+            let legal = try state.legalActions(for: player)
+            let action: GameAction
+            if legal.contains(.passPlanning) {
+                action = .passPlanning
+            } else if legal.contains(.drawCards) {
+                action = .drawCards
+            } else if legal.contains(.skipTrading) {
+                action = .skipTrading
+            } else {
+                action = try #require(legal.first { if case .deliverCards = $0 { return true }; return false })
             }
+            (state, _) = try GameEngine.apply(action, by: player, to: state)
+            actions += 1
+        }
+        #expect(state.ending.status == .finished)
+        #expect(try JSONDecoder().decode(GameState.self, from: JSONEncoder().encode(state)) == state)
+        var object = try encodedObject(state)
+        var turn = try #require(object["turn"] as? [String: Any])
+        turn["currentSeat"] = (state.draft.order.first + 1) % players.count
+        object["turn"] = turn
+        expectDecodeError(try encodedData(object), .invalidTurnState)
+    }
+
+    private enum FieldErrorKind { case missing, null, wrongType }
+
+    private func expectFieldError(_ data: Data, key: String, kind: FieldErrorKind) {
+        do {
+            _ = try JSONDecoder().decode(GameState.self, from: data)
+            Issue.record("Expected \(kind) decoding error for \(key).")
+        } catch DecodingError.keyNotFound(let missing, let context) where kind == .missing {
+            #expect(missing.stringValue == key)
+            #expect(context.codingPath.isEmpty)
+        } catch DecodingError.valueNotFound(_, let context) where kind == .null {
+            #expect(context.codingPath.map(\.stringValue) == [key])
+        } catch DecodingError.typeMismatch(_, let context) where kind == .wrongType {
+            #expect(context.codingPath.map(\.stringValue) == [key])
+        } catch {
+            Issue.record("Expected \(kind) decoding error for \(key), received \(error).")
         }
     }
 

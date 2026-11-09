@@ -146,6 +146,9 @@ public enum GameInvariants {
             guard state.deck.isEmpty, nextSeat == turn.currentSeat else { throw .invalidTurnState }
         case (.finished, .finished):
             guard state.deck.isEmpty else { throw .invalidTurnState }
+            if state.ending.rule == .oneMoreTurn, turn.currentSeat != order.first {
+                throw .invalidTurnState
+            }
         default:
             throw .invalidTurnState
         }

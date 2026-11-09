@@ -169,7 +169,7 @@ struct GameReplayTests {
         }
     }
 
-    @Test func passiveAndDeliveryStrategiesTerminate() throws {
+    @Test func EC19PassiveAndDeliveryStrategiesTerminate() throws {
         for count in 2...4 {
             for rule in [EndGameRule.immediate, .oneMoreTurn] {
                 try run(count: count, rule: rule, seed: 11, strategy: .passive)
@@ -180,10 +180,16 @@ struct GameReplayTests {
 
     @Test(arguments: 2...4, [EndGameRule.immediate, .oneMoreTurn])
     func EC18RestoredGameContinuesAtEveryPhase(count: Int, rule: EndGameRule) throws {
+        for seed in [UInt64(56), 57, 58] {
+            try verifyRestoredGame(count: count, rule: rule, seed: seed)
+        }
+    }
+
+    private func verifyRestoredGame(count: Int, rule: EndGameRule, seed: UInt64) throws {
         let players = (0..<count).map { PlayerID("p\($0)") }
         let rules = try GameRules(specialCardCatalog: .standard, endGameRule: rule)
         let configuration = try GameConfiguration(
-            playerIDs: players, seed: 56, firstPlayer: .fixed(players[1]), rules: rules
+            playerIDs: players, seed: seed, firstPlayer: .fixed(players[1]), rules: rules
         )
         var state = try GameState(configuration: configuration)
         var sawDraft = false
