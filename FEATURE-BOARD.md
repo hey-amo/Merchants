@@ -6,14 +6,14 @@ to the full requirement, including its acceptance criteria and tests.
 
 ## How to use
 
-- **Integration branch:** `feature/fr`. Create a micro-branch for each
-  requirement from `feature/fr`, push it once tests pass, and open a pull
-  request targeting `feature/fr`; do not merge this work into `main`.
+- **Integration branch:** `func-req-work`. Create a micro-branch for each
+  requirement from `func-req-work`, push it once tests pass, and open a pull
+  request targeting `func-req-work`; do not merge this work into `main`.
 - **Planned:** not started or not yet assessed.
 - **In progress:** started, but not complete against the PRD.
 - **Ready to merge:** implemented and tested on a separate branch, but not yet
-  present on `feature/fr`.
-- **Done:** present on `feature/fr` and verified against the requirement.
+  present on `func-req-work`.
+- **Done:** present on `func-req-work` and verified against the requirement.
 
 Move cards between sections as their status changes. Record the branch and
 remaining work for partially completed cards; do not mark a feature done solely
@@ -21,9 +21,13 @@ because a component or placeholder exists.
 
 ## Ready to merge
 
-- **[FR5 - Goods and cards vocabulary](PRD.md#fr5-goods-and-cards-vocabulary)**
-  Implemented and tested on `feature/fr5-goods-and-cards-vocabulary`. Four
-  targeted tests and all 44 package tests passed on 2026-11-09.
+- **[FR6 - Draw deck](PRD.md#fr6-draw-deck)**
+  Implemented and tested on `feature/FR6-draw-deck`; not yet integrated.
+- **[FR7 - Hand](PRD.md#fr7-hand)**
+  Implemented and tested on `feature/FR7-hand`; not yet integrated. Base
+  hand limit is currently a standard-rules placeholder pending FR25.
+  Cross-owner restoration and player-view validation remain part of FR24 and
+  FR19 respectively.
 
 ## In progress
 
@@ -37,8 +41,6 @@ because a component or placeholder exists.
 
 ## Planned
 
-- [FR6 - Draw deck](PRD.md#fr6-draw-deck)
-- [FR7 - Hand](PRD.md#fr7-hand)
 - [FR8 - Cube supply](PRD.md#fr8-cube-supply)
 - [FR9 - Ships](PRD.md#fr9-ships)
 - [FR10 - Marketplace](PRD.md#fr10-marketplace)
@@ -76,12 +78,14 @@ because a component or placeholder exists.
   Implemented on `feature/fr4-banking` and merged into `working-on-package`.
   Twelve targeted tests passed on 2026-11-09, including atomicity and invalid
   restoration coverage.
+- **[FR5 - Goods and cards vocabulary](PRD.md#fr5-goods-and-cards-vocabulary)**
+  Implemented on `feature/fr5-goods-and-cards-vocabulary` and integrated into
+  `func-req-work`.
 
 ## Verification
 
 On 2026-11-09, the full `MerchantsGame` package regression suite passed on
-`working-on-package` (the starting point for `feature/fr`): 40 tests, including 14
-Coins and 12 Banking tests.
+`feature/FR7-hand`: 50 tests, including six Hand tests. FR6 was tested separately.
 
 ## Baseline and PRD discrepancy
 

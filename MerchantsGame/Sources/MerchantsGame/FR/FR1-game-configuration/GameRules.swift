@@ -5,5 +5,7 @@
 public struct GameRules: Codable, Equatable, Sendable {
     public static let standard = GameRules()
 
+    public var handLimitBase: Int { 6 }
+
     public init() {}
 }
