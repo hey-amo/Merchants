@@ -43,23 +43,21 @@ because a component or placeholder exists.
 - **[FR23 - Testing and replay](PRD.md#fr23-testing-and-replay)**
   PR #26 added seeded random games, per-action
   invariants, deterministic replay, and passive and delivery-first strategy
-  tests for 2–4 players under both end-game rules. Exhaustive rule-by-rule
+  tests for 2–4 players under both end-game rules. `feature/coregp-acceptance`
+  also tests restoration during replay. Exhaustive rule-by-rule
   rejection, boundary, and EC-ID coverage remains.
 - **[FR24 - State restoration](PRD.md#fr24-state-restoration)**
-  PR #26 added validating `GameState` decoding, cross-owner
-  invariants, corruption tests, and deterministic continuation. A broader
-  audit of all owner decoders and malformed combinations remains.
+  PR #26 added validating `GameState` decoding, cross-owner invariants,
+  corruption tests, and deterministic continuation. `feature/coregp-acceptance`
+  adds per-good card conservation, draft-state validation and overflow-safe
+  stock checks. A broader malformed-state audit remains.
 - **[FR21 - Bot placeholders](PRD.md#fr21-bot-placeholders)**
-  A generic passive bot is integrated in PR #26; adaptation to concrete engine
-  action and player projection types remains.
+  PR #26 included a generic passive bot. `feature/coregp-acceptance` adds the
+  concrete `GamePassiveBot` alias; the approved empty-list result remains `nil`.
 - **[FR22 - Error layering](PRD.md#fr22-error-layering)**
-  Existing mappings and action rejection are integrated in PR #26;
-  placeholder UK-English descriptions are on `feature/coregp-acceptance`.
-  Remaining context mappings and exhaustive rejection tests still need work.
-- **F26 - Game session**
-  Setup and ending experiments remain uncommitted in the separate
-  `feature/F26-Game-Session` worktree. PR #26 added a live store,
-  but an end-to-end session lifecycle remains outstanding.
+  Existing mappings and action rejection were integrated in PR #26.
+  `feature/coregp-acceptance` adds context conversions, tests and placeholder
+  UK-English descriptions. Exhaustive rejection coverage remains.
 
 ## Planned
 
@@ -67,7 +65,13 @@ No unstarted PRD section 7 requirements are currently tracked here.
 
 ## Ready to merge
 
-No features are currently tracked here.
+- **F26 - Game session**
+  `feature/coregp-acceptance` provides a `GameSession` facade over the
+  existing store, with deterministic creation, state restoration, player views,
+  legal actions, serialized submissions, updates and final standings. Tests
+  exercise complete games, scoring, purchases, replay and concurrency.
+  `snapshot()` is host-only full state; player consumers use `playerView(for:)`.
+  The earlier separate `feature/F26-Game-Session` worktree remains untouched.
 
 ## Done
 
@@ -122,9 +126,10 @@ No features are currently tracked here.
 string-catalog resource; the source-language text is used as a fallback and
 translations require the resource-processing issue to be addressed.
 
-The full `MerchantsGame` suite passed on `feature/coregp-acceptance`:
-119 XCTest tests and 69 Swift Testing tests, including engine-level planning,
-trading, scoring, ending, event and projection coverage.
+The full `MerchantsGame` suite passed after combining the acceptance and
+closeout branches: 119 XCTest tests and 78 Swift Testing tests, including
+engine-level coverage, complete session lifecycles and intermediate
+restoration in seeded replay.
 
 FR2 generator, actual game setup, restoration and seeded replay tests passed
 on `feature/FR20-FR23-FR24-FR25-bundle`: six XCTest tests and six Swift
@@ -171,10 +176,9 @@ and six Hand tests.
    setup, draft, planning, trading, final-round and finished states; replay
    identical legal actions after restoration across seeds, player counts and
    ending rules. Run targeted suites, then the full package suite.
-3. Before implementing those audits, reconcile the separately committed
-   `feature/game-logic-closeout` changes: they already add error mappings,
-   malformed-state checks and intermediate replay tests. Base follow-up work on
-   the integrated code to avoid duplicating or overwriting it.
+3. Base the audits on the integrated closeout changes, which already add error
+   mappings, malformed-state checks and intermediate replay tests, to avoid
+   duplicating or overwriting them.
 
 ## Baseline and PRD discrepancy
 

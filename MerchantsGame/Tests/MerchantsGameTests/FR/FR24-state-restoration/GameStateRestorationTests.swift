@@ -89,6 +89,24 @@ struct GameStateRestorationTests {
         expectDecodeError(try encodedData(object), .cardCountMismatch)
     }
 
+    @Test func rejectsIncorrectGoodsDistributionEvenWhenTotalIsSixty() throws {
+        var state = try started()
+        var deck = state.deck
+        var cards = try deck.draw(deck.remaining)
+        let first = try #require(cards.first)
+        let replacement = try #require(cards.first(where: { $0.good != first.good }))
+        cards[0] = replacement
+        state.deck = DrawDeck(cards: cards)
+        expectDecodeError(try JSONEncoder().encode(state), .cardCountMismatch)
+    }
+
+    @Test func rejectsCoinsDuringDraft() throws {
+        let configuration = try GameConfiguration(playerIDs: players, seed: 42)
+        var state = try GameState(configuration: configuration)
+        state.bank = try Bank(restoring: [players[0]: 1, players[1]: 0])
+        expectDecodeError(try JSONEncoder().encode(state), .invalidTurnState)
+    }
+
     @Test func rejectsCubeCountMismatchWithExactError() throws {
         var state = try started()
         _ = try state.supply.take(.tea)
@@ -101,6 +119,7 @@ struct GameStateRestorationTests {
         var object = try encodedObject(state)
         var deck = try #require(object["deck"] as? [String: Any])
         var deckCards = try #require(deck["cards"] as? [[String: Any]])
+        let movedCards = Array(deckCards.suffix(4))
         deckCards.removeLast(4)
         deck["cards"] = deckCards
         object["deck"] = deck
@@ -108,8 +127,7 @@ struct GameStateRestorationTests {
         var hands = try #require(object["hands"] as? [[String: Any]])
         var hand = try #require(hands.first)
         var cards = try #require(hand["cards"] as? [[String: Any]])
-        let card = try #require(cards.first)
-        cards.append(contentsOf: Array(repeating: card, count: 4))
+        cards.append(contentsOf: movedCards)
         hand["cards"] = cards
         hands[0] = hand
         object["hands"] = hands
@@ -155,6 +173,23 @@ struct GameStateRestorationTests {
         var state = try started()
         try state.stock.purchase(.ship, for: &state.tableaux[0])
         expectDecodeError(try JSONEncoder().encode(state), .invalidFleet)
+    }
+
+    @Test func rejectsHugeTableauCountsWithoutOverflow() throws {
+        var state = try started()
+        try state.stock.purchase(.ship, for: &state.tableaux[0])
+        var object = try encodedObject(state)
+        var tableaux = try #require(object["tableaux"] as? [[String: Any]])
+        var tableau = tableaux[0]
+        var counts = try #require(tableau["counts"] as? [Any])
+        try #require(counts.count == 2)
+        counts[1] = NSNumber(value: Int.max)
+        tableau["counts"] = counts
+        tableaux[0] = tableau
+        tableaux[1] = tableau
+        object["tableaux"] = tableaux
+
+        expectDecodeError(try encodedData(object), .invalidSpecialCardStock)
     }
 
     @Test func rejectsOutOfSyncDraftSnapshotDuringDrafting() throws {
