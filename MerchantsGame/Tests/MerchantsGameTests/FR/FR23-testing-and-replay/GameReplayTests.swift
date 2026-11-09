@@ -92,6 +92,7 @@ struct GameReplayTests {
             }
             let (next, events) = try GameEngine.apply(action, by: player, to: state)
             #expect(!events.isEmpty)
+            #expect(next.random == before.random)
             let beforeCoins = before.bank.standings.values.reduce(0) { $0 + $1.available }
             let afterCoins = next.bank.standings.values.reduce(0) { $0 + $1.available }
             let credited = events.reduce(0) { total, event in
@@ -127,6 +128,7 @@ struct GameReplayTests {
         for (index, step) in steps.enumerated() {
             let (next, events) = try GameEngine.apply(step.action, by: step.player, to: replay)
             #expect(events == allEvents[index])
+            #expect(next.random == state.random)
             replay = next
         }
         #expect(replay == state)

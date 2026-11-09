@@ -57,11 +57,6 @@ because a component or placeholder exists.
   Setup and ending experiments remain uncommitted in the separate
   `feature/F26-Game-Session` worktree. The bundle branch adds a live store,
   but an end-to-end session lifecycle remains outstanding.
-- **[FR2 - Deterministic randomness](PRD.md#fr2-deterministic-randomness)**  
-  `working-on-package` at `3a69ddd` has a seeded generator, Fisher-Yates
-  shuffle and first-player selection; six targeted tests passed on 2026-11-09.
-  The engine and bundle branches integrate random state into `GameState`,
-  seeded setup and replay; these changes are not yet on `working-branch`.
 
 ## Planned
 
@@ -69,6 +64,11 @@ No unstarted PRD section 7 requirements are currently tracked here.
 
 ## Ready to merge
 
+- **[FR2 - Deterministic randomness](PRD.md#fr2-deterministic-randomness)**
+  Seeded Fisher-Yates setup, optional first-player selection, and persisted
+  random state are implemented and tested on
+  `feature/FR20-FR23-FR24-FR25-bundle`. The bundle includes the engine branch
+  prerequisites and has not been merged into `working-branch`.
 - **[FR20 - Game store](PRD.md#fr20-game-store)**
   Actor-serialized actions and ordered `AsyncStream` updates are implemented
   and tested on `feature/FR20-FR23-FR24-FR25-bundle`.
@@ -116,6 +116,10 @@ No unstarted PRD section 7 requirements are currently tracked here.
   Merged into `working-branch` in PR #24.
 
 ## Verification
+
+FR2 generator, actual game setup, restoration and seeded replay tests passed
+on `feature/FR20-FR23-FR24-FR25-bundle`: six XCTest tests and six Swift
+Testing tests.
 
 The full `MerchantsGame` regression suite passed on
 `feature/FR20-FR23-FR24-FR25-bundle`: 119 XCTest tests and 57 Swift Testing
