@@ -653,9 +653,9 @@ Each feature lists **Owner**, **Expectations**, **Errors**, **Tests**.
 ### FR21-bot-placeholders
 
 - **Owner:** `BotPlaceholders`
-- `BotStrategy` accepts a read-only observation and the current legal actions; strategies never receive or mutate `GameState`.
+- `BotStrategy` selects from caller-supplied legal actions or returns `nil` when it cannot select one. Its observation and action types are generic.
 - `PassiveBot`: deterministic dummy that picks the first legal action.
-- `AIStrategist`: deterministic conservative/aggressive heuristics for cube exchanges, special-card purchases, deliveries, and drawing.
+- `AIStrategist`: deterministic conservative/aggressive heuristics for cube exchanges, special-card purchases, deliveries, and drawing. It receives a read-only player observation, not `GameState`.
 - Decisions include a phase-labelled explanation; the default logger writes it to the console.
 - **Tests:** mock-only observations; selected actions are legal; delivery scoring accounts for resulting market demand, all players, and Trade Agreement bonuses.
 

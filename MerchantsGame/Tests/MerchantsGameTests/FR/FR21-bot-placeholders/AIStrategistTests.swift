@@ -6,6 +6,25 @@ struct AIStrategistTests {
     private let botID = PlayerID("bot")
     private let rivalID = PlayerID("rival")
 
+    @Test func strategiesShareTheSelectionContract() throws {
+        let observation = try makeObservation(phase: .planning)
+        let actions: [GameAction] = [.passPlanning]
+
+        func select<S: BotStrategy>(
+            _ strategy: S, actions: [GameAction]
+        ) -> GameAction? where S.View == StrategistObservation, S.Action == GameAction {
+            strategy.chooseAction(for: observation, legalActions: actions)
+        }
+
+        let passive = PassiveBot<StrategistObservation, GameAction>()
+        let strategist = AIStrategist(logger: { _ in })
+        #expect(select(passive, actions: actions) == .passPlanning)
+        #expect(select(strategist, actions: actions) == .passPlanning)
+        #expect(select(passive, actions: []) == nil)
+        #expect(select(strategist, actions: []) == nil)
+        #expect(select(strategist, actions: [.drawCards]) == nil)
+    }
+
     @Test func aggressiveStrategistBuysAnIncomeShipBeforeExchanging() throws {
         let observation = try makeObservation(
             phase: .planning,
