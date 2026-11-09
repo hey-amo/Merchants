@@ -3,6 +3,12 @@
 
 import PackageDescription
 
+#if os(macOS)
+let configurationResourcesPath = "fr/FR1-game-configuration/Resources"
+#else
+let configurationResourcesPath = "FR/FR1-game-configuration/Resources"
+#endif
+
 let package = Package(
     name: "MerchantsGame",
     platforms: [
@@ -22,7 +28,7 @@ let package = Package(
         .target(
             name: "MerchantsGame",
             resources: [
-                .process("FR/FR1-game-configuration/Resources")
+                .process(configurationResourcesPath)
             ]),
         .testTarget(
             name: "MerchantsGameTests",
