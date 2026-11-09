@@ -22,12 +22,9 @@ because a component or placeholder exists.
 ## Ready to merge
 
 - **[FR9 - Ships](PRD.md#fr9-ships)**
-  Implemented and tested on `feature/FR9-ships-redo`. PR #21 merged it into
-  `working-on-package`, not `working-branch`; it still needs integration into
-  `working-branch`.
-- **[FR11 - Special cards](PRD.md#fr11-special-cards)**
-  Implemented and tested on `feature/-FR11-special-cards`; awaiting integration
-  into `working-branch`. The turn engine will apply the effects during play.
+  Implemented and tested on `feature/FR9-ships-integration`; awaiting integration
+  into `working-branch`. PR #21 merged the earlier implementation into
+  `working-on-package` instead.
 
 ## In progress
 
@@ -87,6 +84,8 @@ because a component or placeholder exists.
   Merged into `working-branch` in PR #17.
 - **[FR10 - Marketplace](PRD.md#fr10-marketplace)**
   Merged into `working-branch` in PR #20.
+- **[FR11 - Special cards](PRD.md#fr11-special-cards)**
+  Merged into `working-branch` in PR #22. The turn engine will apply the effects.
 
 ## Verification
 
