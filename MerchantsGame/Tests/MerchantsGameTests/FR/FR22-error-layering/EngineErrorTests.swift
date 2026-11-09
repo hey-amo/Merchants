@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import MerchantsGame
 
@@ -46,6 +47,37 @@ struct EngineErrorTests {
         #expect(rejection.description.contains(TurnFlowError.wrongPhase.description))
         #expect(EngineError(GameStateError.cardCountMismatch).description ==
             "state: The saved game has an incorrect number of cards.")
+    }
+
+    @Test func genericLocalizedMessageKeepsTheUnderlyingErrorDetail() {
+        let errors: [EngineError] = [
+            .turnFlow(.wrongPhase),
+            .invalidAction,
+            .unexpected("An unknown problem occurred.")
+        ]
+        for error in errors {
+            let expected = "Game error -- \(error.description)"
+            #expect(error.localizedDescription == expected)
+            let rejection = ActionRejection(error: error, action: .drawCards, player: PlayerID("player"))
+            #expect(rejection.localizedDescription == expected)
+            let erased: any Error = rejection
+            #expect(erased.localizedDescription == expected)
+            #expect(rejection.description.contains("player"))
+        }
+    }
+
+    @Test func actualRejectedActionExposesGenericLocalizedMessage() throws {
+        let players = [PlayerID("one"), PlayerID("two")]
+        let state = try GameState(configuration: GameConfiguration(
+            playerIDs: players, seed: 1, firstPlayer: .fixed(players[0])
+        ))
+        do {
+            _ = try GameEngine.apply(.drawCards, by: players[0], to: state)
+            Issue.record("Expected an action rejection")
+        } catch {
+            #expect(error.error == .invalidAction)
+            #expect(error.localizedDescription == "Game error -- This action is not available now.")
+        }
     }
 
     @Test func addedContextAndPlanningMappingsPreserveErrors() {

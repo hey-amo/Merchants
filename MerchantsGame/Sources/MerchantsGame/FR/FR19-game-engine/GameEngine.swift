@@ -1,8 +1,11 @@
-public struct ActionRejection: Error, Equatable, Sendable, CustomStringConvertible {
+import Foundation
+
+public struct ActionRejection: Error, Equatable, Sendable, CustomStringConvertible, LocalizedError {
     public let error: EngineError
     public let action: GameAction
     public let player: PlayerID
     public var description: String { "player \(player.rawValue), action \(action): \(error)" }
+    public var errorDescription: String? { error.errorDescription }
 }
 
 public enum GameEngine {

@@ -1,6 +1,6 @@
 import Foundation
 
-public enum EngineError: Error, Equatable, Sendable, CustomStringConvertible {
+public enum EngineError: Error, Equatable, Sendable, CustomStringConvertible, LocalizedError {
     case coins(CoinError)
     case banking(BankingError)
     case drawDeck(DrawDeckError)
@@ -71,5 +71,9 @@ public enum EngineError: Error, Equatable, Sendable, CustomStringConvertible {
         case .unexpected(let detail):
             String(localized: "An unexpected error occurred: \(detail)", bundle: .module)
         }
+    }
+
+    public var errorDescription: String? {
+        String(localized: "Game error -- \(description)", bundle: .module)
     }
 }

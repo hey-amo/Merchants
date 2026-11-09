@@ -21,13 +21,6 @@ because a component or placeholder exists.
 
 ## In progress
 
-- **[FR19 - Game engine and player view](PRD.md#fr19-game-engine-and-player-view)**
-  Core action pipeline, data-only player projection, legal actions, and
-  deterministic setup are implemented on `working-branch` in PR #26,
-  together with restoration and seeded replay/invariant coverage;
-  `feature/coregp-acceptance` adds exact event, projection and legal-action
-  checks and rejection tests for every action; the broader error-case and
-  malformed-state audits remain.
 - **[FR23 - Testing and replay](PRD.md#fr23-testing-and-replay)**
   PR #26 added seeded random games, per-action
   invariants, deterministic replay, and passive and delivery-first strategy
@@ -47,10 +40,6 @@ because a component or placeholder exists.
 - **[FR21 - Bot placeholders](PRD.md#fr21-bot-placeholders)**
   PR #26 included a generic passive bot. `feature/coregp-acceptance` adds the
   concrete `GamePassiveBot` alias; the approved empty-list result remains `nil`.
-- **[FR22 - Error layering](PRD.md#fr22-error-layering)**
-  Existing mappings and action rejection were integrated in PR #26.
-  `feature/coregp-acceptance` adds context conversions, tests and placeholder
-  UK-English descriptions. Exhaustive rejection coverage remains.
 
 ## Planned
 
@@ -58,6 +47,19 @@ No unstarted PRD section 7 requirements are currently tracked here.
 
 ## Ready to merge
 
+- **[FR19 - Game engine and player view](PRD.md#fr19-game-engine-and-player-view)**
+  The engine, data-only player projection, legal actions and deterministic
+  setup were integrated into `working-branch` in PR #26.
+  `feature/coregp-acceptance` adds event, projection, legal-action and rejection
+  checks, plus complete game and replay coverage. No known FR19 implementation
+  defect is currently recorded. Exhaustive rejection coverage is deferred;
+  the broader malformed-state audit remains separate FR24 work.
+- **[FR22 - Error layering](PRD.md#fr22-error-layering)**
+  Existing mappings and action rejection were integrated in PR #26.
+  `feature/coregp-acceptance` adds context conversions, tests, UK-English
+  descriptions and a generic `Game error --` message for engine errors and
+  action rejections. For local gameplay the user accepts existing coverage
+  instead of requiring an exhaustive rejection audit.
 - **[FR18 - Game actions and events](PRD.md#fr18-game-actions-and-events)**
   `feature/coregp-acceptance` verifies exact events for all eight actions,
   Office and ending events, Codable round trips, count-only draw events, and
@@ -166,7 +168,7 @@ and six Hand tests.
 
 ## Remaining acceptance plan
 
-1. **Rejections (FR22/FR23):** inventory every error case and each engine
+1. **Rejections (FR23, deferred):** inventory every error case and each engine
    action against the PRD and existing tests. Create a matrix of happy path,
    each reachable rejection and boundaries, including wrong player/phase,
    funds, stock, supply, ship and hand limits, and finished games. For each
@@ -175,8 +177,9 @@ and six Hand tests.
    applicable. Test unreachable internal errors directly at their owner and
    record why they cannot arise through valid play. Use EC IDs in test names.
    FR18 now covers each action family and representative boundary failures;
-   this broader owner-error audit remains open; EC-labelled tests now also
-   cover additional planning, trading, scoring and ending boundaries.
+   this broader owner-error audit is deferred for local gameplay; EC-labelled
+   tests now also cover additional planning, trading, scoring and ending
+   boundaries.
 2. **Malformed state (FR24/FR23):** inventory all owner decoders and
    cross-owner invariants, then mutate valid encoded fixtures one field at a
    time. Cover missing, null, wrong-type, negative, oversized and inconsistent
