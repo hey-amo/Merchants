@@ -34,15 +34,17 @@ No features ready to merge yet.
 
 ## Planned
 
-- [FR3 - Coins](PRD.md#fr3-coins)
-- [FR4 - Banking](PRD.md#fr4-banking)
 - [FR5 - Goods and cards vocabulary](PRD.md#fr5-goods-and-cards-vocabulary)
+  - `GoodType` exists as a prerequisite for banking; cards, cubes and tests
+    remain.
 - [FR6 - Draw deck](PRD.md#fr6-draw-deck)
-- [FR7 - Hand and warehouse](PRD.md#fr7-hand-and-warehouse)
+- [FR7 - Hand](PRD.md#fr7-hand)
 - [FR8 - Cube supply](PRD.md#fr8-cube-supply)
 - [FR9 - Ships](PRD.md#fr9-ships)
 - [FR10 - Marketplace](PRD.md#fr10-marketplace)
 - [FR11 - Special cards](PRD.md#fr11-special-cards)
+  - `SpecialCardKind` exists as a prerequisite for banking; remaining special-card
+    functionality and tests are planned.
 - [FR12 - Turn flow](PRD.md#fr12-turn-flow)
 - [FR13 - Cube snake draft](PRD.md#fr13-cube-snake-draft)
 - [FR14 - Planning phase](PRD.md#fr14-planning-phase)
@@ -64,11 +66,25 @@ No features ready to merge yet.
   Implemented on `working-on-package` at `3a69ddd`: configuration, validation,
   seed factory and serialization. Seven targeted tests passed on 2026-11-09.
   The rules value is a placeholder pending FR25.
+- **[FR3 - Coins](PRD.md#fr3-coins)**
+  Implemented on `feature/fr3-coins` and merged into `working-on-package`.
+  The maximum balance is configured as 5,000 in `Coins`; initialization,
+  decoding and additions reject higher balances. This is a user-directed
+  change from the PRD; integer overflow remains separately guarded.
+  Fourteen targeted tests passed on 2026-11-09.
+- **[FR4 - Banking](PRD.md#fr4-banking)**
+  Implemented on `feature/fr4-banking` and merged into `working-on-package`.
+  Twelve targeted tests passed on 2026-11-09, including atomicity and invalid
+  restoration coverage.
+
+## Verification
+
+On 2026-11-09, the full `MerchantsGame` package regression suite passed on
+`working-on-package`: 40 tests, including 14 Coins and 12 Banking tests.
 
 ## Baseline and PRD discrepancy
 
-Checked on 2026-11-09: this board's branch has a placeholder game package;
-FR1 and FR2 were reviewed on `working-on-package`. The integration branch has
-its own version of the PRD, which removes warehouse requirements that are still
-present in this branch's PRD. This board follows the PRD in this branch;
+Checked on 2026-11-09: FR1 and FR2 were reviewed on `working-on-package`.
+Its PRD removes warehouse requirements that are still present in the PRD on
+the board's original branch. This board follows the integration branch's PRD;
 reconcile the discrepancy before implementing or merging affected work.
