@@ -74,6 +74,7 @@ public enum EngineError: Error, Equatable, Sendable, CustomStringConvertible, Lo
     }
 
     public var errorDescription: String? {
-        String(localized: "Game error -- \(description)", bundle: .module)
+        if case .state(let error) = self { return error.errorDescription }
+        return String(localized: "Game error -- \(description)", bundle: .module)
     }
 }

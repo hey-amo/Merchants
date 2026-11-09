@@ -290,6 +290,49 @@ struct GameStateRestorationTests {
         expectDecodeError(try encodedData(startedObject), .invalidTurnState)
     }
 
+    @Test func restoreReportsMalformedDataAndPreservesCause() throws {
+        let state = try started()
+        let original = try encodedObject(state)
+        var missing = original
+        missing.removeValue(forKey: "deck")
+        var null = original
+        null["deck"] = NSNull()
+        var wrongType = original
+        wrongType["deck"] = "invalid"
+        var invalidSeat = original
+        var turn = try #require(invalidSeat["turn"] as? [String: Any])
+        turn["currentSeat"] = -1
+        invalidSeat["turn"] = turn
+
+        for object in [missing, null, wrongType, invalidSeat] {
+            do {
+                _ = try GameState.restore(from: encodedData(object))
+                Issue.record("Expected malformed game data.")
+            } catch let error as GameRestorationError {
+                #expect(error.localizedDescription == "Game error - corrupted data")
+                #expect(error.underlyingError is DecodingError || error.underlyingError is TurnFlowError)
+            }
+        }
+        var corrupted = state
+        _ = try corrupted.supply.take(.tea)
+        do {
+            let data = try JSONEncoder().encode(corrupted)
+            _ = try GameState.restore(from: data)
+            Issue.record("Expected an invalid game state.")
+        } catch let error as GameRestorationError {
+            #expect(error.localizedDescription == "Game error - corrupted data")
+            #expect(error.underlyingError as? GameStateError == .cubeCountMismatch)
+        }
+        do {
+            _ = try GameState.restore(from: Data("{".utf8))
+            Issue.record("Expected malformed JSON.")
+        } catch {
+            #expect(error.localizedDescription == "Game error - corrupted data")
+            #expect(error.underlyingError is DecodingError)
+        }
+        #expect(try GameState.restore(from: JSONEncoder().encode(state)) == state)
+    }
+
     @Test func rejectsInvalidNestedOwnerValues() throws {
         let original = try encodedObject(started())
 
@@ -370,6 +413,13 @@ struct GameStateRestorationTests {
             #expect(context.codingPath.map(\.stringValue) == [key])
         } catch {
             Issue.record("Expected \(kind) decoding error for \(key), received \(error).")
+        }
+        do {
+            _ = try GameState.restore(from: data)
+            Issue.record("Expected corrupted data for \(key).")
+        } catch {
+            #expect(error.localizedDescription == "Game error - corrupted data")
+            #expect(error.underlyingError is DecodingError)
         }
     }
 

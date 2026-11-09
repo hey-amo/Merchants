@@ -47,6 +47,8 @@ struct EngineErrorTests {
         #expect(rejection.description.contains(TurnFlowError.wrongPhase.description))
         #expect(EngineError(GameStateError.cardCountMismatch).description ==
             "state: The saved game has an incorrect number of cards.")
+        #expect(EngineError(GameStateError.cardCountMismatch).localizedDescription ==
+            "Game error - corrupted data")
     }
 
     @Test func genericLocalizedMessageKeepsTheUnderlyingErrorDetail() {

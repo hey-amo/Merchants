@@ -1,3 +1,5 @@
+import Foundation
+
 public struct GameSession: Sendable {
     private let store: GameStore
 
@@ -8,6 +10,11 @@ public struct GameSession: Sendable {
     public init(restoring state: GameState) throws(GameStateError) {
         try GameInvariants.validate(state)
         store = GameStore(initialState: state)
+    }
+
+    /// Restores a session from JSON game data.
+    public init(restoring data: Data) throws(GameRestorationError) {
+        store = GameStore(initialState: try GameState.restore(from: data))
     }
 
     /// Full host state, including hidden cards. Use playerView(for:) for players.

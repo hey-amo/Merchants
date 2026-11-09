@@ -68,7 +68,7 @@ struct GameSessionTests {
         let state = try GameState(configuration: configuration)
         let data = try JSONEncoder().encode(state)
         let restored = try JSONDecoder().decode(GameState.self, from: data)
-        let session = try GameSession(restoring: restored)
+        let session = try GameSession(restoring: data)
         let seat = try restored.draft.nextSeat()
         let player = players[seat]
         let actions = try await session.legalActions(for: player)
@@ -76,6 +76,26 @@ struct GameSessionTests {
         let (expected, _) = try GameEngine.apply(action, by: player, to: restored)
         try await session.send(action, by: player)
         #expect(await session.snapshot() == expected)
+    }
+
+    @Test func restoringMalformedDataReportsGameError() throws {
+        do {
+            _ = try GameSession(restoring: Data("{}".utf8))
+            Issue.record("Expected malformed game data.")
+        } catch {
+            #expect(error.localizedDescription == "Game error - corrupted data")
+            #expect(error.underlyingError is DecodingError)
+        }
+        let configuration = try GameConfiguration(playerIDs: [PlayerID("first"), PlayerID("second")], seed: 1)
+        var invalid = try GameState(configuration: configuration)
+        _ = try invalid.supply.take(.tea)
+        do {
+            _ = try GameSession(restoring: invalid)
+            Issue.record("Expected an invalid game state.")
+        } catch {
+            #expect(error == .cubeCountMismatch)
+            #expect(error.localizedDescription == "Game error - corrupted data")
+        }
     }
 
     @Test func concurrentSubmissionsCommitOnlyOneAction() async throws {
