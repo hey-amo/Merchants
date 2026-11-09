@@ -98,3 +98,8 @@ Checked on 2026-11-09: FR1 and FR2 were reviewed on `working-on-package`.
 Its PRD removes warehouse requirements that are still present in the PRD on
 the board's original branch. This board follows the integration branch's PRD;
 reconcile the discrepancy before implementing or merging affected work.
+
+## FR10 branch update
+
+FR10 is implemented and tested on `feature/FR10-marketplace`; it is ready for a
+PR to `working-branch`. Its Planned card should move to Done once merged.
