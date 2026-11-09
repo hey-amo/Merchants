@@ -29,12 +29,14 @@ because a component or placeholder exists.
 ## In progress
 
 - **[FR2 - Deterministic randomness](PRD.md#fr2-deterministic-randomness)**  
-  `working-on-package` at `3a69ddd` has a seeded generator, Fisher-Yates
-  shuffle and first-player selection; six targeted tests passed on 2026-11-09.
-  Remaining: integrate random state into `GameState`, use it for the actual
-  deck and first-player setup, and verify the end-to-end randomness and replay
-  requirements. The implementation is on the integration branch; the remaining
-  integration work is not.
+  The seeded generator, Fisher-Yates shuffle, standard deck builder, and
+  first-player selection are implemented on `working-branch`.
+  `feature/FR2-randomness-fixes` adds tests for the real deck and first-player
+  sequence and generator restoration.
+  Remaining: put random state in `GameState` and wire deck construction and
+  first-player selection into game setup. Neither `GameState` nor the game
+  setup/engine exists yet; full-game replay and restoration depend on those
+  later features (FR19, FR23, and FR24).
 
 ## Planned
 
