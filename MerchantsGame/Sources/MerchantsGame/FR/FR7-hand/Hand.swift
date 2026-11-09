@@ -7,6 +7,10 @@ public struct Hand: Codable, Equatable, Sendable {
         cards.count
     }
 
+    public var contents: [GoodsCard] {
+        cards
+    }
+
     public func count(of good: GoodType) -> Int {
         cards.filter { $0.good == good }.count
     }
