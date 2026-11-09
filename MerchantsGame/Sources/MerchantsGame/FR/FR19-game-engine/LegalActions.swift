@@ -51,7 +51,7 @@ extension GameState {
                 func placements(_ selected: [Int]) {
                     if !selected.isEmpty {
                         candidates.append(.deliverCards(selected.map {
-                            DeliveryPlacement(slot: $0, card: GoodsCard(good: good))
+                            DeliveryPlacement(slot: $0, source: .hand(good))
                         }))
                     }
                     guard selected.count < count else { return }

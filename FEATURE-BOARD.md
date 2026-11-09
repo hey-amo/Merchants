@@ -21,13 +21,13 @@ because a component or placeholder exists.
 
 ## In progress
 
-- **[FR18 - Game actions and events](PRD.md#fr18-game-actions-and-events)** and
-  **[FR19 - Game engine and player view](PRD.md#fr19-game-engine-and-player-view)**
+- **[FR19 - Game engine and player view](PRD.md#fr19-game-engine-and-player-view)**
   Core action pipeline, data-only player projection, legal actions, and
   deterministic setup are implemented on `working-branch` in PR #26,
   together with restoration and seeded replay/invariant coverage;
   `feature/coregp-acceptance` adds exact event, projection and legal-action
-  checks; exhaustive per-action rejection coverage remains.
+  checks and rejection tests for every action; the broader error-case and
+  malformed-state audits remain.
 - **[FR23 - Testing and replay](PRD.md#fr23-testing-and-replay)**
   PR #26 added seeded random games, per-action
   invariants, deterministic replay, and passive and delivery-first strategy
@@ -53,6 +53,12 @@ No unstarted PRD section 7 requirements are currently tracked here.
 
 ## Ready to merge
 
+- **[FR18 - Game actions and events](PRD.md#fr18-game-actions-and-events)**
+  `feature/coregp-acceptance` verifies exact events for all eight actions,
+  Office and ending events, Codable round trips, count-only draw events, and
+  action rejection context and atomicity. Rejected actions do not publish
+  updates. Delivery placements expose `.hand(good)` while retaining the existing
+  `card` initializer and Codable representation for compatibility.
 - **[FR14 - Planning phase](PRD.md#fr14-planning-phase)**,
   **[FR15 - Trading phase](PRD.md#fr15-trading-phase)**,
   **[FR16 - Delivery scoring](PRD.md#fr16-delivery-scoring)** and
@@ -124,8 +130,8 @@ string-catalog resource; the source-language text is used as a fallback and
 translations require the resource-processing issue to be addressed.
 
 The full `MerchantsGame` suite passed after combining the acceptance and
-closeout branches and completing FR14–FR17 acceptance: 122 XCTest tests and
-83 Swift Testing tests, including engine-level coverage, complete session
+closeout branches and completing FR14–FR18 acceptance: 122 XCTest tests and
+91 Swift Testing tests, including engine-level coverage, complete session
 lifecycles and intermediate restoration in seeded replay.
 
 FR2 generator, actual game setup, restoration and seeded replay tests passed
@@ -164,6 +170,8 @@ and six Hand tests.
    state and no store update; assert it is absent from legal actions when
    applicable. Test unreachable internal errors directly at their owner and
    record why they cannot arise through valid play. Use EC IDs in test names.
+   FR18 now covers each action family and representative boundary failures;
+   this broader owner-error audit remains open.
 2. **Malformed state (FR24/FR23):** inventory all owner decoders and
    cross-owner invariants, then mutate valid encoded fixtures one field at a
    time. Cover missing, null, wrong-type, negative, oversized and inconsistent
