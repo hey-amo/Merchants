@@ -653,10 +653,18 @@ Each feature lists **Owner**, **Expectations**, **Errors**, **Tests**.
 ### FR21-bot-placeholders
 
 - **Owner:** `BotPlaceholders`
-- `protocol BotStrategy: Sendable { func chooseAction(for view: PlayerView, legalActions: [GameAction]) -> GameAction }`
+- `BotStrategy` selects from caller-supplied legal actions or returns `nil` when it cannot select one. Its observation and action types are generic.
 - `PassiveBot`: deterministic dummy that picks the first legal action.
-- **No** heuristics, search, learning or difficulty levels this phase.
-- **Tests:** `PassiveBot` always returns a member of `legalActions`.
+- `AIStrategist`: deterministic conservative/aggressive heuristics for cube exchanges, special-card purchases, deliveries, and drawing. It receives a read-only player observation, not `GameState`.
+- Decisions include a phase-labelled explanation; the default logger writes it to the console.
+- **Tests:** mock-only observations; selected actions are legal; delivery scoring accounts for resulting market demand, all players, and Trade Agreement bonuses.
+
+### Bot-only game loop
+
+- `BotGameSession` owns a game session and applies one bot action at a time, using the first legal cube-draft action and `AIStrategist` for normal turns. It stops at game over and reports failures rather than silently skipping actions.
+- The app's bot-game screen runs a two-bot game, showing the marketplace, fleets, balances, latest decision and winner. It supports pausing and starting a new game; it is a spectator-only baseline, not a human gameplay UI.
+- **Tests:** presentation unit tests inject disposable in-memory session stubs; integration tests use fresh, seeded in-memory games from draft to standings with both end-game rules, multiple player counts and personalities. Cancellation before an action leaves the game unchanged.
+- The opt-in package smoke test runs 1–10 completed player turns (excluding the draft) or stops immediately when the deck empties. It uses a fresh in-memory session, prints the active player's portfolio and public game information, and never saves or loads game state. See the [README](README.md#bot-smoke-test) for the command.
 
 ### FR22-error-layering
 
