@@ -1,3 +1,5 @@
+import Foundation
+
 public enum EngineError: Error, Equatable, Sendable, CustomStringConvertible {
     case coins(CoinError)
     case banking(BankingError)
@@ -46,9 +48,10 @@ public enum EngineError: Error, Equatable, Sendable, CustomStringConvertible {
         case .trading(let error): "trading: \(error)"
         case .deliveryScoring(let error): "deliveryScoring: \(error)"
         case .gameEnding(let error): "gameEnding: \(error)"
-        case .unknownPlayer: "unknown player"
-        case .invalidAction: "invalid action"
-        case .unexpected(let detail): "unexpected error: \(detail)"
+        case .unknownPlayer: String(localized: "The player is not in this game.", bundle: .module)
+        case .invalidAction: String(localized: "This action is not available now.", bundle: .module)
+        case .unexpected(let detail):
+            String(localized: "An unexpected error occurred: \(detail)", bundle: .module)
         }
     }
 }

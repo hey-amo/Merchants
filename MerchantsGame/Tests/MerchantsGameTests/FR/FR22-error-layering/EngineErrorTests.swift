@@ -23,9 +23,27 @@ struct EngineErrorTests {
     @Test func descriptionsIncludeContextAndErrorDetails() {
         let error = EngineError(HandError.invalidLimit(-1))
         #expect(error.description.contains("hand"))
-        #expect(error.description.contains("invalidLimit"))
+        #expect(error.description.contains("limit"))
         #expect(error.description.contains("-1"))
         #expect(EngineError(TurnFlowError.wrongPhase).description.contains("turnFlow"))
+    }
+
+    @Test func descriptionsAreReadableAndIncludeRelevantDetails() {
+        #expect(ShipError.sameGood.description == "Choose a cube of a different colour.")
+        #expect(CoinError.insufficientFunds(required: 4, available: 2).description ==
+            "Not enough coins: 4 required, 2 available.")
+        #expect(HandError.invalidLimit(-1).description == "The hand limit -1 cannot be negative.")
+        #expect(GameSetupError.invalidPlayerCount.description == "A game must have between 2 and 4 players.")
+        #expect(SpecialCardError.outOfStock(.largeShip).description == "The Large Ship card is out of stock.")
+        #expect(SpecialCardError.ownershipLimitReached(.customsHouse).description ==
+            "The ownership limit for Customs House has been reached.")
+        #expect(CubeDraftError.ship(.sameGood).description == ShipError.sameGood.description)
+        #expect(PlanningError.turn(.wrongPhase).description == TurnFlowError.wrongPhase.description)
+        #expect(EngineError.invalidAction.description == "This action is not available now.")
+        #expect(GameStateError.cardCountMismatch.description == "The saved game has an incorrect number of cards.")
+        let rejection = ActionRejection(error: .turnFlow(.wrongPhase), action: .drawCards, player: PlayerID("p"))
+        #expect(rejection.description.contains("p"))
+        #expect(rejection.description.contains(TurnFlowError.wrongPhase.description))
     }
 
     @Test func mappedBankRejectionPreservesState() throws {

@@ -25,7 +25,7 @@ because a component or placeholder exists.
   **[FR15 - Trading phase](PRD.md#fr15-trading-phase)**
   Components are integrated with the engine on `working-branch` in PR #26;
   `feature/coregp-acceptance` adds engine-level Customs House and final-round
-  purchase coverage. Unified error localization remains.
+  purchase coverage and placeholder UK-English error descriptions.
 - **[FR16 - Delivery scoring](PRD.md#fr16-delivery-scoring)**
   Pure scoring and engine payout integration are implemented and tested on
   `working-branch` in PR #26. Engine-level delivery event coverage is on
@@ -39,7 +39,7 @@ because a component or placeholder exists.
   deterministic setup are implemented on `working-branch` in PR #26,
   together with restoration and seeded replay/invariant coverage;
   `feature/coregp-acceptance` adds exact event, projection and legal-action
-  checks; exhaustive per-action rejection coverage and error localization remain.
+  checks; exhaustive per-action rejection coverage remains.
 - **[FR23 - Testing and replay](PRD.md#fr23-testing-and-replay)**
   PR #26 added seeded random games, per-action
   invariants, deterministic replay, and passive and delivery-first strategy
@@ -54,8 +54,8 @@ because a component or placeholder exists.
   action and player projection types remains.
 - **[FR22 - Error layering](PRD.md#fr22-error-layering)**
   Existing mappings and action rejection are integrated in PR #26;
-  remaining context cases, localized descriptions, and exhaustive rejection
-  tests still need work.
+  placeholder UK-English descriptions are on `feature/coregp-acceptance`.
+  Remaining context mappings and exhaustive rejection tests still need work.
 - **F26 - Game session**
   Setup and ending experiments remain uncommitted in the separate
   `feature/F26-Game-Session` worktree. PR #26 added a live store,
@@ -117,6 +117,11 @@ No features are currently tracked here.
 
 ## Verification
 
+`feature/coregp-acceptance` adds UK-English placeholder descriptions using
+`String(localized:bundle:)`. The existing SwiftPM build reports an unhandled
+string-catalog resource; the source-language text is used as a fallback and
+translations require the resource-processing issue to be addressed.
+
 The full `MerchantsGame` suite passed on `feature/coregp-acceptance`:
 119 XCTest tests and 69 Swift Testing tests, including engine-level planning,
 trading, scoring, ending, event and projection coverage.
@@ -146,6 +151,30 @@ The full `MerchantsGame` package regression suite passed on
 On 2026-11-09, the full `MerchantsGame` package regression suite passed on
 `feature/F8-cube-supply`: 68 tests, including ten Cube Supply, eight Draw Deck,
 and six Hand tests.
+
+## Remaining acceptance plan
+
+1. **Rejections (FR22/FR23):** inventory every error case and each engine
+   action against the PRD and existing tests. Create a matrix of happy path,
+   each reachable rejection and boundaries, including wrong player/phase,
+   funds, stock, supply, ship and hand limits, and finished games. For each
+   engine rejection, assert the exact mapped error, player and action, unchanged
+   state and no store update; assert it is absent from legal actions when
+   applicable. Test unreachable internal errors directly at their owner and
+   record why they cannot arise through valid play. Use EC IDs in test names.
+2. **Malformed state (FR24/FR23):** inventory all owner decoders and
+   cross-owner invariants, then mutate valid encoded fixtures one field at a
+   time. Cover missing, null, wrong-type, negative, oversized and inconsistent
+   counts; player identities, draft/turn/ending combinations, fleets, stock,
+   hands, deck and marketplace. Assert the exact owner or `GameStateError`
+   and that no invalid state is returned or arithmetic traps. Round-trip valid
+   setup, draft, planning, trading, final-round and finished states; replay
+   identical legal actions after restoration across seeds, player counts and
+   ending rules. Run targeted suites, then the full package suite.
+3. Before implementing those audits, reconcile the separately committed
+   `feature/game-logic-closeout` changes: they already add error mappings,
+   malformed-state checks and intermediate replay tests. Base follow-up work on
+   the integrated code to avoid duplicating or overwriting it.
 
 ## Baseline and PRD discrepancy
 
