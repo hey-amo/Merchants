@@ -659,6 +659,12 @@ Each feature lists **Owner**, **Expectations**, **Errors**, **Tests**.
 - Decisions include a phase-labelled explanation; the default logger writes it to the console.
 - **Tests:** mock-only observations; selected actions are legal; delivery scoring accounts for resulting market demand, all players, and Trade Agreement bonuses.
 
+### Bot-only game loop
+
+- `BotGameSession` owns a game session and applies one bot action at a time, using the first legal cube-draft action and `AIStrategist` for normal turns. It stops at game over and reports failures rather than silently skipping actions.
+- The app's bot-game screen runs a two-bot game, showing the marketplace, fleets, balances, latest decision and winner. It supports pausing and starting a new game; it is a spectator-only baseline, not a human gameplay UI.
+- **Tests:** presentation unit tests inject disposable in-memory session stubs; integration tests use fresh, seeded in-memory games from draft to standings with both end-game rules, multiple player counts and personalities. Cancellation before an action leaves the game unchanged.
+
 ### FR22-error-layering
 
 - **Owner:** `GameActions` (`EngineError`, `ActionRejection`)
