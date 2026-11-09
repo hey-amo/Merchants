@@ -5,17 +5,20 @@ public struct GameRules: Codable, Equatable, Sendable {
     public let specialCardCatalog: SpecialCardCatalog
     public let tradeAgreementBonusPerCard: Int
     public let tradeAgreementMinimumPayout: Int
+    public let endGameRule: EndGameRule
 
     public init() {
         specialCardCatalog = .standard
         tradeAgreementBonusPerCard = 2
         tradeAgreementMinimumPayout = 2
+        endGameRule = .oneMoreTurn
     }
 
     public init(
         specialCardCatalog: SpecialCardCatalog,
         tradeAgreementBonusPerCard: Int = 2,
-        tradeAgreementMinimumPayout: Int = 2
+        tradeAgreementMinimumPayout: Int = 2,
+        endGameRule: EndGameRule = .oneMoreTurn
     ) throws(SpecialCardError) {
         guard tradeAgreementBonusPerCard >= 0, tradeAgreementMinimumPayout >= 0 else {
             throw .invalidRules
@@ -23,6 +26,7 @@ public struct GameRules: Codable, Equatable, Sendable {
         self.specialCardCatalog = specialCardCatalog
         self.tradeAgreementBonusPerCard = tradeAgreementBonusPerCard
         self.tradeAgreementMinimumPayout = tradeAgreementMinimumPayout
+        self.endGameRule = endGameRule
     }
 
     public init(from decoder: any Decoder) throws {
@@ -33,11 +37,13 @@ public struct GameRules: Codable, Equatable, Sendable {
             tradeAgreementBonusPerCard: container.contains(.tradeAgreementBonusPerCard)
                 ? container.decode(Int.self, forKey: .tradeAgreementBonusPerCard) : 2,
             tradeAgreementMinimumPayout: container.contains(.tradeAgreementMinimumPayout)
-                ? container.decode(Int.self, forKey: .tradeAgreementMinimumPayout) : 2
+                ? container.decode(Int.self, forKey: .tradeAgreementMinimumPayout) : 2,
+            endGameRule: container.contains(.endGameRule)
+                ? container.decode(EndGameRule.self, forKey: .endGameRule) : .oneMoreTurn
         )
     }
 
     private enum CodingKeys: String, CodingKey {
-        case specialCardCatalog, tradeAgreementBonusPerCard, tradeAgreementMinimumPayout
+        case specialCardCatalog, tradeAgreementBonusPerCard, tradeAgreementMinimumPayout, endGameRule
     }
 }
