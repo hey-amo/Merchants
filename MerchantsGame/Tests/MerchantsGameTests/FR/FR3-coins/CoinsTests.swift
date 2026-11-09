@@ -79,14 +79,33 @@ final class CoinsTests: XCTestCase {
         XCTAssertEqual(coins.available, 3)
     }
 
-    func testAddingPastIntMaxFailsAtomically() throws {
-        var coins = try Coins(Int.max)
+    func testMaximumBalanceIs5000AndCanBeRestored() throws {
+        XCTAssertEqual(Coins.maximumBalance, 5_000)
+        XCTAssertEqual(try Coins(5_000).available, 5_000)
+        XCTAssertThrowsError(try Coins(5_001)) {
+            XCTAssertEqual($0 as? CoinError, .limitExceeded(limit: 5_000, attempted: 5_001))
+        }
+    }
+
+    func testAddingToMaximumAndPastMaximum() throws {
+        var coins = try Coins(4_999)
+        try coins.perform(.add(1))
+        XCTAssertEqual(coins.available, 5_000)
 
         XCTAssertThrowsError(try coins.perform(.add(1))) {
+            XCTAssertEqual($0 as? CoinError, .limitExceeded(limit: 5_000, attempted: 5_001))
+        }
+        XCTAssertEqual(coins.available, 5_000)
+    }
+
+    func testAddingPastIntMaxFailsAtomically() throws {
+        var coins = try Coins(1)
+
+        XCTAssertThrowsError(try coins.perform(.add(Int.max))) {
             XCTAssertEqual($0 as? CoinError, .overflow)
         }
 
-        XCTAssertEqual(coins.available, Int.max)
+        XCTAssertEqual(coins.available, 1)
     }
 
     func testCodableRoundTripsRestoredBalance() throws {
@@ -103,6 +122,14 @@ final class CoinsTests: XCTestCase {
 
         XCTAssertThrowsError(try JSONDecoder().decode(Coins.self, from: data)) {
             XCTAssertEqual($0 as? CoinError, .isNegativeNumber)
+        }
+    }
+
+    func testCodableRejectsBalanceAboveMaximum() {
+        let data = Data(#"{"available":5001}"#.utf8)
+
+        XCTAssertThrowsError(try JSONDecoder().decode(Coins.self, from: data)) {
+            XCTAssertEqual($0 as? CoinError, .limitExceeded(limit: 5_000, attempted: 5_001))
         }
     }
 }

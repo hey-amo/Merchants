@@ -3,11 +3,16 @@
 // Does not know about players, banks, or reasons for coin changes.
 
 public struct Coins: Codable, Equatable, Hashable, Sendable {
+    public static let maximumBalance = 5_000
+
     public private(set) var available: Int
 
     public init(_ amount: Int = 0) throws(CoinError) {
         guard amount >= 0 else {
             throw .isNegativeNumber
+        }
+        guard amount <= Self.maximumBalance else {
+            throw .limitExceeded(limit: Self.maximumBalance, attempted: amount)
         }
         available = amount
     }
@@ -21,6 +26,9 @@ public struct Coins: Codable, Equatable, Hashable, Sendable {
             let (sum, overflowed) = available.addingReportingOverflow(amount)
             guard !overflowed else {
                 throw .overflow
+            }
+            guard sum <= Self.maximumBalance else {
+                throw .limitExceeded(limit: Self.maximumBalance, attempted: sum)
             }
             available = sum
         case .subtract(let amount):
