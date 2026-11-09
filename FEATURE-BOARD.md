@@ -6,14 +6,14 @@ to the full requirement, including its acceptance criteria and tests.
 
 ## How to use
 
-- **Integration branch:** `func-req-work`. Create a micro-branch for each
-  requirement from `func-req-work`, push it once tests pass, and open a pull
-  request targeting `func-req-work`; do not merge this work into `main`.
+- **Integration branch:** `working-branch`. Create a micro-branch for each
+  requirement from `working-branch`, push it once tests pass, and open a pull
+  request targeting `working-branch`; do not create pull requests to `main`.
 - **Planned:** not started or not yet assessed.
 - **In progress:** started, but not complete against the PRD.
 - **Ready to merge:** implemented and tested on a separate branch, but not yet
-  present on `func-req-work`.
-- **Done:** present on `func-req-work` and verified against the requirement.
+  present on `working-branch`.
+- **Done:** present on `working-branch` and verified against the requirement.
 
 Move cards between sections as their status changes. Record the branch and
 remaining work for partially completed cards; do not mark a feature done solely
@@ -22,12 +22,7 @@ because a component or placeholder exists.
 ## Ready to merge
 
 - **[FR6 - Draw deck](PRD.md#fr6-draw-deck)**
-  Implemented and tested on `feature/FR6-draw-deck`; not yet integrated.
-- **[FR7 - Hand](PRD.md#fr7-hand)**
-  Implemented and tested on `feature/FR7-hand`; not yet integrated. Base
-  hand limit is currently a standard-rules placeholder pending FR25.
-  Cross-owner restoration and player-view validation remain part of FR24 and
-  FR19 respectively.
+  Implemented and tested on `feature/FR6-draw-deck`; awaiting integration.
 
 ## In progress
 
@@ -81,11 +76,16 @@ because a component or placeholder exists.
 - **[FR5 - Goods and cards vocabulary](PRD.md#fr5-goods-and-cards-vocabulary)**
   Implemented on `feature/fr5-goods-and-cards-vocabulary` and integrated into
   `func-req-work`.
+- **[FR7 - Hand](PRD.md#fr7-hand)**
+  Implemented on `feature/FR7-hand` and integrated into `working-branch`.
+  The base hand limit remains a standard-rules placeholder pending FR25;
+  cross-owner restoration and player-view validation remain part of FR24 and
+  FR19 respectively.
 
 ## Verification
 
 On 2026-11-09, the full `MerchantsGame` package regression suite passed on
-`feature/FR7-hand`: 50 tests, including six Hand tests. FR6 was tested separately.
+`feature/FR6-draw-deck`: 58 tests, including eight Draw Deck and six Hand tests.
 
 ## Baseline and PRD discrepancy
 
