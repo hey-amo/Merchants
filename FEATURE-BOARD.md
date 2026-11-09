@@ -19,37 +19,62 @@ Move cards between sections as their status changes. Record the branch and
 remaining work for partially completed cards; do not mark a feature done solely
 because a component or placeholder exists.
 
-## Ready to merge
-
-- **[FR12 - Turn flow](PRD.md#fr12-turn-flow)** and
-  **[FR13 - Cube snake draft](PRD.md#fr13-cube-snake-draft)**
-  Implemented together on `Feature/FR12-TurnOrder`; awaiting integration into
-  `working-branch`. Engine-level action execution belongs to FR14, FR15 and FR19.
-
 ## In progress
 
-- **[FR2 - Deterministic randomness](PRD.md#fr2-deterministic-randomness)**  
-  `working-on-package` at `3a69ddd` has a seeded generator, Fisher-Yates
-  shuffle and first-player selection; six targeted tests passed on 2026-11-09.
-  Remaining: integrate random state into `GameState`, use it for the actual
-  deck and first-player setup, and verify the end-to-end randomness and replay
-  requirements. The implementation is on the integration branch; the remaining
-  integration work is not.
+- **[FR14 - Planning phase](PRD.md#fr14-planning-phase)** and
+  **[FR15 - Trading phase](PRD.md#fr15-trading-phase)**
+  Existing components are integrated with the engine on
+  `feature/FR16-FR18-FR19-engine`; broader combined acceptance coverage and
+  unified error localization remain.
+- **[FR16 - Delivery scoring](PRD.md#fr16-delivery-scoring)**
+  Pure scoring and engine payout integration are implemented and tested on
+  `feature/FR16-FR18-FR19-engine`; the branch is not yet merged.
+- **[FR17 - End game and winners](PRD.md#fr17-end-game-and-winners)**
+  Rules and end-game handling are integrated on the same local branch.
+- **[FR18 - Game actions and events](PRD.md#fr18-game-actions-and-events)** and
+  **[FR19 - Game engine and player view](PRD.md#fr19-game-engine-and-player-view)**
+  Core action pipeline, data-only player projection, legal actions, and
+  deterministic setup are implemented on `feature/FR16-FR18-FR19-engine`.
+  The bundle branch adds restoration and seeded replay/invariant coverage;
+  full per-action acceptance and error localization remain outstanding.
+- **[FR23 - Testing and replay](PRD.md#fr23-testing-and-replay)**
+  `feature/FR20-FR23-FR24-FR25-bundle` adds seeded random games, per-action
+  invariants, deterministic replay, and passive and delivery-first strategy
+  tests for 2–4 players under both end-game rules. Exhaustive rule-by-rule
+  rejection, boundary, and EC-ID coverage remains.
+- **[FR24 - State restoration](PRD.md#fr24-state-restoration)**
+  The bundle branch adds validating `GameState` decoding, cross-owner
+  invariants, corruption tests, and deterministic continuation. A broader
+  audit of all owner decoders and malformed combinations remains.
+- **[FR21 - Bot placeholders](PRD.md#fr21-bot-placeholders)**
+  Generic passive bot is on local `feature/F21-Bot-Placeholders`; adaptation to
+  concrete engine action and player projection types remains.
+- **[FR22 - Error layering](PRD.md#fr22-error-layering)**
+  Existing mappings and action rejection are integrated on the engine branch;
+  remaining context cases, localized descriptions, and exhaustive rejection
+  tests still need work.
+- **F26 - Game session**
+  Setup and ending experiments remain uncommitted in the separate
+  `feature/F26-Game-Session` worktree. The bundle branch adds a live store,
+  but an end-to-end session lifecycle remains outstanding.
 
 ## Planned
 
-- [FR14 - Planning phase](PRD.md#fr14-planning-phase)
-- [FR15 - Trading phase](PRD.md#fr15-trading-phase)
-- [FR16 - Delivery scoring](PRD.md#fr16-delivery-scoring)
-- [FR17 - End game and winners](PRD.md#fr17-end-game-and-winners)
-- [FR18 - Game actions and events](PRD.md#fr18-game-actions-and-events)
-- [FR19 - Game engine and player view](PRD.md#fr19-game-engine-and-player-view)
-- [FR20 - Game store](PRD.md#fr20-game-store)
-- [FR21 - Bot placeholders](PRD.md#fr21-bot-placeholders)
-- [FR22 - Error layering](PRD.md#fr22-error-layering)
-- [FR23 - Testing and replay](PRD.md#fr23-testing-and-replay)
-- [FR24 - State restoration](PRD.md#fr24-state-restoration)
-- [FR25 - Game rules](PRD.md#fr25-game-rules)
+No unstarted PRD section 7 requirements are currently tracked here.
+
+## Ready to merge
+
+- **[FR2 - Deterministic randomness](PRD.md#fr2-deterministic-randomness)**
+  Seeded Fisher-Yates setup, optional first-player selection, and persisted
+  random state are implemented and tested on
+  `feature/FR20-FR23-FR24-FR25-bundle`. The bundle includes the engine branch
+  prerequisites and has not been merged into `working-branch`.
+- **[FR20 - Game store](PRD.md#fr20-game-store)**
+  Actor-serialized actions and ordered `AsyncStream` updates are implemented
+  and tested on `feature/FR20-FR23-FR24-FR25-bundle`.
+- **[FR25 - Game rules](PRD.md#fr25-game-rules)**
+  Configurable, validated and serializable rules, including hand limits and
+  special-card catalog overrides, are tested on the same bundle branch.
 
 ## Done
 
@@ -86,8 +111,24 @@ because a component or placeholder exists.
   Merged into `working-branch` in PR #20.
 - **[FR11 - Special cards](PRD.md#fr11-special-cards)**
   Merged into `working-branch` in PR #22. The turn engine will apply the effects.
+- **[FR12 - Turn flow](PRD.md#fr12-turn-flow)** and
+  **[FR13 - Cube snake draft](PRD.md#fr13-cube-snake-draft)**
+  Merged into `working-branch` in PR #24.
 
 ## Verification
+
+FR2 generator, actual game setup, restoration and seeded replay tests passed
+on `feature/FR20-FR23-FR24-FR25-bundle`: six XCTest tests and six Swift
+Testing tests.
+
+The full `MerchantsGame` regression suite passed on
+`feature/FR20-FR23-FR24-FR25-bundle`: 119 XCTest tests and 57 Swift Testing
+tests. The package remains free of SwiftUI, UIKit, and AppKit.
+
+The full `MerchantsGame` regression suite passed on
+`feature/FR16-FR18-FR19-engine`: 112 XCTest tests and 35 Swift Testing tests.
+The engine tests include both end-game rules and equal-turn final rounds for
+two, three, and four players.
 
 The full `MerchantsGame` package regression suite passed on
 `Feature/FR12-TurnOrder`: 99 tests, including 12 turn-flow and draft tests.
