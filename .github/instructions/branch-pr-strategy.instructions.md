@@ -6,3 +6,5 @@ description: Describe when these instructions should be loaded by the agent base
 <!-- Tip: Use /create-instructions in chat to generate content with agent assistance -->
 
 Hard rule instruction: All pull requests should be against `working-branch`, NEVER make a pull request against `main`
+
+Soft rule instruction: Feature branches should be named using the format `feature/<fr<#number>-<feature-name>>`
