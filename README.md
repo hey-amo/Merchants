@@ -29,5 +29,7 @@ set `SMOKE_DELAY_MS=0` to run without the pause (maximum 10000 milliseconds).
 
 The test uses fixed-seed, in-memory game data and does not load or save any
 game. Stop it with Ctrl-C without affecting app game data. Output shows each
-active player's hand and ships, but not other players' hands. This interactive
-test is skipped in ordinary test runs unless `SMOKE_ROUNDS` is set.
+active player's hand and ships, every player's coin balance, and a micro report
+after each action with coin changes and updated balances; it does not show
+other players' hands. This interactive test is skipped in ordinary test runs
+unless `SMOKE_ROUNDS` is set.

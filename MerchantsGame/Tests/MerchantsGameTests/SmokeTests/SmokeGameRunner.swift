@@ -90,17 +90,19 @@ struct SmokeGameRunner {
                 return "  Ship \(index + 1) (\(String(describing: ship.kind))): \(cubes.isEmpty ? "empty" : cubes.joined(separator: ", "))"
             }.joined(separator: "\n")
             let hand = view.hand.map { String(describing: $0.good).capitalized }.joined(separator: ", ")
-            await log("\n--- \(phase): \(player.rawValue) ---\nMarketplace: \(market)\nDeck remaining: \(view.deckCount)\nCube supply: \(supply)\n\(player.rawValue)'s portfolio:\n\(ships)\n  Hand: \(hand.isEmpty ? "empty" : hand)")
+            await log("\n--- \(phase): \(player.rawValue) ---\nMarketplace: \(market)\nDeck remaining: \(view.deckCount)\nCube supply: \(supply)\nCoins: \(try coinBalances(in: state))\n\(player.rawValue)'s portfolio:\n\(ships)\n  Hand: \(hand.isEmpty ? "empty" : hand)")
 
             try await delay()
             try Task.checkCancellation()
             guard let step = try await session.step() else { throw SmokeGameError.unexpectedEnd }
+            let previousState = state
             state = step.state
             if case .draftCube(let good, let ship) = step.action {
                 await log("Decision: \(player.rawValue) drafted \(String(describing: good).capitalized) for ship \(ship + 1).")
             } else {
                 await log("Decision: \(step.message)")
             }
+            await log(try coinMicroReport(from: previousState, to: state))
             switch step.action {
             case .drawCards, .deliverCards, .skipTrading:
                 completedRounds += 1
@@ -109,6 +111,25 @@ struct SmokeGameRunner {
                 break
             }
         }
+    }
+
+    private func coinBalances(in state: GameState) throws -> String {
+        try state.configuration.playerIDs.map { player in
+            "\(player.rawValue): \(try state.bank.balance(of: player).available)"
+        }.joined(separator: ", ")
+    }
+
+    private func coinMicroReport(from previous: GameState, to current: GameState) throws -> String {
+        let changes = try current.configuration.playerIDs.compactMap { player -> String? in
+            let oldBalance = try previous.bank.balance(of: player).available
+            let newBalance = try current.bank.balance(of: player).available
+            let change = newBalance - oldBalance
+            guard change != 0 else { return nil }
+            let description = change > 0 ? "paid \(change)" : "spent \(-change)"
+            return "\(player.rawValue) \(description) coins (balance: \(newBalance))"
+        }
+        let summary = changes.isEmpty ? "No coin changes" : changes.joined(separator: "; ")
+        return "Micro report: \(summary) | Balances: \(try coinBalances(in: current))"
     }
 
     private func stopDescription(_ reason: StopReason) -> String {

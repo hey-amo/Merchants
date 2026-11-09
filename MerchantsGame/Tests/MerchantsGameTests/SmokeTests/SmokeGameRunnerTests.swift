@@ -73,10 +73,25 @@ struct SmokeGameRunnerTests {
         #expect(first.contains("Marketplace:"))
         #expect(first.contains("Deck remaining: \(view.deckCount)"))
         #expect(first.contains("Cube supply:"))
+        #expect(first.contains("Coins: Test bot 1: 0, Test bot 2: 0"))
         #expect(first.contains("\(active.rawValue)'s portfolio:"))
         #expect(first.contains("Hand: \(hand)"))
         #expect(first.components(separatedBy: "Hand:").count == 2)
         #expect(!first.contains("\(config.playerIDs[1 - seat].rawValue)'s portfolio:"))
+    }
+
+    @Test func reportsPaymentsAndUpdatedBalances() async throws {
+        let session = try BotGameSession(configuration: configuration(), logger: { _ in })
+        let recorder = Recorder()
+        let runner = SmokeGameRunner(
+            session: session, roundLimit: 10,
+            delay: {}, log: { await recorder.append($0) }
+        )
+        _ = try await runner.run()
+        let reports = await recorder.messages.filter { $0.hasPrefix("Micro report:") }
+        #expect(!reports.isEmpty)
+        #expect(reports.contains { $0.contains("paid ") && $0.contains("(balance:") })
+        #expect(reports.allSatisfy { $0.contains("Balances: Test bot 1:") && $0.contains("Test bot 2:") })
     }
 
     @Test func rejectsInvalidRoundLimitsBeforeTakingAnAction() async throws {
