@@ -25,6 +25,9 @@ because a component or placeholder exists.
   Implemented and tested on `feature/FR9-ships-redo`. PR #21 merged it into
   `working-on-package`, not `working-branch`; it still needs integration into
   `working-branch`.
+- **[FR11 - Special cards](PRD.md#fr11-special-cards)**
+  Implemented and tested on `feature/-FR11-special-cards`; awaiting integration
+  into `working-branch`. The turn engine will apply the effects during play.
 
 ## In progress
 
@@ -38,9 +41,6 @@ because a component or placeholder exists.
 
 ## Planned
 
-- [FR11 - Special cards](PRD.md#fr11-special-cards)
-  - `SpecialCardKind` exists as a prerequisite for banking; remaining special-card
-    functionality and tests are planned.
 - [FR12 - Turn flow](PRD.md#fr12-turn-flow)
 - [FR13 - Cube snake draft](PRD.md#fr13-cube-snake-draft)
 - [FR14 - Planning phase](PRD.md#fr14-planning-phase)
@@ -89,6 +89,9 @@ because a component or placeholder exists.
   Merged into `working-branch` in PR #20.
 
 ## Verification
+
+The full `MerchantsGame` package regression suite passed on
+`feature/-FR11-special-cards`: 82 tests, including nine Special Cards tests.
 
 The full `MerchantsGame` package regression suite passed on
 `feature/FR9-ships-redo`: 78 tests, including five Ships tests.

@@ -1,6 +1,6 @@
 // Special-card vocabulary used by transaction reasons.
 
-public enum SpecialCardKind: Codable, Equatable, Sendable {
+public enum SpecialCardKind: Codable, Hashable, CaseIterable, Sendable {
     case ship
     case largeShip
     case office
