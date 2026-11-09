@@ -1,3 +1,4 @@
+// CoinValueView.swift
 import SwiftUI
 
 // A partial showing only coins
