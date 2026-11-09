@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+// Show the player's avatar in 2 states
+// - active: `onTurn` state
+// - idle: `idle` or waiting for their turn state
 struct PlayerAvatarView: View {
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
