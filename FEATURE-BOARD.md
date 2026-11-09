@@ -21,10 +21,10 @@ because a component or placeholder exists.
 
 ## Ready to merge
 
-- **[FR9 - Ships](PRD.md#fr9-ships)**
-  Implemented and tested on `feature/FR9-ships-integration`; awaiting integration
-  into `working-branch`. PR #21 merged the earlier implementation into
-  `working-on-package` instead.
+- **[FR12 - Turn flow](PRD.md#fr12-turn-flow)** and
+  **[FR13 - Cube snake draft](PRD.md#fr13-cube-snake-draft)**
+  Implemented together on `Feature/FR12-TurnOrder`; awaiting integration into
+  `working-branch`. Engine-level action execution belongs to FR14, FR15 and FR19.
 
 ## In progress
 
@@ -38,8 +38,6 @@ because a component or placeholder exists.
 
 ## Planned
 
-- [FR12 - Turn flow](PRD.md#fr12-turn-flow)
-- [FR13 - Cube snake draft](PRD.md#fr13-cube-snake-draft)
 - [FR14 - Planning phase](PRD.md#fr14-planning-phase)
 - [FR15 - Trading phase](PRD.md#fr15-trading-phase)
 - [FR16 - Delivery scoring](PRD.md#fr16-delivery-scoring)
@@ -82,12 +80,17 @@ because a component or placeholder exists.
   FR19 respectively.
 - **[FR8 - Cube supply](PRD.md#fr8-cube-supply)**
   Merged into `working-branch` in PR #17.
+- **[FR9 - Ships](PRD.md#fr9-ships)**
+  Merged into `working-branch` in PR #23.
 - **[FR10 - Marketplace](PRD.md#fr10-marketplace)**
   Merged into `working-branch` in PR #20.
 - **[FR11 - Special cards](PRD.md#fr11-special-cards)**
   Merged into `working-branch` in PR #22. The turn engine will apply the effects.
 
 ## Verification
+
+The full `MerchantsGame` package regression suite passed on
+`Feature/FR12-TurnOrder`: 99 tests, including 12 turn-flow and draft tests.
 
 The full `MerchantsGame` package regression suite passed on
 `feature/-FR11-special-cards`: 82 tests, including nine Special Cards tests.
