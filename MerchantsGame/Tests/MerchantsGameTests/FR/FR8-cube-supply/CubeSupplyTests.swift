@@ -122,4 +122,18 @@ final class CubeSupplyTests: XCTestCase {
             }
         }
     }
+
+    func testCodableRejectsMissingGoodForEveryGood() {
+        for missingGood in GoodType.allCases {
+            let counts = GoodType.allCases
+                .filter { $0 != missingGood }
+                .map { "\"\($0)\":5" }
+                .joined(separator: ",")
+            let data = Data("{\(counts)}".utf8)
+
+            XCTAssertThrowsError(try JSONDecoder().decode(CubeSupply.self, from: data)) {
+                XCTAssertEqual($0 as? CubeSupplyError, .missingCount(missingGood))
+            }
+        }
+    }
 }

@@ -1,16 +1,14 @@
 public struct CubeSupply: Codable, Equatable, Sendable {
     public static let cubesPerGood = 5
 
-    private var counts: [GoodType: Int]
+    private var counts: GoodCounts
 
     public init() {
-        counts = Dictionary(
-            uniqueKeysWithValues: GoodType.allCases.map { ($0, Self.cubesPerGood) }
-        )
+        counts = GoodCounts(repeating: Self.cubesPerGood)
     }
 
     public init(restoring availableCounts: [GoodType: Int]) throws(CubeSupplyError) {
-        var restored: [GoodType: Int] = [:]
+        var restored = GoodCounts(repeating: 0)
         for good in GoodType.allCases {
             guard let count = availableCounts[good] else {
                 throw .missingCount(good)
@@ -24,7 +22,7 @@ public struct CubeSupply: Codable, Equatable, Sendable {
     }
 
     public func available(of good: GoodType) -> Int {
-        counts[good, default: 0]
+        counts[good]
     }
 
     public mutating func take(_ good: GoodType) throws(CubeSupplyError) -> GoodsCube {
@@ -48,7 +46,12 @@ public struct CubeSupply: Codable, Equatable, Sendable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         var decodedCounts: [GoodType: Int] = [:]
         for good in GoodType.allCases {
-            let count = try container.decode(Int.self, forKey: CodingKeys(good))
+            guard let count = try container.decodeIfPresent(
+                Int.self,
+                forKey: CodingKeys(good)
+            ) else {
+                throw CubeSupplyError.missingCount(good)
+            }
             decodedCounts[good] = count
         }
         try self.init(restoring: decodedCounts)
@@ -77,6 +80,47 @@ public struct CubeSupply: Codable, Equatable, Sendable {
             case .tea: self = .tea
             case .silk: self = .silk
             case .lumber: self = .lumber
+            }
+        }
+    }
+
+    private struct GoodCounts: Equatable, Sendable {
+        var sugar: Int
+        var indigo: Int
+        var spices: Int
+        var tea: Int
+        var silk: Int
+        var lumber: Int
+
+        init(repeating count: Int) {
+            sugar = count
+            indigo = count
+            spices = count
+            tea = count
+            silk = count
+            lumber = count
+        }
+
+        subscript(good: GoodType) -> Int {
+            get {
+                switch good {
+                case .sugar: sugar
+                case .indigo: indigo
+                case .spices: spices
+                case .tea: tea
+                case .silk: silk
+                case .lumber: lumber
+                }
+            }
+            set {
+                switch good {
+                case .sugar: sugar = newValue
+                case .indigo: indigo = newValue
+                case .spices: spices = newValue
+                case .tea: tea = newValue
+                case .silk: silk = newValue
+                case .lumber: lumber = newValue
+                }
             }
         }
     }

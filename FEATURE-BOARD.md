@@ -21,8 +21,9 @@ because a component or placeholder exists.
 
 ## Ready to merge
 
-- **[FR6 - Draw deck](PRD.md#fr6-draw-deck)**
-  Implemented and tested on `feature/FR6-draw-deck`; awaiting integration.
+- **[FR8 - Cube supply](PRD.md#fr8-cube-supply)**
+  Implemented and tested on `feature/F8-cube-supply`; awaiting integration into
+  `working-branch`.
 
 ## In progress
 
@@ -81,11 +82,15 @@ because a component or placeholder exists.
   The base hand limit remains a standard-rules placeholder pending FR25;
   cross-owner restoration and player-view validation remain part of FR24 and
   FR19 respectively.
+- **[FR6 - Draw deck](PRD.md#fr6-draw-deck)**
+  Implemented on `feature/FR6-draw-deck` and merged into `working-branch` in
+  PR #16.
 
 ## Verification
 
 On 2026-11-09, the full `MerchantsGame` package regression suite passed on
-`feature/FR6-draw-deck`: 58 tests, including eight Draw Deck and six Hand tests.
+`feature/F8-cube-supply`: 68 tests, including ten Cube Supply, eight Draw Deck,
+and six Hand tests.
 
 ## Baseline and PRD discrepancy
 
