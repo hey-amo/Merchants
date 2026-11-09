@@ -34,7 +34,7 @@ struct TradingPhaseTests {
         (4, false, true), (5, false, false), (6, false, false),
         (6, true, true), (7, true, false)
     ])
-    func drawHonorsHandCapacity(handCount: Int, customs: Bool, allowed: Bool) throws {
+    func EC1EC2EC25DrawHonorsHandCapacity(handCount: Int, customs: Bool, allowed: Bool) throws {
         let initial = try state(handCount: handCount, customs: customs)
         if allowed {
             let result = try TradingPhaseRules.apply(.draw, by: 0, to: initial)
@@ -52,34 +52,40 @@ struct TradingPhaseTests {
         }
     }
 
-    @Test func drawOneRemainingCardSignalsDeckEmpty() throws {
+    @Test func EC4EC5DrawOneRemainingCardSignalsDeckEmpty() throws {
         let initial = try state(handCount: 5, deckCount: 1, offices: 1)
         let result = try TradingPhaseRules.apply(.draw, by: 0, to: initial)
         #expect(result.state.hands[0].count == 6)
         #expect(result.outcome == .drew(base: 1, officeExtras: 0, deckEmptied: true))
     }
 
-    @Test func oneRemainingCardCanBeDrawnAtSevenWithCustomsHouse() throws {
+    @Test func EC25OneRemainingCardCanBeDrawnAtSevenWithCustomsHouse() throws {
         let initial = try state(handCount: 7, deckCount: 1, customs: true)
         let result = try TradingPhaseRules.apply(.draw, by: 0, to: initial)
         #expect(result.state.hands[0].count == 8)
         #expect(result.outcome == .drew(base: 1, officeExtras: 0, deckEmptied: true))
     }
 
-    @Test func baseDrawCanEmptyDeck() throws {
-        let result = try TradingPhaseRules.apply(.draw, by: 0, to: state(deckCount: 2))
+    @Test func EC4BaseDrawCanEmptyDeck() throws {
+        let result = try TradingPhaseRules.apply(.draw, by: 0, to: state(deckCount: 2, offices: 1))
         #expect(result.outcome == .drew(base: 2, officeExtras: 0, deckEmptied: true))
     }
 
-    @Test func officeExtrasAreCappedByHandRoom() throws {
-        let initial = try state(handCount: 3, offices: 2)
-        let result = try TradingPhaseRules.apply(.draw, by: 0, to: initial)
-        #expect(result.outcome == .drew(base: 2, officeExtras: 1, deckEmptied: false))
-        #expect(result.state.hands[0].count == 6)
-        #expect(result.state.deck.remaining == 5)
+    @Test func EC3EC27OfficeExtrasAreCappedByHandRoom() throws {
+        for (handCount, expectedExtras) in [(3, 1), (4, 0)] {
+            let initial = try state(handCount: handCount, offices: 2)
+            let result = try TradingPhaseRules.apply(.draw, by: 0, to: initial)
+            #expect(result.outcome == .drew(base: 2, officeExtras: expectedExtras, deckEmptied: false))
+            #expect(result.state.hands[0].count == 6)
+            #expect(result.state.deck.remaining == 8 - 2 - expectedExtras)
+        }
+        let full = try state(handCount: 6, offices: 2)
+        #expect(throws: TurnFlowError.cannotDrawMustDeliver) {
+            try TradingPhaseRules.apply(.draw, by: 0, to: full)
+        }
     }
 
-    @Test func officeExtrasAreCappedByDeckAndSignalEmpty() throws {
+    @Test func EC6EC27OfficeExtrasAreCappedByDeckAndSignalEmpty() throws {
         let initial = try state(deckCount: 3, offices: 2)
         let result = try TradingPhaseRules.apply(.draw, by: 0, to: initial)
         #expect(result.outcome == .drew(base: 2, officeExtras: 1, deckEmptied: true))
@@ -118,7 +124,7 @@ struct TradingPhaseTests {
         #expect(initial.deck.remaining == 8)
     }
 
-    @Test func skipOnlyAllowedWithEmptyDeckAndDrawThenRejected() throws {
+    @Test func EC24SkipOnlyAllowedWithEmptyDeckAndDrawThenRejected() throws {
         let normal = try state()
         #expect(throws: TurnFlowError.skipOnlyWhenDeckEmpty) {
             try TradingPhaseRules.apply(.skip, by: 0, to: normal)

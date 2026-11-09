@@ -1,5 +1,7 @@
 // The complete serializable game state and the read-only player projection.
 // Owns composition of domain values, but does not implement game rules.
+import Foundation
+
 public struct GameState: Codable, Equatable, Sendable {
     public let configuration: GameConfiguration
     public let random: SeededRandomSource
@@ -93,6 +95,15 @@ public struct GameState: Codable, Equatable, Sendable {
         self.supply = supply
 
         try GameInvariants.validate(self)
+    }
+
+    /// Restores JSON game data, retaining the underlying decoding or validation error.
+    public static func restore(from data: Data) throws(GameRestorationError) -> GameState {
+        do {
+            return try JSONDecoder().decode(GameState.self, from: data)
+        } catch {
+            throw GameRestorationError(underlyingError: error)
+        }
     }
 
     public func playerView(for player: PlayerID) throws -> PlayerView {
