@@ -21,18 +21,6 @@ because a component or placeholder exists.
 
 ## In progress
 
-- **[FR14 - Planning phase](PRD.md#fr14-planning-phase)** and
-  **[FR15 - Trading phase](PRD.md#fr15-trading-phase)**
-  Components are integrated with the engine on `working-branch` in PR #26;
-  `feature/coregp-acceptance` adds engine-level Customs House and final-round
-  purchase coverage and placeholder UK-English error descriptions.
-- **[FR16 - Delivery scoring](PRD.md#fr16-delivery-scoring)**
-  Pure scoring and engine payout integration are implemented and tested on
-  `working-branch` in PR #26. Engine-level delivery event coverage is on
-  `feature/coregp-acceptance`.
-- **[FR17 - End game and winners](PRD.md#fr17-end-game-and-winners)**
-  Rules and end-game handling are integrated on `working-branch` in PR #26;
-  `feature/coregp-acceptance` adds event checks for both end rules.
 - **[FR18 - Game actions and events](PRD.md#fr18-game-actions-and-events)** and
   **[FR19 - Game engine and player view](PRD.md#fr19-game-engine-and-player-view)**
   Core action pipeline, data-only player projection, legal actions, and
@@ -65,6 +53,15 @@ No unstarted PRD section 7 requirements are currently tracked here.
 
 ## Ready to merge
 
+- **[FR14 - Planning phase](PRD.md#fr14-planning-phase)**,
+  **[FR15 - Trading phase](PRD.md#fr15-trading-phase)**,
+  **[FR16 - Delivery scoring](PRD.md#fr16-delivery-scoring)** and
+  **[FR17 - End game and winners](PRD.md#fr17-end-game-and-winners)**
+  Implemented on `working-branch` in PR #26 and verified together on
+  `feature/coregp-acceptance`, including purchase boundaries, planning and
+  trading effects, delivery scoring, and both end rules. Large Ships can now
+  be purchased with one or two cubes as explicitly confirmed by the user;
+  legal actions and state restoration support both loads.
 - **F26 - Game session**
   `feature/coregp-acceptance` provides a `GameSession` facade over the
   existing store, with deterministic creation, state restoration, player views,
@@ -127,9 +124,9 @@ string-catalog resource; the source-language text is used as a fallback and
 translations require the resource-processing issue to be addressed.
 
 The full `MerchantsGame` suite passed after combining the acceptance and
-closeout branches: 119 XCTest tests and 78 Swift Testing tests, including
-engine-level coverage, complete session lifecycles and intermediate
-restoration in seeded replay.
+closeout branches and completing FR14–FR17 acceptance: 122 XCTest tests and
+83 Swift Testing tests, including engine-level coverage, complete session
+lifecycles and intermediate restoration in seeded replay.
 
 FR2 generator, actual game setup, restoration and seeded replay tests passed
 on `feature/FR20-FR23-FR24-FR25-bundle`: six XCTest tests and six Swift
@@ -181,6 +178,12 @@ and six Hand tests.
    duplicating or overwriting them.
 
 ## Baseline and PRD discrepancy
+
+The user confirmed that a Large Ship may be purchased with one or two cubes,
+resolving the conflict between EC-30 and the two-cube purchase wording in the
+locked PRD. FR15's test list also says drawing two cards at hand size 7 and
+limit 8 is legal; the explicit EC-25 rule requires room for both cards unless
+only one remains in the deck, and the tests follow EC-25.
 
 Checked on 2026-11-09: FR1 and FR2 were reviewed on `working-on-package`.
 Its PRD removes warehouse requirements that are still present in the PRD on

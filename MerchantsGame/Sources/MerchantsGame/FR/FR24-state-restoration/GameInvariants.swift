@@ -134,7 +134,7 @@ public enum GameInvariants {
             throw .invalidTurnState
         }
         guard state.fleets.allSatisfy({
-            $0.ships.allSatisfy { $0.cubes.count == $0.kind.capacity }
+            $0.ships.allSatisfy { !$0.cubes.isEmpty }
         }) else {
             throw .shipNotFull
         }

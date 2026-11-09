@@ -37,6 +37,7 @@ extension GameState {
                     }
                 case .largeShip:
                     for first in GoodType.allCases {
+                        candidates.append(.buySpecialCard(kind: kind, loadCubes: [first]))
                         for second in GoodType.allCases {
                             candidates.append(.buySpecialCard(kind: kind, loadCubes: [first, second]))
                         }

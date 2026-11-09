@@ -21,7 +21,7 @@ struct GameReplayTests {
         for fleet in state.fleets {
             for ship in fleet.ships {
                 #expect(ship.cubes.count <= ship.kind.capacity)
-                if state.turn != nil { #expect(ship.cubes.count == ship.kind.capacity) }
+                if state.turn != nil { #expect(!ship.cubes.isEmpty) }
             }
         }
         #expect(state.deck.remaining + state.hands.reduce(0) { $0 + $1.count } + state.marketplace.totalCardCount == 60)

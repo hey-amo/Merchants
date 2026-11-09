@@ -206,7 +206,7 @@ extension GameStateError: CustomStringConvertible {
         case .cubeCountMismatch: String(localized: "The saved game has an incorrect number of cubes.", bundle: .module)
         case .handOverLimit: String(localized: "A saved hand exceeds its card limit.", bundle: .module)
         case .shipOverCapacity: String(localized: "A saved ship exceeds its cube capacity.", bundle: .module)
-        case .shipNotFull: String(localized: "A saved ship is not fully loaded.", bundle: .module)
+        case .shipNotFull: String(localized: "A saved ship has no cubes.", bundle: .module)
         case .negativeBalance: String(localized: "A saved coin balance is invalid.", bundle: .module)
         case .invalidSpecialCardStock: String(localized: "The saved special-card stock is inconsistent.", bundle: .module)
         case .invalidFleet: String(localized: "A saved fleet does not match its special cards.", bundle: .module)
