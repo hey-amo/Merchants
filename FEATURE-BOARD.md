@@ -21,8 +21,9 @@ because a component or placeholder exists.
 
 ## Ready to merge
 
-- **[FR8 - Cube supply](PRD.md#fr8-cube-supply)**
-  Implemented and tested on `feature/F8-cube-supply`; awaiting integration into
+- **[FR9 - Ships](PRD.md#fr9-ships)**
+  Implemented and tested on `feature/FR9-ships-redo`. PR #21 merged it into
+  `working-on-package`, not `working-branch`; it still needs integration into
   `working-branch`.
 
 ## In progress
@@ -37,9 +38,6 @@ because a component or placeholder exists.
 
 ## Planned
 
-- [FR8 - Cube supply](PRD.md#fr8-cube-supply)
-- [FR9 - Ships](PRD.md#fr9-ships)
-- [FR10 - Marketplace](PRD.md#fr10-marketplace)
 - [FR11 - Special cards](PRD.md#fr11-special-cards)
   - `SpecialCardKind` exists as a prerequisite for banking; remaining special-card
     functionality and tests are planned.
@@ -77,16 +75,23 @@ because a component or placeholder exists.
 - **[FR5 - Goods and cards vocabulary](PRD.md#fr5-goods-and-cards-vocabulary)**
   Implemented on `feature/fr5-goods-and-cards-vocabulary` and integrated into
   `func-req-work`.
+- **[FR6 - Draw deck](PRD.md#fr6-draw-deck)**
+  Implemented on `feature/FR6-draw-deck` and merged into `working-branch` in
+  PR #16.
 - **[FR7 - Hand](PRD.md#fr7-hand)**
   Implemented on `feature/FR7-hand` and integrated into `working-branch`.
   The base hand limit remains a standard-rules placeholder pending FR25;
   cross-owner restoration and player-view validation remain part of FR24 and
   FR19 respectively.
-- **[FR6 - Draw deck](PRD.md#fr6-draw-deck)**
-  Implemented on `feature/FR6-draw-deck` and merged into `working-branch` in
-  PR #16.
+- **[FR8 - Cube supply](PRD.md#fr8-cube-supply)**
+  Merged into `working-branch` in PR #17.
+- **[FR10 - Marketplace](PRD.md#fr10-marketplace)**
+  Merged into `working-branch` in PR #20.
 
 ## Verification
+
+The full `MerchantsGame` package regression suite passed on
+`feature/FR9-ships-redo`: 78 tests, including five Ships tests.
 
 On 2026-11-09, the full `MerchantsGame` package regression suite passed on
 `feature/F8-cube-supply`: 68 tests, including ten Cube Supply, eight Draw Deck,
@@ -98,8 +103,3 @@ Checked on 2026-11-09: FR1 and FR2 were reviewed on `working-on-package`.
 Its PRD removes warehouse requirements that are still present in the PRD on
 the board's original branch. This board follows the integration branch's PRD;
 reconcile the discrepancy before implementing or merging affected work.
-
-## FR10 branch update
-
-FR10 is implemented and tested on `feature/FR10-marketplace`; it is ready for a
-PR to `working-branch`. Its Planned card should move to Done once merged.
