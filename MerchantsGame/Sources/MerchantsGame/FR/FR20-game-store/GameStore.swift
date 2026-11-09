@@ -55,6 +55,7 @@ public actor GameStore {
         }
     }
 
+    /// Host-only updates contain full state, including hidden cards.
     public func updates() -> AsyncStream<GameUpdate> {
         let (stream, continuation) = AsyncStream<GameUpdate>.makeStream()
         guard state.ending.status != .finished else {

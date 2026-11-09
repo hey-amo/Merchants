@@ -4,6 +4,35 @@ import Testing
 
 @Suite("Game session lifecycle")
 struct GameSessionTests {
+    @Test(arguments: 2...4)
+    func sessionInitializesOwnersForEachPlayerCount(count: Int) async throws {
+        let players = (0..<count).map { PlayerID("player-\($0)") }
+        let configuration = try GameConfiguration(
+            playerIDs: players, seed: 9, firstPlayer: .fixed(players[1])
+        )
+        let session = try GameSession(configuration: configuration)
+        let state = await session.snapshot()
+
+        #expect(state.deck.remaining == 60 - count * 3 - Marketplace.slotCount)
+        #expect(state.hands.map(\.count) == Array(repeating: 3, count: count))
+        #expect(state.marketplace.visibleCards.count == Marketplace.slotCount)
+        #expect(state.draft.order.first == 1)
+        #expect(state.fleets.count == count)
+        #expect(state.tableaux.count == count)
+        for player in players {
+            #expect(try state.bank.balance(of: player).available == 0)
+        }
+        for good in GoodType.allCases {
+            #expect(state.supply.available(of: good) == CubeSupply.cubesPerGood)
+        }
+        for kind in SpecialCardKind.allCases {
+            let expected = try configuration.rules.specialCardCatalog.stock(for: kind, playerCount: count)
+            #expect(state.stock.available(of: kind) == expected)
+        }
+        let repeated = try GameState(configuration: configuration)
+        #expect(state == repeated)
+    }
+
     @Test(arguments: [EndGameRule.immediate, .oneMoreTurn])
     func completeGamePublishesDeterministicUpdates(rule: EndGameRule) async throws {
         let players = [PlayerID("first"), PlayerID("second")]

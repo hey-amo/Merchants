@@ -34,6 +34,7 @@ public struct GameSession: Sendable {
         try await store.send(action, by: player)
     }
 
+    /// Host-only updates contain full state, including hidden cards.
     public func updates() async -> AsyncStream<GameUpdate> {
         await store.updates()
     }
