@@ -5,10 +5,10 @@ public struct Bank: Codable, Equatable, Sendable {
         balances
     }
 
-    public init(playerIDs: [PlayerID]) {
+    public init(playerIDs: [PlayerID]) throws(CoinError) {
         balances = [:]
         for playerID in playerIDs {
-            balances[playerID] = try! Coins()
+            balances[playerID] = try Coins()
         }
     }
 

@@ -7,14 +7,14 @@ final class BankTests: XCTestCase {
     private let bob = PlayerID("bob")
 
     func testInitializesPlayersWithZeroBalances() throws {
-        let bank = Bank(playerIDs: [alice, bob])
+        let bank = try Bank(playerIDs: [alice, bob])
 
         XCTAssertEqual(try bank.balance(of: alice), try Coins())
         XCTAssertEqual(try bank.balance(of: bob), try Coins())
     }
 
     func testCreditsAndDebitsCoins() throws {
-        var bank = Bank(playerIDs: [alice])
+        var bank = try Bank(playerIDs: [alice])
 
         try bank.apply([
             Transaction(
@@ -66,7 +66,7 @@ final class BankTests: XCTestCase {
     }
 
     func testUnknownPlayersAreRejectedForTransactionsAndBalanceLookups() throws {
-        var bank = Bank(playerIDs: [alice])
+        var bank = try Bank(playerIDs: [alice])
         let unknownPlayer = PlayerID("unknown")
 
         XCTAssertThrowsError(try bank.balance(of: unknownPlayer)) {
@@ -107,7 +107,7 @@ final class BankTests: XCTestCase {
                 reason: .specialCardPurchase(.customsHouse)
             )
         ]
-        var bank = Bank(playerIDs: [alice, bob])
+        var bank = try Bank(playerIDs: [alice, bob])
 
         try bank.apply(transactions)
 
@@ -144,8 +144,35 @@ final class BankTests: XCTestCase {
         }
     }
 
+    func testUnknownPlayerAfterValidTransactionLeavesBatchUnchanged() throws {
+        var bank = try Bank(restoring: [alice: 5, bob: 2])
+        let originalStandings = bank.standings
+        let unknownPlayer = PlayerID("unknown")
+
+        XCTAssertThrowsError(
+            try bank.apply([
+                Transaction(
+                    player: alice,
+                    amount: 3,
+                    direction: .credit,
+                    reason: .tradeAgreementBonus
+                ),
+                Transaction(
+                    player: unknownPlayer,
+                    amount: 1,
+                    direction: .credit,
+                    reason: .deliveryPayout(.sugar)
+                )
+            ])
+        ) {
+            XCTAssertEqual($0 as? BankingError, .unknownPlayer(unknownPlayer))
+        }
+
+        XCTAssertEqual(bank.standings, originalStandings)
+    }
+
     func testStandingsIsAReadOnlySnapshot() throws {
-        let bank = Bank(playerIDs: [alice])
+        let bank = try Bank(playerIDs: [alice])
         var snapshot = bank.standings
         snapshot[alice] = try Coins(99)
 
@@ -158,6 +185,19 @@ final class BankTests: XCTestCase {
         let restored = try JSONDecoder().decode(Bank.self, from: data)
 
         XCTAssertEqual(restored, bank)
+    }
+
+    func testBankCodableRejectsNegativeAndOverLimitBalances() {
+        let invalidBalancePayloads = [
+            #"{"balances":{"alice":{"available":-1}}}"#,
+            #"{"balances":{"alice":{"available":5001}}}"#
+        ]
+
+        for payload in invalidBalancePayloads {
+            XCTAssertThrowsError(
+                try JSONDecoder().decode(Bank.self, from: Data(payload.utf8))
+            )
+        }
     }
 
     func testBatchExceedingMaximumBalanceFailsAtomically() throws {
