@@ -21,9 +21,8 @@ because a component or placeholder exists.
 
 ## Ready to merge
 
-- **[FR8 - Cube supply](PRD.md#fr8-cube-supply)**
-  Implemented and tested on `feature/F8-cube-supply`; awaiting integration into
-  `working-branch`.
+- **[FR9 - Ships](PRD.md#fr9-ships)**
+  Implemented and tested on `feature/FR9-ships`; awaiting integration.
 
 ## In progress
 
@@ -37,8 +36,6 @@ because a component or placeholder exists.
 
 ## Planned
 
-- [FR8 - Cube supply](PRD.md#fr8-cube-supply)
-- [FR9 - Ships](PRD.md#fr9-ships)
 - [FR10 - Marketplace](PRD.md#fr10-marketplace)
 - [FR11 - Special cards](PRD.md#fr11-special-cards)
   - `SpecialCardKind` exists as a prerequisite for banking; remaining special-card
@@ -85,6 +82,9 @@ because a component or placeholder exists.
 - **[FR6 - Draw deck](PRD.md#fr6-draw-deck)**
   Implemented on `feature/FR6-draw-deck` and merged into `working-branch` in
   PR #16.
+- **[FR8 - Cube supply](PRD.md#fr8-cube-supply)**
+  Implemented on `feature/F8-cube-supply` and merged into `working-branch`
+  in PR #17.
 
 ## Verification
 
