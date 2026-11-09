@@ -664,6 +664,7 @@ Each feature lists **Owner**, **Expectations**, **Errors**, **Tests**.
 - `BotGameSession` owns a game session and applies one bot action at a time, using the first legal cube-draft action and `AIStrategist` for normal turns. It stops at game over and reports failures rather than silently skipping actions.
 - The app's bot-game screen runs a two-bot game, showing the marketplace, fleets, balances, latest decision and winner. It supports pausing and starting a new game; it is a spectator-only baseline, not a human gameplay UI.
 - **Tests:** presentation unit tests inject disposable in-memory session stubs; integration tests use fresh, seeded in-memory games from draft to standings with both end-game rules, multiple player counts and personalities. Cancellation before an action leaves the game unchanged.
+- The opt-in package smoke test runs 1–10 completed player turns (excluding the draft) or stops immediately when the deck empties. It uses a fresh in-memory session, prints the active player's portfolio and public game information, and never saves or loads game state. See the [README](README.md#bot-smoke-test) for the command.
 
 ### FR22-error-layering
 
