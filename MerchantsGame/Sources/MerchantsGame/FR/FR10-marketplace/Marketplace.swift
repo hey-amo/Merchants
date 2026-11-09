@@ -10,6 +10,12 @@ public struct Marketplace: Codable, Equatable, Sendable {
         stacks.reduce(0) { $0 + $1.count }
     }
 
+    func count(of good: GoodType) -> Int {
+        stacks.reduce(0) { total, stack in
+            total + stack.filter { $0.good == good }.count
+        }
+    }
+
     public init(visibleCards: [GoodsCard]) throws(MarketplaceError) {
         guard visibleCards.count == Self.slotCount else { throw .invalidSlotCount }
         self.stacks = visibleCards.map { [$0] }

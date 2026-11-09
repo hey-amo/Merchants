@@ -12,11 +12,11 @@ public enum GameSetupError: Error, Equatable, Sendable, CustomStringConvertible 
     public var description: String {
         switch self {
         case .invalidPlayerCount:
-            String(localized: "gameSetup.invalidPlayerCount", bundle: .module)
+            String(localized: "gameSetup.invalidPlayerCount", defaultValue: "A game must have between 2 and 4 players.", bundle: .module)
         case .duplicatePlayerID:
-            String(localized: "gameSetup.duplicatePlayerID", bundle: .module)
+            String(localized: "gameSetup.duplicatePlayerID", defaultValue: "Player identifiers must be unique.", bundle: .module)
         case .unknownFirstPlayer:
-            String(localized: "gameSetup.unknownFirstPlayer", bundle: .module)
+            String(localized: "gameSetup.unknownFirstPlayer", defaultValue: "The selected first player is not in this game.", bundle: .module)
         }
     }
 }

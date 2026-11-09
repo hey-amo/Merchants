@@ -21,6 +21,23 @@ public actor GameStore {
         state = initialState
     }
 
+    /// Full host state, including hidden cards. Use playerView(for:) for players.
+    public func snapshot() -> GameState {
+        state
+    }
+
+    public func playerView(for player: PlayerID) throws -> PlayerView {
+        try state.playerView(for: player)
+    }
+
+    public func legalActions(for player: PlayerID) throws(EngineError) -> [GameAction] {
+        try state.legalActions(for: player)
+    }
+
+    public func standings() throws -> Standings {
+        try state.ending.standings(players: state.configuration.playerIDs, bank: state.bank)
+    }
+
     public func send(_ action: GameAction, by player: PlayerID) throws(ActionRejection) {
         let (newState, events) = try GameEngine.apply(action, by: player, to: state)
         state = newState
@@ -38,6 +55,7 @@ public actor GameStore {
         }
     }
 
+    /// Host-only updates contain full state, including hidden cards.
     public func updates() -> AsyncStream<GameUpdate> {
         let (stream, continuation) = AsyncStream<GameUpdate>.makeStream()
         guard state.ending.status != .finished else {

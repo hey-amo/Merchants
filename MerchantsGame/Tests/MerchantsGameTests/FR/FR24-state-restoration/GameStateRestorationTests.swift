@@ -89,6 +89,24 @@ struct GameStateRestorationTests {
         expectDecodeError(try encodedData(object), .cardCountMismatch)
     }
 
+    @Test func rejectsIncorrectGoodsDistributionEvenWhenTotalIsSixty() throws {
+        var state = try started()
+        var deck = state.deck
+        var cards = try deck.draw(deck.remaining)
+        let first = try #require(cards.first)
+        let replacement = try #require(cards.first(where: { $0.good != first.good }))
+        cards[0] = replacement
+        state.deck = DrawDeck(cards: cards)
+        expectDecodeError(try JSONEncoder().encode(state), .cardCountMismatch)
+    }
+
+    @Test func rejectsCoinsDuringDraft() throws {
+        let configuration = try GameConfiguration(playerIDs: players, seed: 42)
+        var state = try GameState(configuration: configuration)
+        state.bank = try Bank(restoring: [players[0]: 1, players[1]: 0])
+        expectDecodeError(try JSONEncoder().encode(state), .invalidTurnState)
+    }
+
     @Test func rejectsCubeCountMismatchWithExactError() throws {
         var state = try started()
         _ = try state.supply.take(.tea)
@@ -101,6 +119,7 @@ struct GameStateRestorationTests {
         var object = try encodedObject(state)
         var deck = try #require(object["deck"] as? [String: Any])
         var deckCards = try #require(deck["cards"] as? [[String: Any]])
+        let movedCards = Array(deckCards.suffix(4))
         deckCards.removeLast(4)
         deck["cards"] = deckCards
         object["deck"] = deck
@@ -108,8 +127,7 @@ struct GameStateRestorationTests {
         var hands = try #require(object["hands"] as? [[String: Any]])
         var hand = try #require(hands.first)
         var cards = try #require(hand["cards"] as? [[String: Any]])
-        let card = try #require(cards.first)
-        cards.append(contentsOf: Array(repeating: card, count: 4))
+        cards.append(contentsOf: movedCards)
         hand["cards"] = cards
         hands[0] = hand
         object["hands"] = hands
@@ -157,6 +175,23 @@ struct GameStateRestorationTests {
         expectDecodeError(try JSONEncoder().encode(state), .invalidFleet)
     }
 
+    @Test func rejectsHugeTableauCountsWithoutOverflow() throws {
+        var state = try started()
+        try state.stock.purchase(.ship, for: &state.tableaux[0])
+        var object = try encodedObject(state)
+        var tableaux = try #require(object["tableaux"] as? [[String: Any]])
+        var tableau = tableaux[0]
+        var counts = try #require(tableau["counts"] as? [Any])
+        try #require(counts.count == 2)
+        counts[1] = NSNumber(value: Int.max)
+        tableau["counts"] = counts
+        tableaux[0] = tableau
+        tableaux[1] = tableau
+        object["tableaux"] = tableaux
+
+        expectDecodeError(try encodedData(object), .invalidSpecialCardStock)
+    }
+
     @Test func rejectsOutOfSyncDraftSnapshotDuringDrafting() throws {
         let configuration = try GameConfiguration(
             playerIDs: players,
@@ -194,6 +229,198 @@ struct GameStateRestorationTests {
         object["marketplace"] = marketplace
 
         expectDecodeError(try encodedData(object), .invalidTurnState)
+    }
+
+    @Test func rejectsExchangeProgressWithoutMatchingCranes() throws {
+        var state = try started()
+        let unpurchasedStock = state.stock
+        let unpurchasedTableau = state.tableaux[0]
+        try state.stock.purchase(.crane, for: &state.tableaux[0])
+        (state, _) = try GameEngine.apply(
+            .exchangeCube(ship: 0, cubeIndex: 0, good: .silk), by: players[0], to: state
+        )
+        #expect(try JSONDecoder().decode(GameState.self, from: JSONEncoder().encode(state)) == state)
+        state.stock = unpurchasedStock
+        state.tableaux[0] = unpurchasedTableau
+        expectDecodeError(try JSONEncoder().encode(state), .invalidTurnState)
+    }
+
+    @Test func rejectsCranePurchaseProgressWithoutOwnedCrane() throws {
+        var state = try started()
+        state.bank = try Bank(restoring: [players[0]: 12, players[1]: 0])
+        let unpurchasedStock = state.stock
+        let unpurchasedTableau = state.tableaux[0]
+        (state, _) = try GameEngine.apply(.buySpecialCard(kind: .crane, loadCubes: []), by: players[0], to: state)
+        #expect(try JSONDecoder().decode(GameState.self, from: JSONEncoder().encode(state)) == state)
+        state.stock = unpurchasedStock
+        state.tableaux[0] = unpurchasedTableau
+        expectDecodeError(try JSONEncoder().encode(state), .invalidTurnState)
+    }
+
+    @Test func rejectsMissingNullAndWrongTypedRequiredStateFields() throws {
+        let original = try encodedObject(started())
+        let required = ["configuration", "random", "deck", "hands", "marketplace",
+                        "bank", "stock", "tableaux", "draft", "ending", "fleets", "supply"]
+        for key in required {
+            var missing = original
+            missing.removeValue(forKey: key)
+            expectFieldError(try encodedData(missing), key: key, kind: .missing)
+            var null = original
+            null[key] = NSNull()
+            expectFieldError(try encodedData(null), key: key, kind: .null)
+            var wrongType = original
+            wrongType[key] = "not a valid value"
+            expectFieldError(try encodedData(wrongType), key: key, kind: .wrongType)
+        }
+    }
+
+    @Test func optionalTurnIsAbsentDuringDraftButRequiredAfterDraft() throws {
+        let configuration = try GameConfiguration(playerIDs: players, seed: 42)
+        let draft = try GameState(configuration: configuration)
+        var object = try encodedObject(draft)
+        object.removeValue(forKey: "turn")
+        #expect(try JSONDecoder().decode(GameState.self, from: encodedData(object)) == draft)
+        object["turn"] = NSNull()
+        #expect(try JSONDecoder().decode(GameState.self, from: encodedData(object)) == draft)
+        object["turn"] = "invalid"
+        expectFieldError(try encodedData(object), key: "turn", kind: .wrongType)
+
+        var startedObject = try encodedObject(started())
+        startedObject.removeValue(forKey: "turn")
+        expectDecodeError(try encodedData(startedObject), .invalidTurnState)
+    }
+
+    @Test func restoreReportsMalformedDataAndPreservesCause() throws {
+        let state = try started()
+        let original = try encodedObject(state)
+        var missing = original
+        missing.removeValue(forKey: "deck")
+        var null = original
+        null["deck"] = NSNull()
+        var wrongType = original
+        wrongType["deck"] = "invalid"
+        var invalidSeat = original
+        var turn = try #require(invalidSeat["turn"] as? [String: Any])
+        turn["currentSeat"] = -1
+        invalidSeat["turn"] = turn
+
+        for object in [missing, null, wrongType, invalidSeat] {
+            do {
+                _ = try GameState.restore(from: encodedData(object))
+                Issue.record("Expected malformed game data.")
+            } catch let error as GameRestorationError {
+                #expect(error.localizedDescription == "Game error - corrupted data")
+                #expect(error.underlyingError is DecodingError || error.underlyingError is TurnFlowError)
+            }
+        }
+        var corrupted = state
+        _ = try corrupted.supply.take(.tea)
+        do {
+            let data = try JSONEncoder().encode(corrupted)
+            _ = try GameState.restore(from: data)
+            Issue.record("Expected an invalid game state.")
+        } catch let error as GameRestorationError {
+            #expect(error.localizedDescription == "Game error - corrupted data")
+            #expect(error.underlyingError as? GameStateError == .cubeCountMismatch)
+        }
+        do {
+            _ = try GameState.restore(from: Data("{".utf8))
+            Issue.record("Expected malformed JSON.")
+        } catch {
+            #expect(error.localizedDescription == "Game error - corrupted data")
+            #expect(error.underlyingError is DecodingError)
+        }
+        #expect(try GameState.restore(from: JSONEncoder().encode(state)) == state)
+    }
+
+    @Test func rejectsInvalidNestedOwnerValues() throws {
+        let original = try encodedObject(started())
+
+        var duplicatePlayers = original
+        var configuration = try #require(duplicatePlayers["configuration"] as? [String: Any])
+        configuration["playerIDs"] = ["first", "first"]
+        duplicatePlayers["configuration"] = configuration
+        #expect(throws: GameSetupError.duplicatePlayerID) {
+            try JSONDecoder().decode(GameState.self, from: encodedData(duplicatePlayers))
+        }
+
+        var invalidSupply = original
+        var supply = try #require(invalidSupply["supply"] as? [String: Any])
+        supply["tea"] = 6
+        invalidSupply["supply"] = supply
+        #expect(throws: CubeSupplyError.invalidCount(good: .tea, count: 6)) {
+            try JSONDecoder().decode(GameState.self, from: encodedData(invalidSupply))
+        }
+
+        var invalidDraft = original
+        var draft = try #require(invalidDraft["draft"] as? [String: Any])
+        draft["picksMade"] = Int.max
+        invalidDraft["draft"] = draft
+        #expect(throws: CubeDraftError.invalidState) {
+            try JSONDecoder().decode(GameState.self, from: encodedData(invalidDraft))
+        }
+
+        var invalidTurn = original
+        var turn = try #require(invalidTurn["turn"] as? [String: Any])
+        turn["currentSeat"] = -1
+        invalidTurn["turn"] = turn
+        #expect(throws: TurnFlowError.invalidProgress) {
+            try JSONDecoder().decode(GameState.self, from: encodedData(invalidTurn))
+        }
+    }
+
+    @Test func rejectsFinishedFinalRoundWithWrongTurnSeat() throws {
+        var state = try started()
+        var actions = 0
+        while state.ending.status != .finished && actions < 500 {
+            let seat = try #require(state.turn?.currentSeat)
+            let player = players[seat]
+            let legal = try state.legalActions(for: player)
+            let action: GameAction
+            if legal.contains(.passPlanning) {
+                action = .passPlanning
+            } else if legal.contains(.drawCards) {
+                action = .drawCards
+            } else if legal.contains(.skipTrading) {
+                action = .skipTrading
+            } else {
+                action = try #require(legal.first { if case .deliverCards = $0 { return true }; return false })
+            }
+            (state, _) = try GameEngine.apply(action, by: player, to: state)
+            actions += 1
+        }
+        #expect(state.ending.status == .finished)
+        #expect(try JSONDecoder().decode(GameState.self, from: JSONEncoder().encode(state)) == state)
+        var object = try encodedObject(state)
+        var turn = try #require(object["turn"] as? [String: Any])
+        turn["currentSeat"] = (state.draft.order.first + 1) % players.count
+        object["turn"] = turn
+        expectDecodeError(try encodedData(object), .invalidTurnState)
+    }
+
+    private enum FieldErrorKind { case missing, null, wrongType }
+
+    private func expectFieldError(_ data: Data, key: String, kind: FieldErrorKind) {
+        do {
+            _ = try JSONDecoder().decode(GameState.self, from: data)
+            Issue.record("Expected \(kind) decoding error for \(key).")
+        } catch DecodingError.keyNotFound(let missing, let context) where kind == .missing {
+            #expect(missing.stringValue == key)
+            #expect(context.codingPath.isEmpty)
+        } catch DecodingError.valueNotFound(_, let context) where kind == .null {
+            #expect(context.codingPath.map(\.stringValue) == [key])
+        } catch DecodingError.typeMismatch(_, let context) where kind == .wrongType {
+            #expect(context.codingPath.map(\.stringValue) == [key])
+        } catch {
+            Issue.record("Expected \(kind) decoding error for \(key), received \(error).")
+        }
+        do {
+            _ = try GameState.restore(from: data)
+            Issue.record("Expected corrupted data for \(key).")
+        } catch {
+            #expect(error.localizedDescription == "Game error - corrupted data")
+            #expect(error.underlyingError is DecodingError)
+        }
     }
 
     private func encodedObject(_ state: GameState) throws -> [String: Any] {

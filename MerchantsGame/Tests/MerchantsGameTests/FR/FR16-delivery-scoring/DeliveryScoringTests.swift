@@ -28,7 +28,7 @@ struct DeliveryScoringTests {
         return tableau
     }
 
-    @Test func thresholdAndMultipleAgreements() throws {
+    @Test func EC13EC14ThresholdAndMultipleAgreements() throws {
         for demand in [2, 3] {
             let result = try DeliveryScoring.transactions(
                 for: .sugar, marketplace: market(demand), players: players,
@@ -42,7 +42,7 @@ struct DeliveryScoringTests {
         }
     }
 
-    @Test func largeShipAndBothPlayersScoreAfterMarketplacePlacement() throws {
+    @Test func EC15EC28EC30LargeShipAndBothPlayersScoreAfterMarketplacePlacement() throws {
         var marketplace = try market(1)
         try marketplace.deliver([DeliveryPlacement(slot: 0, card: GoodsCard(good: .sugar)),
                                  DeliveryPlacement(slot: 1, card: GoodsCard(good: .sugar))])
@@ -57,7 +57,7 @@ struct DeliveryScoringTests {
         ])
     }
 
-    @Test func zeroPayoutAndInvalidPlayerLists() throws {
+    @Test func EC16ZeroPayoutAndInvalidPlayerLists() throws {
         let marketplace = try market(0)
         #expect(try DeliveryScoring.transactions(
             for: .sugar, marketplace: marketplace, players: players,
@@ -69,7 +69,7 @@ struct DeliveryScoringTests {
         }
     }
 
-    @Test func agreementsApplyToEveryPlayersDeliveryAndOnlyOnce() throws {
+    @Test func EC13AgreementsApplyToEveryPlayersDeliveryAndOnlyOnce() throws {
         let result = try DeliveryScoring.transactions(
             for: .sugar, marketplace: market(3), players: players,
             fleets: [fleet(2), fleet(1)], tableaux: [tableau(agreements: 1), tableau(agreements: 1)], rules: .standard

@@ -5,7 +5,7 @@ import Testing
 @Suite("End game and winners")
 struct GameEndingTests {
     @Test(arguments: [EndGameRule.immediate, .oneMoreTurn])
-    func triggerCanFollowBaseDrawOrOfficeDraw(rule: EndGameRule) throws {
+    func EC4EC5EC6TriggerCanFollowBaseDrawOrOfficeDraw(rule: EndGameRule) throws {
         for (deckSize, baseCount) in [(1, 1), (2, 2), (3, 2)] {
             var deck = DrawDeck(cards: Array(repeating: GoodsCard(good: .tea), count: deckSize))
             let base = try deck.draw(baseCount)
@@ -28,7 +28,7 @@ struct GameEndingTests {
         }
     }
 
-    @Test func finalRoundEndsAtLastSeatWithEqualTurnCounts() throws {
+    @Test func EC23FinalRoundEndsAtLastSeatWithEqualTurnCounts() throws {
         for count in 2...4 {
             for first in 0..<count {
                 let order = try SeatOrder(count: count, first: first)
@@ -80,7 +80,7 @@ struct GameEndingTests {
         ([5, 1, 5, 2], [0, 2]),
         ([5, 5, 5, 5], [0, 1, 2, 3])
     ])
-    func standingsUseBalancesAndPreserveSeatOrder(balances: [Int], winningSeats: [Int]) throws {
+    func EC36StandingsUseBalancesAndPreserveSeatOrder(balances: [Int], winningSeats: [Int]) throws {
         let players = (0..<4).map { PlayerID("player\($0)") }
         let bank = try Bank(restoring: Dictionary(uniqueKeysWithValues: zip(players, balances)))
         var ending = GameEnding(rule: .immediate, order: try SeatOrder(count: 4, first: 2))

@@ -90,7 +90,9 @@ public enum PlanningPhaseRules {
             case .largeShip: capacity = Ship.Kind.large.capacity
             default: capacity = 0
             }
-            guard goods.count == capacity else { throw .invalidShipLoad }
+            guard kind == .largeShip ? (1...capacity).contains(goods.count) : goods.count == capacity else {
+                throw .invalidShipLoad
+            }
             let shipIndex = capacity > 0 ? result.fleets[seat].ships.count : nil
             do { try result.turn.buy(by: seat, kind: kind, addedShip: shipIndex) }
             catch { throw .turn(error) }

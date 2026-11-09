@@ -35,6 +35,51 @@ final class SeededRandomSourceTests: XCTestCase {
         XCTAssertEqual(firstPlayer, repeatedFirstPlayer)
     }
 
+    func testStandardDeckAndFirstPlayerRepeatFromSameSeed() throws {
+        let players = (0..<4).map { PlayerID("player-\($0)") }
+        let configuration = try GameConfiguration(playerIDs: players, seed: 1234)
+        var firstRandom = SeededRandomSource(seed: configuration.seed)
+        var secondRandom = SeededRandomSource(seed: configuration.seed)
+        var firstDeck = DeckBuilder.standardDeck(using: &firstRandom)
+        var secondDeck = DeckBuilder.standardDeck(using: &secondRandom)
+
+        let firstPlayer = firstRandom.firstPlayer(in: configuration)
+        let repeatedFirstPlayer = secondRandom.firstPlayer(in: configuration)
+
+        XCTAssertEqual(try firstDeck.draw(60), try secondDeck.draw(60))
+        XCTAssertEqual(firstPlayer, repeatedFirstPlayer)
+        XCTAssertTrue(players.contains(firstPlayer))
+        XCTAssertEqual(firstRandom, secondRandom)
+    }
+
+    func testRestoredStateAfterDeckShuffleRepeatsFirstPlayerChoice() throws {
+        let players = (0..<4).map { PlayerID("player-\($0)") }
+        let configuration = try GameConfiguration(playerIDs: players, seed: 42)
+        var random = SeededRandomSource(seed: configuration.seed)
+        _ = DeckBuilder.standardDeck(using: &random)
+        let data = try JSONEncoder().encode(random)
+        var restored = try JSONDecoder().decode(SeededRandomSource.self, from: data)
+
+        XCTAssertEqual(random.firstPlayer(in: configuration), restored.firstPlayer(in: configuration))
+        XCTAssertEqual(random, restored)
+        XCTAssertEqual(random.next(), restored.next())
+    }
+
+    func testFixedFirstPlayerAfterDeckShuffleDoesNotConsumeRandomness() throws {
+        let players = (0..<2).map { PlayerID("player-\($0)") }
+        let configuration = try GameConfiguration(
+            playerIDs: players,
+            seed: 42,
+            firstPlayer: .fixed(players[1])
+        )
+        var random = SeededRandomSource(seed: configuration.seed)
+        _ = DeckBuilder.standardDeck(using: &random)
+        let stateAfterShuffle = random
+
+        XCTAssertEqual(random.firstPlayer(in: configuration), players[1])
+        XCTAssertEqual(random, stateAfterShuffle)
+    }
+
     func testDifferentSeedsProduceDifferentShuffles() {
         var firstRandom = SeededRandomSource(seed: 1)
         var secondRandom = SeededRandomSource(seed: 2)

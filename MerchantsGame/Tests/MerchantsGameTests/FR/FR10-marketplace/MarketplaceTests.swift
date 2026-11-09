@@ -19,7 +19,7 @@ final class MarketplaceTests: XCTestCase {
         }
     }
 
-    func testDemandAndSameColourCover() throws {
+    func testEC15EC28DemandAndSameColourCover() throws {
         var marketplace = try market()
         try marketplace.deliver([
             DeliveryPlacement(slot: 0, card: card(.sugar)),

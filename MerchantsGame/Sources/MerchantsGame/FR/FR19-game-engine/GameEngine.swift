@@ -1,8 +1,11 @@
-public struct ActionRejection: Error, Equatable, Sendable, CustomStringConvertible {
+import Foundation
+
+public struct ActionRejection: Error, Equatable, Sendable, CustomStringConvertible, LocalizedError {
     public let error: EngineError
     public let action: GameAction
     public let player: PlayerID
     public var description: String { "player \(player.rawValue), action \(action): \(error)" }
+    public var errorDescription: String? { error.errorDescription }
 }
 
 public enum GameEngine {
@@ -15,25 +18,22 @@ public enum GameEngine {
             let mapped: EngineError
             switch error {
             case let error as EngineError: mapped = error
-            case let error as CubeDraftError: mapped = .draft(error)
-            case let error as PlanningError:
-                switch error {
-                case .turn(let cause): mapped = .turnFlow(cause)
-                case .banking(let cause): mapped = .banking(cause)
-                case .supply(let cause): mapped = .cubeSupply(cause)
-                case .ship(let cause): mapped = .ships(cause)
-                case .specialCard(let cause): mapped = .specialCards(cause)
-                case .unknownPlayer: mapped = .unknownPlayer
-                case .invalidState, .invalidShipLoad: mapped = .planning(error)
-                }
-            case let error as TradingPhaseError: mapped = .trading(error)
-            case let error as DeliveryScoringError: mapped = .deliveryScoring(error)
-            case let error as GameEndingError: mapped = .gameEnding(error)
-            case let error as TurnFlowError: mapped = .turnFlow(error)
-            case let error as BankingError: mapped = .banking(error)
-            case let error as HandError: mapped = .hand(error)
-            case let error as MarketplaceError: mapped = .marketplace(error)
-            case let error as DrawDeckError: mapped = .drawDeck(error)
+            case let error as CubeDraftError: mapped = EngineError(error)
+            case let error as PlanningError: mapped = EngineError(error)
+            case let error as TradingPhaseError: mapped = EngineError(error)
+            case let error as DeliveryScoringError: mapped = EngineError(error)
+            case let error as GameEndingError: mapped = EngineError(error)
+            case let error as GameStateError: mapped = EngineError(error)
+            case let error as CoinError: mapped = EngineError(error)
+            case let error as GameSetupError: mapped = EngineError(error)
+            case let error as CubeSupplyError: mapped = EngineError(error)
+            case let error as ShipError: mapped = EngineError(error)
+            case let error as SpecialCardError: mapped = EngineError(error)
+            case let error as TurnFlowError: mapped = EngineError(error)
+            case let error as BankingError: mapped = EngineError(error)
+            case let error as HandError: mapped = EngineError(error)
+            case let error as MarketplaceError: mapped = EngineError(error)
+            case let error as DrawDeckError: mapped = EngineError(error)
             default: mapped = .unexpected(String(describing: error))
             }
             throw ActionRejection(error: mapped, action: action, player: player)
