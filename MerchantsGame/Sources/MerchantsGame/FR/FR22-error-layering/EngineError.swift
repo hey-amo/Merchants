@@ -9,6 +9,14 @@ public enum EngineError: Error, Equatable, Sendable, CustomStringConvertible {
     case specialCards(SpecialCardError)
     case turnFlow(TurnFlowError)
     case setup(GameSetupError)
+    case draft(CubeDraftError)
+    case planning(PlanningError)
+    case trading(TradingPhaseError)
+    case deliveryScoring(DeliveryScoringError)
+    case gameEnding(GameEndingError)
+    case unknownPlayer
+    case invalidAction
+    case unexpected(String)
 
     public init(_ error: CoinError) { self = .coins(error) }
     public init(_ error: BankingError) { self = .banking(error) }
@@ -33,6 +41,14 @@ public enum EngineError: Error, Equatable, Sendable, CustomStringConvertible {
         case .specialCards(let error): "specialCards: \(error)"
         case .turnFlow(let error): "turnFlow: \(error)"
         case .setup(let error): "setup: \(error)"
+        case .draft(let error): "draft: \(error)"
+        case .planning(let error): "planning: \(error)"
+        case .trading(let error): "trading: \(error)"
+        case .deliveryScoring(let error): "deliveryScoring: \(error)"
+        case .gameEnding(let error): "gameEnding: \(error)"
+        case .unknownPlayer: "unknown player"
+        case .invalidAction: "invalid action"
+        case .unexpected(let detail): "unexpected error: \(detail)"
         }
     }
 }

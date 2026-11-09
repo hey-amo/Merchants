@@ -68,4 +68,17 @@ struct DeliveryScoringTests {
                                              fleets: [fleet(1), fleet(1)], tableaux: [Tableau(), Tableau()], rules: .standard)
         }
     }
+
+    @Test func agreementsApplyToEveryPlayersDeliveryAndOnlyOnce() throws {
+        let result = try DeliveryScoring.transactions(
+            for: .sugar, marketplace: market(3), players: players,
+            fleets: [fleet(2), fleet(1)], tableaux: [tableau(agreements: 1), tableau(agreements: 1)], rules: .standard
+        )
+        #expect(result == [
+            Transaction(player: players[0], amount: 6, direction: .credit, reason: .deliveryPayout(.sugar)),
+            Transaction(player: players[0], amount: 2, direction: .credit, reason: .tradeAgreementBonus),
+            Transaction(player: players[1], amount: 3, direction: .credit, reason: .deliveryPayout(.sugar)),
+            Transaction(player: players[1], amount: 2, direction: .credit, reason: .tradeAgreementBonus)
+        ])
+    }
 }
