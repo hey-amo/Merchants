@@ -7,6 +7,17 @@
 
 import SwiftUI
 
+// Fix: Blue background
+// Ship blue bg: RGB: {98, 222, 253}, hex: 62defd
+// Fix button to contrast against blue bg
+
+// Buttons:
+// - Play offline game (confirms if there's a game existing)
+// - Continue game (greyed out if no game exists)
+// - Game center (not implemented)
+// - Sound/Music toggle buttons
+// - About (not implemented)
+
 struct MainMenuView: View {
     var body: some View {
         NavigationStack {

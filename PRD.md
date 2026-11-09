@@ -761,3 +761,9 @@ Each feature lists **Owner**, **Expectations**, **Errors**, **Tests**.
 > ### Unchanged
 >
 > Setup, the cube snake draft, the six goods, delivery and scoring (all players are paid `cubes × visible matching cards`), and "most coins wins; ties share" are exactly as in the original. Special cards are worth nothing at the end.
+----
+
+
+Ship blue bg: RGB: {98, 222, 253}
+Ship blue hex: 62defd
+
