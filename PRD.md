@@ -6,7 +6,7 @@
 | **Scope** | Game logic only (rules, state, errors, determinism, concurrency) |
 | **Companion doc** | `Game-rules.md` (kept separate). Every deviation from the original game is listed in Appendix A |
 
-> **Convention:** every edge case, ambiguity or rule decision has an ID of the form **EC-<int>** (register in §4.3). Use these IDs in code comments, tests (`test_EC14_...`) and conversation.
+> **Convention:** every edge case, ambiguity or rule decision has an ID of the form **EC-<int>** (register in 4.3). Use these IDs in code comments, tests (`test_EC14_...`) and conversation.
 
 ---
 
@@ -52,6 +52,7 @@ Goals:
 - **No observer pattern** (delegates, `NotificationCenter`, Combine, KVO). The one exception is `GameStore.updates()` (FR20).
 - **No `Core`, `Utils`, `Services`, `Helpers`, `Managers`, `Components` folders or types.**
 - Do not invent rules. Where the rules are ambiguous, follow §4 and flag it as a new EC entry.
+- Do not implement the feature: Warehouse. Its not needed.
 
 ### Platform and toolchain
 
@@ -72,7 +73,7 @@ Goals:
    | Coin arithmetic | `Coins` |
    | Money movement between players/bank | `Banking` (using `Coins`) |
    | Draw deck order and draws | `DrawDeck` |
-   | Cards in a player's hand and warehouse | `Hand` |
+   | Cards in a player's hand | `Hand` |
    | Cubes in the common supply | `CubeSupply` |
    | Cubes on ships, ship ownership of a cube | `Ships` |
    | The 6 demand slots | `Marketplace` |
@@ -138,7 +139,7 @@ Merchants/
 │  │   ├─ DrawDeck.swift
 │  │   ├─ DeckBuilder.swift
 │  │   └─ DrawDeckError.swift
-│  ├─ Hand/                  // one player's private cards: hand and warehouse
+│  ├─ Hand/                  // one player's private cards: hand 
 │  │   ├─ Hand.swift
 │  │   ├─ Warehouse.swift
 │  │   ├─ HandLimit.swift
@@ -254,7 +255,7 @@ All effects are automatic. There are no extra actions, except the Warehouse para
 | Card | Cost | Stock | Max per player | Effect |
 |---|---|---|---|---|
 | **Ship** | 10 | `14 − 2 × players` (10 / 8 / 6) | none | Buy action only. You gain a ship that carries **1 cube**. As part of the purchase you choose its cube from the supply, and it is loaded automatically. A ship bought this turn is not eligible for exchange this turn. |
-| **Large Ship** | 18 *(provisional)* | `players` | **1** | Like a Ship but it carries **2 cubes** of any colours (the same colour twice is allowed). Both cubes are chosen and loaded on purchase. See EC-30, EC-32. |
+| **Large Ship** | 18 *(provisional)* | `players` | **1** | Like a Ship but it carries **2 cubes** of any colours (the same colour twice is allowed). Both cubes are chosen (if available) and loaded on purchase. See EC-30, EC-32. |
 | **Office** | 8 | 2 | none | Whenever you take the **Draw 2** action, you automatically draw **1 extra card per Office** you own. Extras are limited by your hand room and the deck, and you draw what is possible. It does nothing when you Deliver. |
 | **Crane** (was Docker) | 12 | 2 | none | Tied to the **Exchange** action: when your Phase I action is Exchange, you may make **1 extra exchange per Crane** you own. When you **buy** a Crane, you immediately get **one free, optional** exchange. Each exchange swaps one cube on one ship. Each ship can be exchanged at most once per Planning phase, including the base exchange. A ship bought this turn is not eligible. It does nothing on Pass or on buying any other card. |
 | **Trade Agreement** | 11 | 2 | none | Whenever a delivery triggers scoring, **whoever delivered**, if you own at least one Trade Agreement and your own payout from that scoring is **more than 2 coins**, you also receive **2 coins per Trade Agreement** you own. It is paid once per scoring, never per cube. The bonus itself does not count toward the "more than 2" check. |
@@ -296,8 +297,8 @@ Status: **Resolved**, or **OPEN** (needs your confirmation).
 | EC-27 | Office extras without enough room or deck | Draw what is possible; extras never block Draw 2. | Resolved |
 | EC-28 | Scoring formula | Confirmed: `cubes × visible matching cards after the play`; all players are paid; the marketplace is always 6 cards; each delivered card goes on a different slot. Example: 1 red visible, play 2 reds over non-reds → 3 reds visible → 1 red cube earns 3. | Resolved |
 | EC-29 | Covered marketplace cards | Removed from play. The deck never refills. | Resolved |
-| EC-30 | Large Ship details | Capacity 2, cost 18, 1 per player, own stock. Needs 2 cubes available in the supply. Price is provisional: two Ships cost 20, so 18 pays for tempo (one action instead of two). Tune in `GameRules`. | **OPEN (price)** |
-| EC-31 | Warehouse details | Cost 6, 1 per player. It holds at most 1 face-down card. **Store:** as an optional first step of the **Draw** action, the player moves one hand card into an empty Warehouse (this frees room before the EC-25 check). **Deliver:** the stored card may be one of the delivered cards (same colour, own slot, counts toward the 1–6 limit). It is never discarded and scores nothing at game end. Overlaps with Customs House (+2); consider dropping if playtests show redundancy. | **OPEN (mechanics and price)** |
+| EC-30 | Large Ship details | Capacity 2, cost 18, 1 per player, own stock. Can hold 1-2 cubes, the ship will indicate cargo space for 2 cubes. If 2 cubes are chosen, they must be available in the supply. | **Resolved** |
+| EC-31 | Warehouse details | Cost 12, 1 per player. It holds at most 1 face-down card. **Store:** as an optional first step of the **Draw** action, the player moves one hand card into an empty Warehouse (this frees room before the EC-25 check). **Deliver:** the stored card may be one of the delivered cards (same colour, own slot, counts toward the 1–6 limit). It is never discarded and scores nothing at game end. Overlaps with Customs House (+2); consider dropping if playtests show redundancy. | **Resolved** |
 | EC-32 | Exchange on a Large Ship | The player chooses which of its two cubes to swap (`cubeIndex`). The ship then counts as exchanged for the phase. | Resolved |
 | EC-33 | Customs House bought in Planning | Hand limit rises immediately, so that turn's Draw 2 uses it. | Resolved |
 | EC-34 | Buying special cards during the final round | Allowed (they score nothing; spending is the player's choice). | Resolved |
