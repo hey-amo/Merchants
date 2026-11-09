@@ -1,5 +1,0 @@
-//
-//  GoodsCube.swift
-//  MerchantsPackage
-//
-

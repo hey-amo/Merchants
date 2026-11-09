@@ -2,11 +2,38 @@
 
 ## About
 
-This is an unoffical creation of Reiner Kniza's game "Merchants"
+This is an unoffical creation of Reiner Kniza's game "Merchants" for 2-4 players.
 
 The 16th century saw a boom in sailing, exploration and sea-based trading.
 
 Players act as a 16th century merchant family and try to maximise profits through the exchange of good cubes that match good cards played to a market.
+
+### Detail
+
+Your goal in Merchants is to make as much money as possible, ideally by having the right goods at the right time to earn more at the peak of sales.
+
+To start, lay out six goods cards face up in a demand row. Goods cards come in six colors, and the more cards of a color on display, the more in demand that good is. Each player gets a hand of three goods cards and (on the table) two ship cards; in turn, each player places a goods cube of their choice on a ship, then they place a goods cube on their other ship.
+
+On a turn, you take two actions. The first action is one of these choices:
+
+Exchange a goods cube on one of your ships with a cube of a different color, if available. (Each good has only five cubes.)
+Buy a special card, which are explained below.
+Pass.
+The second action is one of these choices:
+
+Play goods cards of one color onto cards in the demand row, placing each card played onto a different spot in the demand row, covering the card already present; after you do this, each player with cubes of the color played receives 1 coin for each visible card of this color per cube on their ships. (For example, if red was played and you have two red cubes and three red cards show in the demand row, you gain 6 coins.)
+Draw two goods cards from the deck.
+The special cards you can buy aren't worth money on their own, but they can help you earn more coins:
+
+Ship (costs 10 coins): After buying the ship, place a goods cube from the reserve on it.
+
+Office (8 coins): After your second action, draw a goods card from the deck; if you have three offices, draw three cards.
+
+Docker (12 coins): If you exchange goods for your first action, you can exchange one extra goods cube per docker you have.
+
+Trade agreement (11 coins): If you earn coins in any player's second action, gain 2 extra coins per trade agreement you have.
+
+When the goods deck runs out, the game ends immediately. Whoever has the most coins wins.
 
 ## Components
 
@@ -29,8 +56,6 @@ Players act as a 16th century merchant family and try to maximise profits throug
 - 2 office cards
 - 2 docker cards
 - 2 trade agreement cards
-
-
 
 > Important rule: Each ship may only ever hold 1 cube.
 
@@ -133,7 +158,7 @@ At the end of phase 2, the player may draw a new goods card, regardless of which
 The player may exchange an extra goods cube in Phase 1, regardless of the action chosen.  This may be performed as soon as this card has been purchased.
 
 ## Trade agreement (cost: 11 coins)
-When a delivery occurs by the owner of this card, they receive 2 coins
+When scoring is triggered and the owner of the trade agreement receives gold, he may take 2 additional coins
 
 > Example: The owner of two "trade agreement" special cards will receive four additional gold coins each time he scores instead of two.
 
