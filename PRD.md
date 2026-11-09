@@ -27,8 +27,8 @@ Goals:
 
 - Game configuration, tunable `GameRules`, and setup (deck, hands, marketplace, ships, first player).
 - Coins, banking and transactions.
-- Goods cards, draw deck, player hands, warehouse, cube supply, ships (standard and large), marketplace.
-- Special cards: Ship, Large Ship, Office, Crane, Trade Agreement, Customs House, Warehouse.
+- Goods cards, draw deck, player hands, cube supply, ships (standard and large), marketplace.
+- Special cards: Ship, Large Ship, Office, Crane, Trade Agreement, Customs House.
 - Cube snake draft (pre-game).
 - Turn flow: Phase I (Planning), Phase II (Trading), automatic Office draws, end of turn.
 - Delivery scoring, end-game rule (`immediate` or `oneMoreTurn`), winners.
@@ -48,11 +48,10 @@ Goals:
 - **No user preferences or settings.**
 - **No bot intelligence.** Only the protocol and a trivial placeholder.
 - **No timers, animation hooks, or delays.**
-- **No additional special cards** beyond the seven in §4.2. Explicitly rejected: Customs-House-style catch-up cards, Shipyard, Guild Charter, Lookout.
+- **No additional special cards** beyond the six in §4.2. Explicitly rejected: Customs-House-style catch-up cards, Shipyard, Guild Charter, Lookout.
 - **No observer pattern** (delegates, `NotificationCenter`, Combine, KVO). The one exception is `GameStore.updates()` (FR20).
 - **No `Core`, `Utils`, `Services`, `Helpers`, `Managers`, `Components` folders or types.**
 - Do not invent rules. Where the rules are ambiguous, follow §4 and flag it as a new EC entry.
-- Do not implement the feature: Warehouse. Its not needed.
 
 ### Platform and toolchain
 
@@ -139,9 +138,8 @@ Merchants/
 │  │   ├─ DrawDeck.swift
 │  │   ├─ DeckBuilder.swift
 │  │   └─ DrawDeckError.swift
-│  ├─ Hand/                  // one player's private cards: hand 
+│  ├─ Hand/                  // one player's private cards
 │  │   ├─ Hand.swift
-│  │   ├─ Warehouse.swift
 │  │   ├─ HandLimit.swift
 │  │   └─ HandError.swift
 │  ├─ CubeSupply/
@@ -250,7 +248,7 @@ Precedence when sources disagree: **your explicit decisions > official rulebook 
 
 ### 4.2 Special cards (strict)
 
-All effects are automatic. There are no extra actions, except the Warehouse parameters on the existing Draw and Deliver actions.
+All effects are automatic. There are no extra actions beyond those described for each card.
 
 | Card | Cost | Stock | Max per player | Effect |
 |---|---|---|---|---|
@@ -260,7 +258,6 @@ All effects are automatic. There are no extra actions, except the Warehouse para
 | **Crane** (was Docker) | 12 | 2 | none | Tied to the **Exchange** action: when your Phase I action is Exchange, you may make **1 extra exchange per Crane** you own. When you **buy** a Crane, you immediately get **one free, optional** exchange. Each exchange swaps one cube on one ship. Each ship can be exchanged at most once per Planning phase, including the base exchange. A ship bought this turn is not eligible. It does nothing on Pass or on buying any other card. |
 | **Trade Agreement** | 11 | 2 | none | Whenever a delivery triggers scoring, **whoever delivered**, if you own at least one Trade Agreement and your own payout from that scoring is **more than 2 coins**, you also receive **2 coins per Trade Agreement** you own. It is paid once per scoring, never per cube. The bonus itself does not count toward the "more than 2" check. |
 | **Customs House** | 8 | `players` | **1** | Your hand limit rises by 2 (6 → 8). |
-| **Warehouse** | 6 *(provisional)* | `players` | **1** | Holds **1** face-down goods card outside your hand, not counted against the hand limit. See EC-31. |
 
 ### 4.3 EC register
 
@@ -286,23 +283,21 @@ Status: **Resolved**, or **OPEN** (needs your confirmation).
 | EC-16 | A delivery that pays nobody | Valid, produces no transactions. | Resolved |
 | EC-17 | Nobody has coins at the start | The first Buy is impossible until a delivery pays out. Early Planning is Exchange or Pass. | Resolved |
 | EC-18 | Restored state with a ship over capacity, a hand over its limit, etc. | Rejected by validation (FR24). | Resolved |
-| EC-19 | Termination | Every completed turn in normal play strictly lowers `Φ = 2 × deck + Σ(hand + warehouse sizes)`, which starts at ≤ 102, so a game ends within about 100 turns. The final round (EC-23) adds at most `players` turns. Tested invariant. | Resolved |
+| EC-19 | Termination | Every completed turn in normal play strictly lowers `Φ = 2 × deck + Σ(hand sizes)`, which starts at ≤ 102, so a game ends within about 100 turns. The final round (EC-23) adds at most `players` turns. Tested invariant. | Resolved |
 | EC-20 | Counting House | It is just **Customs House**, renamed. | Resolved |
 | EC-21 | Buying a Crane | Immediate free optional exchange (1). | Resolved |
 | EC-22 | Cranes and ship count | Each ship exchanges once per phase, so extras beyond `ships − 1` do nothing. With 2 ships a Crane gives +1 and a second Crane adds nothing until the player owns 3+ ships. No special code: it falls out of the once-per-ship rule. | Resolved |
 | EC-23 | `oneMoreTurn` | When the deck empties, play continues until the **last seat** (the player immediately before the First player) completes a turn, so everyone has the same number of turns. If the last seat empties the deck, the game ends after that turn. | Resolved |
 | EC-24 | Phase II when the deck is empty (`oneMoreTurn` final round) | Draw is not offered. Deliver is optional, so the player may **skip** Phase II (explicit `skipTrading` action, legal only when the deck is empty). Planning still works. | Resolved |
-| EC-25 | Draw 2 and hand room | Legal only if the deck is not empty and room (after any Warehouse store) ≥ `min(2, deckCount)`. It draws `min(2, deckCount)` cards, then Office extras. | Resolved |
-| EC-26 | Large Ship and Warehouse | Both are included. All other proposed cards are excluded. | Resolved |
+| EC-25 | Draw 2 and hand room | Legal only if the deck is not empty and room ≥ `min(2, deckCount)`. It draws `min(2, deckCount)` cards, then Office extras. | Resolved |
+| EC-26 | Large Ship | It is included. All other proposed cards are excluded. | Resolved |
 | EC-27 | Office extras without enough room or deck | Draw what is possible; extras never block Draw 2. | Resolved |
 | EC-28 | Scoring formula | Confirmed: `cubes × visible matching cards after the play`; all players are paid; the marketplace is always 6 cards; each delivered card goes on a different slot. Example: 1 red visible, play 2 reds over non-reds → 3 reds visible → 1 red cube earns 3. | Resolved |
 | EC-29 | Covered marketplace cards | Removed from play. The deck never refills. | Resolved |
 | EC-30 | Large Ship details | Capacity 2, cost 18, 1 per player, own stock. Can hold 1-2 cubes, the ship will indicate cargo space for 2 cubes. If 2 cubes are chosen, they must be available in the supply. | **Resolved** |
-| EC-31 | Warehouse details | Cost 12, 1 per player. It holds at most 1 face-down card. **Store:** as an optional first step of the **Draw** action, the player moves one hand card into an empty Warehouse (this frees room before the EC-25 check). **Deliver:** the stored card may be one of the delivered cards (same colour, own slot, counts toward the 1–6 limit). It is never discarded and scores nothing at game end. Overlaps with Customs House (+2); consider dropping if playtests show redundancy. | **Resolved** |
 | EC-32 | Exchange on a Large Ship | The player chooses which of its two cubes to swap (`cubeIndex`). The ship then counts as exchanged for the phase. | Resolved |
 | EC-33 | Customs House bought in Planning | Hand limit rises immediately, so that turn's Draw 2 uses it. | Resolved |
 | EC-34 | Buying special cards during the final round | Allowed (they score nothing; spending is the player's choice). | Resolved |
-| EC-35 | Delivering with a Warehouse card | Same rules as any delivered card (EC-31). | Resolved |
 | EC-36 | Tie | All tied players win; winners sorted by seat order. | Resolved |
 | EC-37 | Snake draft colours | The same colour twice is allowed (5 cubes per colour). | Resolved |
 
@@ -508,16 +503,15 @@ Each feature lists **Owner**, **Expectations**, **Errors**, **Tests**.
 - **Errors:** `DrawDeckError.empty`, `.invalidCount`.
 - **Tests:** composition 10 × 6; draw 0; draw exactly remaining; more than remaining returns the remainder; draw on empty throws.
 
-### FR7-hand-and-warehouse
+### FR7-hand
 
-- **Owner:** `Hand`. The only place cards enter or leave a player's hand or warehouse.
+- **Owner:** `Hand`. The only place cards enter or leave a player's hand.
 - `Hand` stores `[GoodsCard]`; `count`, `count(of:)`, `room(limit:)`.
 - `HandLimit.base = 6` comes from `GameRules`. The *effective* limit is `base + SpecialCardEffects.handLimitBonus` (Customs House +2) and is **passed in** by the engine, so `Hand` never knows about special cards.
 - `add(_:limit:)` rejects exceeding the limit; `remove(good:count:)` rejects removing cards not held.
-- `Warehouse` holds 0 or 1 card, outside the hand and outside the limit (EC-31): `store(_:)`, `take()`.
-- Hands and warehouse contents are private (see FR19).
-- **Errors:** `HandError.limitExceeded(limit:attempted:)`, `.insufficientCards(good:required:available:)`, `.warehouseOccupied`, `.warehouseEmpty`, `.warehouseNotOwned`.
-- **Tests (EC-1, EC-2, EC-31):** add up to exactly the limit, add one more; limit 6 vs 8; `room` at 0, 1, 6 cards; remove all of a colour; remove more than held; store into empty/occupied warehouse.
+- Hand contents are private (see FR19).
+- **Errors:** `HandError.limitExceeded(limit:attempted:)`, `.insufficientCards(good:required:available:)`.
+- **Tests (EC-1, EC-2):** add up to exactly the limit, add one more; limit 6 vs 8; `room` at 0, 1, 6 cards; remove all of a colour; remove more than held.
 
 ### FR8-cube-supply
 
@@ -550,13 +544,13 @@ Each feature lists **Owner**, **Expectations**, **Errors**, **Tests**.
 ### FR11-special-cards
 
 - **Owner:** `SpecialCards`
-- `SpecialCardKind`: `.ship`, `.largeShip`, `.office`, `.crane`, `.tradeAgreement`, `.customsHouse`, `.warehouse`.
+- `SpecialCardKind`: `.ship`, `.largeShip`, `.office`, `.crane`, `.tradeAgreement`, `.customsHouse`.
 - `SpecialCardCatalog` is **the only place** for price, stock and per-player cap (values in §4.2). `GameRules` carries a catalog so values are tunable.
 - `SpecialCardStock` tracks what remains to buy. `Tableau` holds per-player counts.
-- `SpecialCardEffects` (pure, derived from a `Tableau` and `GameRules`): `extraExchangesOnExchange` (= Cranes owned), `freeExchangeOnCraneBuy` (= 1), `officeExtraDraws` (= Offices owned), `tradeAgreementBonus` (= 2 × count, subject to the payout threshold), `handLimitBonus` (= 2 with a Customs House), `hasWarehouse`.
+- `SpecialCardEffects` (pure, derived from a `Tableau` and `GameRules`): `extraExchangesOnExchange` (= Cranes owned), `freeExchangeOnCraneBuy` (= 1), `officeExtraDraws` (= Offices owned), `tradeAgreementBonus` (= 2 × count, subject to the payout threshold), `handLimitBonus` (= 2 with a Customs House).
 - Special cards are worth nothing at game end.
 - **Errors:** `SpecialCardError.outOfStock(kind)`, `.ownershipLimitReached(kind)`.
-- **Tests:** price table; stock exhaustion per kind; Ship stock for 2/3/4 players; cumulative effects (2 Offices ⇒ 2 extras; 2 Trade Agreements ⇒ 4 bonus); second Customs House, Large Ship or Warehouse rejected.
+- **Tests:** price table; stock exhaustion per kind; Ship stock for 2/3/4 players; cumulative effects (2 Offices ⇒ 2 extras; 2 Trade Agreements ⇒ 4 bonus); second Customs House and Large Ship rejected.
 
 ### FR12-turn-flow
 
@@ -597,16 +591,15 @@ Each feature lists **Owner**, **Expectations**, **Errors**, **Tests**.
 
 - **Owner:** `GameEngine/TradingPhaseRules`
 - **Normal play:** exactly one of **Deliver** or **Draw 2**. Pass is impossible (EC-2).
-- **Draw 2** (`drawCards(storeInWarehouse:)`):
-  1. Optional first step: store one hand card in an empty Warehouse (EC-31).
-  2. Legal only if the deck is not empty and `room ≥ min(2, deckCount)` (EC-1, EC-25). If not legal, the player must Deliver.
-  3. Draw `min(2, deckCount)` cards.
-  4. Then Office extras: `min(Offices, roomLeft, deckLeft)` cards, automatic (EC-3, EC-27).
-  5. If the deck is now empty, `GameEnding` applies the end-game rule (EC-4, EC-5, EC-6).
-- **Deliver** (`deliverCards`): see FR10 for placement and FR16 for scoring. The Warehouse card may be included (EC-35). Delivery never draws cards, so Office does nothing.
+- **Draw 2** (`drawCards`):
+  1. Legal only if the deck is not empty and `room ≥ min(2, deckCount)` (EC-1, EC-25). If not legal, the player must Deliver.
+  2. Draw `min(2, deckCount)` cards.
+  3. Then Office extras: `min(Offices, roomLeft, deckLeft)` cards, automatic (EC-3, EC-27).
+  4. If the deck is now empty, `GameEnding` applies the end-game rule (EC-4, EC-5, EC-6).
+- **Deliver** (`deliverCards`): see FR10 for placement and FR16 for scoring. Delivery never draws cards, so Office does nothing.
 - **Final round** (`oneMoreTurn`, deck empty): Draw is not offered; the player may deliver or `skipTrading` (EC-24). `skipTrading` is rejected whenever the deck is not empty.
 - **Errors:** `HandError.*`, `MarketplaceError.*`, `DrawDeckError.empty`, `TurnFlowError.cannotDrawMustDeliver` / `.skipOnlyWhenDeckEmpty`.
-- **Tests:** Deliver 1 and 6 cards; Draw 2 at hand 4 (legal), 5 and 6 (illegal, limit 6), and at hand 6, 7 (legal at limit 8); Draw with 1 card left; Office extras capped by room and by deck; Warehouse store then Draw; Warehouse card delivered; skipTrading rejected while the deck has cards; skipTrading legal on an empty deck.
+- **Tests:** Deliver 1 and 6 cards; Draw 2 at hand 4 (legal), 5 and 6 (illegal, limit 6), and at hand 6, 7 (legal at limit 8); Draw with 1 card left; Office extras capped by room and by deck; skipTrading rejected while the deck has cards; skipTrading legal on an empty deck.
 
 ### FR16-delivery-scoring
 
@@ -633,8 +626,8 @@ Each feature lists **Owner**, **Expectations**, **Errors**, **Tests**.
 
 - **Owner:** `GameActions`
 - `GameAction` (`Codable`, `Equatable`, `Sendable`):
-  `draftCube(good, ship)`, `exchangeCube(ship, cubeIndex, good)`, `buySpecialCard(kind, loadCubes: [GoodType])`, `passPlanning`, `endPlanning`, `deliverCards([DeliveryPlacement])` (each placement: slot and source `.hand(good)` or `.warehouse`), `drawCards(storeInWarehouse: GoodType?)`, `skipTrading`.
-- `GameEvent` describes **what happened**: `cubeDrafted`, `cubeExchanged`, `specialCardBought`, `cardsDelivered`, `coinsEarned(player, amount, reason)`, `cardsDrawn(player, count)` (count only, **never** card identities for other players), `officeExtrasDrawn(player, count)`, `cardStoredInWarehouse(player)`, `tradingSkipped(player)`, `turnEnded`, `deckEmptied`, `finalRoundBegan(endsAfter)`, `gameEnded(winners)`.
+  `draftCube(good, ship)`, `exchangeCube(ship, cubeIndex, good)`, `buySpecialCard(kind, loadCubes: [GoodType])`, `passPlanning`, `endPlanning`, `deliverCards([DeliveryPlacement])` (each placement: slot and source `.hand(good)`), `drawCards`, `skipTrading`.
+- `GameEvent` describes **what happened**: `cubeDrafted`, `cubeExchanged`, `specialCardBought`, `cardsDelivered`, `coinsEarned(player, amount, reason)`, `cardsDrawn(player, count)` (count only, **never** card identities for other players), `officeExtrasDrawn(player, count)`, `tradingSkipped(player)`, `turnEnded`, `deckEmptied`, `finalRoundBegan(endsAfter)`, `gameEnded(winners)`.
 - Every successful action returns ≥ 1 event. No strings or localisation in events.
 - **Tests:** each action yields the expected events; `Codable` round-trip; Office extras appear as events without an action.
 
@@ -644,9 +637,9 @@ Each feature lists **Owner**, **Expectations**, **Errors**, **Tests**.
 - `GameEngine.apply(_ action: GameAction, by player: PlayerID, to state: GameState) throws(ActionRejection) -> (GameState, [GameEvent])` is a **pure function**.
 - Pipeline: validate turn/phase (`TurnFlow`) → run the phase rules → commit owner mutations on a copy → advance flow and end check (`GameEnding`) → return.
 - `GameState` composes the owners' values and `GameRules`; it contains **no rules logic**.
-- `PlayerView` is a read-only projection for one player: own hand and warehouse in full; others' hand **sizes** and whether their warehouse is occupied; deck count (not order); everything else public.
+- `PlayerView` is a read-only projection for one player: own hand in full; others' hand **sizes**; deck count (not order); everything else public.
 - `GameState.legalActions(for:)` is derived from the same rule functions the engine uses, never a second copy.
-- **Tests:** engine purity; `PlayerView` never leaks other hands, warehouse contents or deck order; every action in `legalActions` succeeds, and rejected actions are not in the list.
+- **Tests:** engine purity; `PlayerView` never leaks other hands or deck order; every action in `legalActions` succeeds, and rejected actions are not in the list.
 
 ### FR20-game-store
 
@@ -682,14 +675,14 @@ Each feature lists **Owner**, **Expectations**, **Errors**, **Tests**.
 - **Invariants after every action:**
   1. For each good: `supply + shipsLoaded == 5` (30 cubes total).
   2. Every ship holds at most its capacity (1 standard, 2 large) and is full after setup.
-  3. Cards conserved: `deck + hands + warehouses + marketplace(all stacks) == 60`.
-  4. No hand exceeds its effective limit (6, or 8 with a Customs House); no warehouse holds more than 1 card.
+  3. Cards conserved: `deck + hands + marketplace(all stacks) == 60`.
+  4. No hand exceeds its effective limit (6, or 8 with a Customs House).
   5. No negative balances.
   6. Total coins change only by delivery payouts, Trade Agreement bonuses and special-card purchases.
   7. Special-card stock + owned == initial stock; no player exceeds a per-player cap.
   8. The marketplace shows exactly 6 cards.
   9. Exactly one active player until `.finished`; the First player is unchanged.
-  10. In normal play `Φ = 2 × deck + Σ(hand + warehouse)` strictly decreases each completed turn.
+  10. In normal play `Φ = 2 × deck + Σ(hand sizes)` strictly decreases each completed turn.
   11. Within one Planning phase no ship is exchanged twice and no newly bought ship is exchanged.
   12. Under `oneMoreTurn`, all players have taken the same number of turns when the game ends.
 
@@ -756,7 +749,6 @@ Each feature lists **Owner**, **Expectations**, **Errors**, **Tests**.
 > |---|---|---|---|
 > | **Customs House** | 8 | 1 per player | +2 hand limit. |
 > | **Large Ship** | 18 | 1 per player | Carries **2** cubes of any colours, loaded when you buy it. |
-> | **Warehouse** | 6 | 1 per player | Holds 1 card outside your hand; you may include it when you deliver. |
 >
 > ### Unchanged
 >

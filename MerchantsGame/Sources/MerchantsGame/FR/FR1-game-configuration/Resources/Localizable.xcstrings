@@ -1,0 +1,39 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "gameSetup.duplicatePlayerID" : {
+      "comment" : "The game configuration contains the same player identifier more than once.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Player identifiers must be unique."
+          }
+        }
+      }
+    },
+    "gameSetup.invalidPlayerCount" : {
+      "comment" : "The game configuration has a player count outside the supported range.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A game must have between 2 and 4 players."
+          }
+        }
+      }
+    },
+    "gameSetup.unknownFirstPlayer" : {
+      "comment" : "The configured first player is not included in the game's player identifiers.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The selected first player is not in this game."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
