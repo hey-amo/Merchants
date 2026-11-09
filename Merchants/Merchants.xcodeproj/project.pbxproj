@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		4D05EAD030A1CD0F00ECB5A2 /* MerchantsGame in Frameworks */ = {isa = PBXBuildFile; productRef = 4D05EACF30A1CD0F00ECB5A2 /* MerchantsGame */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		4D9CD9EF2FF296FD00B796FD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -39,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D05EAD030A1CD0F00ECB5A2 /* MerchantsGame in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +95,7 @@
 			);
 			name = Merchants;
 			packageProductDependencies = (
+				4D05EACF30A1CD0F00ECB5A2 /* MerchantsGame */,
 			);
 			productName = Merchants;
 			productReference = 4D9CD9DB2FF296FC00B796FD /* Merchants.app */;
@@ -146,6 +152,9 @@
 			);
 			mainGroup = 4D9CD9D22FF296FC00B796FD;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4D05EACE30A1CD0F00ECB5A2 /* XCLocalSwiftPackageReference "../MerchantsGame" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4D9CD9DC2FF296FC00B796FD /* Products */;
 			projectDirPath = "";
@@ -473,6 +482,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		4D05EACE30A1CD0F00ECB5A2 /* XCLocalSwiftPackageReference "../MerchantsGame" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../MerchantsGame;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4D05EACF30A1CD0F00ECB5A2 /* MerchantsGame */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MerchantsGame;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4D9CD9D32FF296FC00B796FD /* Project object */;
 }
