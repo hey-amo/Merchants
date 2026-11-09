@@ -5,5 +5,6 @@
 public enum CoinError: Error, Equatable, Sendable {
     case isNegativeNumber
     case insufficientFunds(required: Int, available: Int)
+    case limitExceeded(limit: Int, attempted: Int)
     case overflow
 }
