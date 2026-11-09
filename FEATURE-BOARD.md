@@ -19,15 +19,16 @@ Move cards between sections as their status changes. Record the branch and
 remaining work for partially completed cards; do not mark a feature done solely
 because a component or placeholder exists.
 
-## Ready to merge
-
-- **[FR12 - Turn flow](PRD.md#fr12-turn-flow)** and
-  **[FR13 - Cube snake draft](PRD.md#fr13-cube-snake-draft)**
-  Implemented together on `Feature/FR12-TurnOrder`; awaiting integration into
-  `working-branch`. Engine-level action execution belongs to FR14, FR15 and FR19.
-
 ## In progress
 
+- **[FR14 - Planning phase](PRD.md#fr14-planning-phase)**
+  Core rules are on the local `feature/FR14-Planning-phase` branch. Engine
+  integration, final-round verification and unified errors remain outstanding.
+- **[FR15 - Trading phase](PRD.md#fr15-trading-phase)**
+  Standalone delivery, draw, Office and skip rules are on
+  `feature/FR15-trading-phase`. FR16 must score deliveries; FR17 must handle
+  deck-emptying and validate final-round status; FR19 must integrate these
+  rules, and FR22 must wrap errors. Game-level acceptance remains outstanding.
 - **[FR2 - Deterministic randomness](PRD.md#fr2-deterministic-randomness)**  
   `working-on-package` at `3a69ddd` has a seeded generator, Fisher-Yates
   shuffle and first-player selection; six targeted tests passed on 2026-11-09.
@@ -38,8 +39,6 @@ because a component or placeholder exists.
 
 ## Planned
 
-- [FR14 - Planning phase](PRD.md#fr14-planning-phase)
-- [FR15 - Trading phase](PRD.md#fr15-trading-phase)
 - [FR16 - Delivery scoring](PRD.md#fr16-delivery-scoring)
 - [FR17 - End game and winners](PRD.md#fr17-end-game-and-winners)
 - [FR18 - Game actions and events](PRD.md#fr18-game-actions-and-events)
@@ -86,8 +85,15 @@ because a component or placeholder exists.
   Merged into `working-branch` in PR #20.
 - **[FR11 - Special cards](PRD.md#fr11-special-cards)**
   Merged into `working-branch` in PR #22. The turn engine will apply the effects.
+- **[FR12 - Turn flow](PRD.md#fr12-turn-flow)** and
+  **[FR13 - Cube snake draft](PRD.md#fr13-cube-snake-draft)**
+  Merged into `working-branch` in PR #24. Engine-level action execution remains
+  part of the phase and engine requirements.
 
 ## Verification
+
+The full `MerchantsGame` package regression suite passed on
+`feature/FR15-trading-phase`: 99 XCTest tests and 12 Swift Testing tests.
 
 The full `MerchantsGame` package regression suite passed on
 `Feature/FR12-TurnOrder`: 99 tests, including 12 turn-flow and draft tests.
