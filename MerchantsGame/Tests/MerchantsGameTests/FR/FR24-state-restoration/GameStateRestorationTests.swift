@@ -231,6 +231,55 @@ struct GameStateRestorationTests {
         expectDecodeError(try encodedData(object), .invalidTurnState)
     }
 
+    @Test func rejectsExchangeProgressWithoutMatchingCranes() throws {
+        var state = try started()
+        let unpurchasedStock = state.stock
+        let unpurchasedTableau = state.tableaux[0]
+        try state.stock.purchase(.crane, for: &state.tableaux[0])
+        (state, _) = try GameEngine.apply(
+            .exchangeCube(ship: 0, cubeIndex: 0, good: .silk), by: players[0], to: state
+        )
+        #expect(try JSONDecoder().decode(GameState.self, from: JSONEncoder().encode(state)) == state)
+        state.stock = unpurchasedStock
+        state.tableaux[0] = unpurchasedTableau
+        expectDecodeError(try JSONEncoder().encode(state), .invalidTurnState)
+    }
+
+    @Test func rejectsCranePurchaseProgressWithoutOwnedCrane() throws {
+        var state = try started()
+        state.bank = try Bank(restoring: [players[0]: 12, players[1]: 0])
+        let unpurchasedStock = state.stock
+        let unpurchasedTableau = state.tableaux[0]
+        (state, _) = try GameEngine.apply(.buySpecialCard(kind: .crane, loadCubes: []), by: players[0], to: state)
+        #expect(try JSONDecoder().decode(GameState.self, from: JSONEncoder().encode(state)) == state)
+        state.stock = unpurchasedStock
+        state.tableaux[0] = unpurchasedTableau
+        expectDecodeError(try JSONEncoder().encode(state), .invalidTurnState)
+    }
+
+    @Test func rejectsMissingNullAndWrongTypedRequiredStateFields() throws {
+        let original = try encodedObject(started())
+        let required = ["configuration", "random", "deck", "hands", "marketplace",
+                        "bank", "stock", "tableaux", "draft", "ending", "fleets", "supply"]
+        for key in required {
+            var missing = original
+            missing.removeValue(forKey: key)
+            #expect(throws: DecodingError.self, "Missing \(key)") {
+                try JSONDecoder().decode(GameState.self, from: encodedData(missing))
+            }
+            var null = original
+            null[key] = NSNull()
+            #expect(throws: DecodingError.self, "Null \(key)") {
+                try JSONDecoder().decode(GameState.self, from: encodedData(null))
+            }
+            var wrongType = original
+            wrongType[key] = "not a valid value"
+            #expect(throws: DecodingError.self, "Wrong type for \(key)") {
+                try JSONDecoder().decode(GameState.self, from: encodedData(wrongType))
+            }
+        }
+    }
+
     private func encodedObject(_ state: GameState) throws -> [String: Any] {
         try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(state)) as? [String: Any])
     }

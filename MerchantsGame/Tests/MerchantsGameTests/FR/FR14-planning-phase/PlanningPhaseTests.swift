@@ -42,7 +42,7 @@ final class PlanningPhaseTests: XCTestCase {
         }
     }
 
-    func testPassAndNonCranePurchaseEndPlanning() throws {
+    func testEC11PassAndNonCranePurchaseEndPlanning() throws {
         let initial = try state(cranes: 1)
         for action in [PlanningAction.pass, .buy(.office, loadCubes: [])] {
             let result = try PlanningPhaseRules.apply(action, by: players[0], to: initial)
@@ -53,7 +53,7 @@ final class PlanningPhaseTests: XCTestCase {
         }
     }
 
-    func testExchangeCranesAndAutomaticEndWhenNoShipsRemain() throws {
+    func testEC9EC22ExchangeCranesAndAutomaticEndWhenNoShipsRemain() throws {
         let initial = try state(cranes: 2)
         let one = try PlanningPhaseRules.apply(.exchange(ship: 0, cubeIndex: 0, good: .silk), by: players[0], to: initial)
         XCTAssertEqual(one.supply.available(of: .tea), initial.supply.available(of: .tea) + 1)
@@ -73,7 +73,7 @@ final class PlanningPhaseTests: XCTestCase {
         XCTAssertEqual(two.fleets[0].ships.map { $0.cubes[0].good }, [.silk, .spices])
     }
 
-    func testCranePurchaseGrantsOnlyOneOptionalExchange() throws {
+    func testEC10EC21CranePurchaseGrantsOnlyOneOptionalExchange() throws {
         let initial = try state(cranes: 1)
         let bought = try PlanningPhaseRules.apply(.buy(.crane, loadCubes: []), by: players[0], to: initial)
         let ended = try PlanningPhaseRules.apply(.endPlanning, by: players[0], to: bought)
@@ -100,7 +100,7 @@ final class PlanningPhaseTests: XCTestCase {
         XCTAssertEqual(original.fleets[0].ships[0].cubes[0].good, .tea)
     }
 
-    func testShipPurchasesRejectUnavailableCubesAndWrongLoadCount() throws {
+    func testEC12ShipPurchasesRejectUnavailableCubesAndWrongLoadCount() throws {
         var initial = try state()
         for _ in 0..<4 { _ = try initial.supply.take(.tea) }
         XCTAssertThrowsError(try PlanningPhaseRules.apply(.buy(.ship, loadCubes: [.tea]), by: players[0], to: initial)) {
@@ -162,7 +162,7 @@ final class PlanningPhaseTests: XCTestCase {
         XCTAssertEqual(initial, snapshot)
     }
 
-    func testLargeShipExchangeChoosesCubeSlotAndConservesSupply() throws {
+    func testEC32LargeShipExchangeChoosesCubeSlotAndConservesSupply() throws {
         var initial = try state(cranes: 1)
         initial.fleets[0].addShip(kind: .large)
         try initial.fleets[0].load(initial.supply.take(.indigo), onto: 2)

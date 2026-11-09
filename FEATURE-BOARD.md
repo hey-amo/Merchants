@@ -32,13 +32,18 @@ because a component or placeholder exists.
   PR #26 added seeded random games, per-action
   invariants, deterministic replay, and passive and delivery-first strategy
   tests for 2–4 players under both end-game rules. `feature/coregp-acceptance`
-  also tests restoration during replay. Exhaustive rule-by-rule
+  exercises 60 seeded random games, comparing every replayed state and event,
+  checks per-player coin changes, and restores and continues at every phase
+  for all player counts and ending rules. Additional EC-labelled boundary
+  tests cover draw, delivery, planning and endings. Exhaustive rule-by-rule
   rejection, boundary, and EC-ID coverage remains.
 - **[FR24 - State restoration](PRD.md#fr24-state-restoration)**
   PR #26 added validating `GameState` decoding, cross-owner invariants,
   corruption tests, and deterministic continuation. `feature/coregp-acceptance`
-  adds per-good card conservation, draft-state validation and overflow-safe
-  stock checks. A broader malformed-state audit remains.
+  adds per-good card conservation, draft-state validation, overflow-safe
+  stock checks and Crane ownership validation for active planning progress.
+  Required top-level fields are tested for missing, null and wrong-type data.
+  A broader malformed-state audit remains.
 - **[FR21 - Bot placeholders](PRD.md#fr21-bot-placeholders)**
   PR #26 included a generic passive bot. `feature/coregp-acceptance` adds the
   concrete `GamePassiveBot` alias; the approved empty-list result remains `nil`.
@@ -129,10 +134,9 @@ No unstarted PRD section 7 requirements are currently tracked here.
 string-catalog resource; the source-language text is used as a fallback and
 translations require the resource-processing issue to be addressed.
 
-The full `MerchantsGame` suite passed after combining the acceptance and
-closeout branches and completing FR14–FR18 acceptance: 122 XCTest tests and
-91 Swift Testing tests, including engine-level coverage, complete session
-lifecycles and intermediate restoration in seeded replay.
+The full `MerchantsGame` suite passed after the FR23 replay and restoration
+coverage changes: 122 XCTest tests and 97 Swift Testing tests, including
+engine-level coverage, complete session lifecycles and seeded replay.
 
 FR2 generator, actual game setup, restoration and seeded replay tests passed
 on `feature/FR20-FR23-FR24-FR25-bundle`: six XCTest tests and six Swift
@@ -171,7 +175,8 @@ and six Hand tests.
    applicable. Test unreachable internal errors directly at their owner and
    record why they cannot arise through valid play. Use EC IDs in test names.
    FR18 now covers each action family and representative boundary failures;
-   this broader owner-error audit remains open.
+   this broader owner-error audit remains open; EC-labelled tests now also
+   cover additional planning, trading, scoring and ending boundaries.
 2. **Malformed state (FR24/FR23):** inventory all owner decoders and
    cross-owner invariants, then mutate valid encoded fixtures one field at a
    time. Cover missing, null, wrong-type, negative, oversized and inconsistent
@@ -180,7 +185,10 @@ and six Hand tests.
    and that no invalid state is returned or arithmetic traps. Round-trip valid
    setup, draft, planning, trading, final-round and finished states; replay
    identical legal actions after restoration across seeds, player counts and
-   ending rules. Run targeted suites, then the full package suite.
+   ending rules. Continuation at every phase is covered for all player counts
+   and both ending rules with one seed, and periodic restoration is checked
+   across the seeded random games. The remaining decoder inventory and
+   corruption matrix are still open.
 3. Base the audits on the integrated closeout changes, which already add error
    mappings, malformed-state checks and intermediate replay tests, to avoid
    duplicating or overwriting them.

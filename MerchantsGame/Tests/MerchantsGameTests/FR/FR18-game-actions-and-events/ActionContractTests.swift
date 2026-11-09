@@ -170,6 +170,19 @@ struct ActionContractTests {
         #expect(try JSONDecoder().decode(GameAction.self, from: JSONEncoder().encode(action)) == action)
     }
 
+    @Test func EC16DeliveryWithoutMatchingCubesPaysNobody() throws {
+        let planning = try started()
+        let (trading, _) = try GameEngine.apply(.passPlanning, by: players[0], to: planning)
+        let good = try #require(trading.hands[0].contents.first {
+            card in trading.fleets.allSatisfy { $0.cubeCount(of: card.good) == 0 }
+        }?.good)
+        let placements = [DeliveryPlacement(slot: 0, source: .hand(good))]
+        let (delivered, events) = try GameEngine.apply(.deliverCards(placements), by: players[0], to: trading)
+        #expect(delivered.bank == trading.bank)
+        #expect(events == [.cardsDelivered(player: players[0], placements: placements),
+                           .turnEnded(player: players[0])])
+    }
+
     @Test func drawEventsRevealOnlyPlayerAndCardCount() throws {
         for event in [GameEvent.cardsDrawn(player: players[0], count: 2),
                       .officeExtrasDrawn(player: players[0], count: 1)] {

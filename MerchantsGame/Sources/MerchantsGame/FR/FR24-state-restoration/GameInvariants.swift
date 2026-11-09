@@ -155,6 +155,15 @@ public enum GameInvariants {
                   progress.shipsAddedThisTurn.allSatisfy(ships.indices.contains) else {
                 throw .invalidTurnState
             }
+            let cranes = state.tableaux[turn.currentSeat].count(of: .crane)
+            switch progress.baseAction {
+            case .exchange:
+                guard progress.extrasAllowed == cranes else { throw .invalidTurnState }
+            case .buy(.crane):
+                guard cranes > 0 else { throw .invalidTurnState }
+            default:
+                break
+            }
         }
 
     }

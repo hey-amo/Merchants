@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Seeded games and replay")
 struct GameReplayTests {
-    private struct Step: Equatable {
+    private struct Step: Codable, Equatable {
         let player: PlayerID
         let action: GameAction
     }
@@ -61,6 +61,7 @@ struct GameReplayTests {
         var random = SeededRandomSource(seed: seed &+ 17)
         var steps: [Step] = []
         var allEvents: [[GameEvent]] = []
+        var allStates: [GameState] = []
         var turnCounts = Array(repeating: 0, count: count)
         var turnPotential = 2 * state.deck.remaining + state.hands.reduce(0) { $0 + $1.count }
         let first = state.draft.order.first
@@ -101,20 +102,30 @@ struct GameReplayTests {
                 #expect(restoredNext == next)
                 #expect(restoredEvents == events)
             }
-            let beforeCoins = before.bank.standings.values.reduce(0) { $0 + $1.available }
-            let afterCoins = next.bank.standings.values.reduce(0) { $0 + $1.available }
-            let credited = events.reduce(0) { total, event in
-                if case .coinsEarned(_, let amount, _) = event { return total + amount }
-                return total
+            for owner in players {
+                let credited = events.reduce(0) { total, event in
+                    guard case .coinsEarned(let recipient, let amount, let reason) = event,
+                          recipient == owner else { return total }
+                    switch reason {
+                    case .deliveryPayout, .tradeAgreementBonus: return total + amount
+                    case .specialCardPurchase:
+                        Issue.record("A purchase cannot be a coin-earning event")
+                        return total
+                    }
+                }
+                let spent: Int
+                if owner == player, case .buySpecialCard(let kind, _) = action {
+                    spent = before.configuration.rules.specialCardCatalog.entry(for: kind).price
+                } else {
+                    spent = 0
+                }
+                let oldBalance = try before.bank.balance(of: owner).available
+                let newBalance = try next.bank.balance(of: owner).available
+                #expect(newBalance - oldBalance == credited - spent)
             }
-            let spent: Int
-            if case .buySpecialCard(let kind, _) = action {
-                spent = before.configuration.rules.specialCardCatalog.entry(for: kind).price
-            } else {
-                spent = 0
-            }
-            #expect(afterCoins - beforeCoins == credited - spent)
-            if events.contains(.turnEnded(player: player)) {
+            let completedTurn = events.contains(.turnEnded(player: player)) ||
+                (next.ending.status == .finished && before.ending.status == .ongoing)
+            if completedTurn {
                 turnCounts[seat] += 1
                 let potential = 2 * next.deck.remaining + next.hands.reduce(0) { $0 + $1.count }
                 if before.ending.status == .ongoing { #expect(potential < turnPotential) }
@@ -123,20 +134,26 @@ struct GameReplayTests {
             #expect(next.draft.order.first == first)
             steps.append(Step(player: player, action: action))
             allEvents.append(events)
+            allStates.append(next)
             state = next
+            try verifyState(state)
             actionCount += 1
         }
         #expect(state.ending.status == .finished)
         #expect(actionCount < 1_000)
-        #expect(turnCounts.reduce(0, +) < 110)
+        #expect(turnCounts.reduce(0, +) <= 110)
         if rule == .oneMoreTurn { #expect(Set(turnCounts).count == 1) }
         try verifyState(state)
 
+        let encodedSteps = try JSONEncoder().encode(steps)
+        let replaySteps = try JSONDecoder().decode([Step].self, from: encodedSteps)
+        let replayEvents = try JSONDecoder().decode([[GameEvent]].self, from: JSONEncoder().encode(allEvents))
+        #expect(replaySteps == steps)
         var replay = try GameState(configuration: configuration)
-        for (index, step) in steps.enumerated() {
+        for (index, step) in replaySteps.enumerated() {
             let (next, events) = try GameEngine.apply(step.action, by: step.player, to: replay)
-            #expect(events == allEvents[index])
-            #expect(next.random == state.random)
+            #expect(events == replayEvents[index])
+            #expect(next == allStates[index])
             replay = next
         }
         #expect(replay == state)
@@ -145,7 +162,7 @@ struct GameReplayTests {
     @Test func seededGamesAndReplayAcrossPlayerCountsAndRules() throws {
         for count in 2...4 {
             for rule in [EndGameRule.immediate, .oneMoreTurn] {
-                for seed in UInt64(0)..<4 {
+                for seed in UInt64(0)..<10 {
                     try run(count: count, rule: rule, seed: seed, strategy: .random)
                 }
             }
@@ -158,6 +175,86 @@ struct GameReplayTests {
                 try run(count: count, rule: rule, seed: 11, strategy: .passive)
                 try run(count: count, rule: rule, seed: 12, strategy: .deliver)
             }
+        }
+    }
+
+    @Test(arguments: 2...4, [EndGameRule.immediate, .oneMoreTurn])
+    func EC18RestoredGameContinuesAtEveryPhase(count: Int, rule: EndGameRule) throws {
+        let players = (0..<count).map { PlayerID("p\($0)") }
+        let rules = try GameRules(specialCardCatalog: .standard, endGameRule: rule)
+        let configuration = try GameConfiguration(
+            playerIDs: players, seed: 56, firstPlayer: .fixed(players[1]), rules: rules
+        )
+        var state = try GameState(configuration: configuration)
+        var sawDraft = false
+        var sawPlanning = false
+        var sawTrading = false
+        var sawFinalRound = false
+        var actions = 0
+        while state.ending.status != .finished && actions < 500 {
+            if state.turn == nil { sawDraft = true }
+            if case .active(.planning) = state.turn?.status { sawPlanning = true }
+            if state.turn?.status == .active(.trading) { sawTrading = true }
+            if case .finalRound = state.ending.status { sawFinalRound = true }
+            let restored = try JSONDecoder().decode(GameState.self, from: JSONEncoder().encode(state))
+            #expect(restored == state)
+            let seat = try state.turn?.currentSeat ?? state.draft.nextSeat()
+            let player = players[seat]
+            let legal = try state.legalActions(for: player)
+            let action: GameAction
+            if state.turn == nil {
+                action = try #require(legal.first)
+            } else if legal.contains(.passPlanning) {
+                action = .passPlanning
+            } else if rule == .oneMoreTurn, state.ending.status == .ongoing,
+                      seat == state.draft.order.last, state.deck.remaining <= 2 {
+                action = try #require(legal.first { if case .deliverCards = $0 { return true }; return false })
+            } else if legal.contains(.drawCards) {
+                action = .drawCards
+            } else if legal.contains(.skipTrading) {
+                action = .skipTrading
+            } else {
+                action = try #require(legal.first { if case .deliverCards = $0 { return true }; return false })
+            }
+            let (next, events) = try GameEngine.apply(action, by: player, to: state)
+            let (restoredNext, restoredEvents) = try GameEngine.apply(action, by: player, to: restored)
+            #expect(restoredNext == next)
+            #expect(restoredEvents == events)
+            state = next
+            actions += 1
+        }
+        #expect(state.ending.status == .finished)
+        #expect(actions < 500)
+        #expect(sawDraft && sawPlanning && sawTrading)
+        if rule == .oneMoreTurn { #expect(sawFinalRound) }
+        #expect(try JSONDecoder().decode(GameState.self, from: JSONEncoder().encode(state)) == state)
+    }
+
+    @Test func EC7EC17EC37InitialDealAndSameColourDraft() throws {
+        for count in 2...4 {
+            let players = (0..<count).map { PlayerID("p\($0)") }
+            let configuration = try GameConfiguration(playerIDs: players, seed: 7, firstPlayer: .fixed(players[0]))
+            var state = try GameState(configuration: configuration)
+            #expect(state.deck.remaining == 60 - count * 3 - 6)
+            #expect(state.hands.allSatisfy { $0.count == 3 })
+            #expect(state.bank.standings.values.allSatisfy { $0.available == 0 })
+            while state.turn == nil {
+                let seat = try state.draft.nextSeat()
+                let ship = try #require(state.fleets[seat].ships.firstIndex { $0.cubes.isEmpty })
+                let good: GoodType = seat == 0 ? .tea : .sugar
+                let availableGood: GoodType = state.supply.available(of: good) > 0 ? good : .silk
+                (state, _) = try GameEngine.apply(
+                    .draftCube(good: availableGood, ship: ship), by: players[seat], to: state
+                )
+                try verifyState(state)
+            }
+            #expect(state.fleets[0].ships.map { $0.cubes[0].good } == [.tea, .tea])
+            let purchase = GameAction.buySpecialCard(kind: .office, loadCubes: [])
+            #expect(throws: ActionRejection(
+                error: .banking(.coin(player: .insufficientFunds(required: 8, available: 0))),
+                action: purchase, player: players[0]
+            )) { try GameEngine.apply(purchase, by: players[0], to: state) }
+            #expect(!(try state.legalActions(for: players[0])).contains(purchase))
         }
     }
 }
