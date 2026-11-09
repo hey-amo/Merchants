@@ -19,15 +19,19 @@ Move cards between sections as their status changes. Record the branch and
 remaining work for partially completed cards; do not mark a feature done solely
 because a component or placeholder exists.
 
-## Ready to merge
-
-- **[FR12 - Turn flow](PRD.md#fr12-turn-flow)** and
-  **[FR13 - Cube snake draft](PRD.md#fr13-cube-snake-draft)**
-  Implemented together on `Feature/FR12-TurnOrder`; awaiting integration into
-  `working-branch`. Engine-level action execution belongs to FR14, FR15 and FR19.
-
 ## In progress
 
+- **[FR14 - Planning phase](PRD.md#fr14-planning-phase)**
+  Core rules are on the local `feature/FR14-Planning-phase` branch; game-engine
+  integration, final-round verification, and unified error wrapping remain.
+- **[FR15 - Trading phase](PRD.md#fr15-trading-phase)**
+  Core rules are on the local `feature/FR15-trading-phase` branch; scoring,
+  end-game and engine integration remain.
+- **[FR17 - End game and winners](PRD.md#fr17-end-game-and-winners)**
+  End-game rules and standings are implemented and tested on
+  `feature/F17-end-game`. FR15 and FR19 must invoke the deck-empty trigger,
+  complete final turns, reject actions after game over, and expose standings.
+  Until then game-level acceptance remains outstanding.
 - **[FR2 - Deterministic randomness](PRD.md#fr2-deterministic-randomness)**  
   `working-on-package` at `3a69ddd` has a seeded generator, Fisher-Yates
   shuffle and first-player selection; six targeted tests passed on 2026-11-09.
@@ -38,10 +42,7 @@ because a component or placeholder exists.
 
 ## Planned
 
-- [FR14 - Planning phase](PRD.md#fr14-planning-phase)
-- [FR15 - Trading phase](PRD.md#fr15-trading-phase)
 - [FR16 - Delivery scoring](PRD.md#fr16-delivery-scoring)
-- [FR17 - End game and winners](PRD.md#fr17-end-game-and-winners)
 - [FR18 - Game actions and events](PRD.md#fr18-game-actions-and-events)
 - [FR19 - Game engine and player view](PRD.md#fr19-game-engine-and-player-view)
 - [FR20 - Game store](PRD.md#fr20-game-store)
@@ -86,8 +87,16 @@ because a component or placeholder exists.
   Merged into `working-branch` in PR #20.
 - **[FR11 - Special cards](PRD.md#fr11-special-cards)**
   Merged into `working-branch` in PR #22. The turn engine will apply the effects.
+- **[FR12 - Turn flow](PRD.md#fr12-turn-flow)** and
+  **[FR13 - Cube snake draft](PRD.md#fr13-cube-snake-draft)**
+  Merged into `working-branch` in PR #24. Phase and engine action execution
+  remains part of FR14, FR15 and FR19.
 
 ## Verification
+
+The full `MerchantsGame` package regression suite passed on
+`feature/F17-end-game`: 99 XCTest tests and six Swift Testing tests, including
+parameterized end-game, seat-order, standings and restoration cases.
 
 The full `MerchantsGame` package regression suite passed on
 `Feature/FR12-TurnOrder`: 99 tests, including 12 turn-flow and draft tests.
