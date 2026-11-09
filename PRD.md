@@ -653,10 +653,11 @@ Each feature lists **Owner**, **Expectations**, **Errors**, **Tests**.
 ### FR21-bot-placeholders
 
 - **Owner:** `BotPlaceholders`
-- `protocol BotStrategy: Sendable { func chooseAction(for view: PlayerView, legalActions: [GameAction]) -> GameAction }`
+- `BotStrategy` accepts a read-only observation and the current legal actions; strategies never receive or mutate `GameState`.
 - `PassiveBot`: deterministic dummy that picks the first legal action.
-- **No** heuristics, search, learning or difficulty levels this phase.
-- **Tests:** `PassiveBot` always returns a member of `legalActions`.
+- `AIStrategist`: deterministic conservative/aggressive heuristics for cube exchanges, special-card purchases, deliveries, and drawing.
+- Decisions include a phase-labelled explanation; the default logger writes it to the console.
+- **Tests:** mock-only observations; selected actions are legal; delivery scoring accounts for resulting market demand, all players, and Trade Agreement bonuses.
 
 ### FR22-error-layering
 
