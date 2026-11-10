@@ -11,6 +11,8 @@ import SwiftUI
 // scrollable list of PlayerHUDView
 // clickable, reports to log clicked player: X
 // Fits narrow screens
+// the clicking of players can be disabled for interactions
+
 struct PlayerHUDListView: View {
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)

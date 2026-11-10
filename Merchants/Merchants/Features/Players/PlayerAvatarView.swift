@@ -27,11 +27,6 @@ struct PlayerAvatarView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .saturation(isActive ? 1 : 0.4)
             .opacity(isActive ? 1 : 0.7)
-/*            .overlay {
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(isActive ? Color.cyan : Color.gray.opacity(0.6),
-                                  lineWidth: isActive ? 4 : 2)
-            }*/
             .shadow(color: isActive ? Color.cyan.opacity(0.8) : .clear, radius: 8)
             .scaleEffect(isActive ? 1.05 : 1)
             .animation(.easeInOut(duration: 0.2), value: state)

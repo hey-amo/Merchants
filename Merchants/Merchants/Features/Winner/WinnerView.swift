@@ -9,8 +9,8 @@ import SwiftUI
 import MerchantsGame
 
 struct WinnerView: View {
-    let winners: [WinnerPlayerModel]
-    let runnersUp: [WinnerPlayerModel]
+    let winners: [PlayerViewModel]
+    let runnersUp: [PlayerViewModel]
 
     var body: some View {
         ScrollView {
@@ -110,6 +110,14 @@ struct WinnerView: View {
                 .padding(16)
                 .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
             }
+            VStack(spacing:20) {
+                // center this button
+                // it should be sticky at the bottom of the view
+                Button("Play again", action: {
+                    print("Play again pressed")
+                })
+            }
+
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -117,20 +125,20 @@ struct WinnerView: View {
 
 #Preview("Human winner") {
     WinnerView(
-        winners: [WinnerPlayerModel(name: "You", coins: 120, isHuman: true, avatarIndex: 0)],
+        winners: [PlayerViewModel(name: "You", coins: 120, isHuman: true, avatarIndex: 0)],
         runnersUp: [
-            WinnerPlayerModel(name: BotNames.name(forBot: 1), coins: 95, avatarIndex: 1),
-            WinnerPlayerModel(name: BotNames.name(forBot: 2), coins: 75, avatarIndex: 2)
+            PlayerViewModel(name: BotNames.name(forBot: 1), coins: 95, avatarIndex: 1),
+            PlayerViewModel(name: BotNames.name(forBot: 2), coins: 75, avatarIndex: 2)
         ]
     )
 }
 
 #Preview("Bot winner") {
     WinnerView(
-        winners: [WinnerPlayerModel(name: BotNames.name(forBot: 2), coins: 120, avatarIndex: 2)],
+        winners: [PlayerViewModel(name: BotNames.name(forBot: 2), coins: 120, avatarIndex: 2)],
         runnersUp: [
-            WinnerPlayerModel(name: "You", coins: 95, isHuman: true, avatarIndex: 0),
-            WinnerPlayerModel(name: BotNames.name(forBot: 1), coins: 75, avatarIndex: 1)
+            PlayerViewModel(name: "You", coins: 95, isHuman: true, avatarIndex: 0),
+            PlayerViewModel(name: BotNames.name(forBot: 1), coins: 75, avatarIndex: 1)
         ]
     )
 }
@@ -138,9 +146,9 @@ struct WinnerView: View {
 #Preview("Tied winners") {
     WinnerView(
         winners: [
-            WinnerPlayerModel(name: BotNames.name(forBot: 1), coins: 120, avatarIndex: 1),
-            WinnerPlayerModel(name: "You", coins: 120, isHuman: true, avatarIndex: 0)
+            PlayerViewModel(name: BotNames.name(forBot: 1), coins: 120, avatarIndex: 1),
+            PlayerViewModel(name: "You", coins: 120, isHuman: true, avatarIndex: 0)
         ],
-        runnersUp: [WinnerPlayerModel(name: BotNames.name(forBot: 3), coins: 75, avatarIndex: 3)]
+        runnersUp: [PlayerViewModel(name: BotNames.name(forBot: 3), coins: 75, avatarIndex: 3)]
     )
 }
