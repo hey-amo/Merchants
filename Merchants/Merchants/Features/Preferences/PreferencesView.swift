@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import GameSettingsPK
 
 // Display the ability to change preferences:
 // - sfx
 // - music
+// - showHints (if supported)
 // - darkMode (if supported)
 // - haptics (if supported)
 
