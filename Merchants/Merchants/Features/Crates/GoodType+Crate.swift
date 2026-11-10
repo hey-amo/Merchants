@@ -6,7 +6,7 @@
 import MerchantsGame
 import Foundation
 
-// Presentation mapping for goods: crate artwork and display names.
+// Presentation mapping for goods: crate/goods-card artwork and display names.
 extension GoodType {
     var crateImageName: String {
         switch self {
@@ -16,6 +16,17 @@ extension GoodType {
         case .tea: "crate-tea"
         case .silk: "crate-silk"
         case .lumber: "crate-lumber"
+        }
+    }
+
+    var goodsImageName: String {
+        switch self {
+        case .sugar: "goods-sugar"
+        case .indigo: "goods-indigo"
+        case .spices: "goods-spice"
+        case .tea: "goods-tea"
+        case .silk: "goods-silk"
+        case .lumber: "goods-lumber"
         }
     }
 
