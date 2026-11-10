@@ -1,20 +1,16 @@
 // CoinValueView.swift
 import SwiftUI
 
-// A partial showing only coins
+// A partial view showing only coins
 struct CoinValueView: View {
     let value: Int
 
     var body: some View {
         HStack(spacing: 6) {
-            Text("🪙")
-                .accessibilityHidden(true)
+            Image("coin-single")
             Text(value, format: .number)
                 .monospacedDigit()
-            Text("coins")
         }
-        .font(.subheadline.weight(.semibold))
-        .foregroundStyle(.secondary)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("Coins: \(value)"))
     }

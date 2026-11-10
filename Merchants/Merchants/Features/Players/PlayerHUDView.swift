@@ -9,14 +9,24 @@ import SwiftUI
 
 // Show a single player in a hud collection showing their coins and avatar
 struct PlayerHUDView: View {
+    let coinValue: Int
+    let index: Int
+    let state: PlayerAvatarView.State
+        
     var body: some View {
         VStack {
-            PlayerAvatarView()
+            PlayerAvatarView(avatarIndex: index, state: state).frame(width:100)
             CoinValueView(value: 50)
         }
     }
 }
 
 #Preview {
-    PlayerHUDView()
+    //PlayerHUDView()
+    HStack(spacing: 24) {
+        PlayerHUDView(coinValue: 50, index: 1, state: .onTurn)
+        PlayerHUDView(coinValue: 100, index: 1, state: .idle)
+    }
+    .padding()
+    .frame(height: 140)
 }
