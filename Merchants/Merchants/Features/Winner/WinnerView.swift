@@ -36,13 +36,19 @@ struct WinnerView: View {
         }
     }
 
+    private var headline: String {
+        guard let first = winners.first else { return "Results unavailable" }
+        guard winners.count == 1 else { return "It's a tie!" }
+        return first.isHuman ? "You won!" : "\(first.name) won!"
+    }
+
     private var hero: some View {
         VStack(spacing: 16) {
             Text("🏆")
                 .font(.system(size: 64))
                 .accessibilityHidden(true)
 
-            Text(winners.isEmpty ? "Results unavailable" : winners.count == 1 ? "We have a winner!" : "It's a tie!")
+            Text(headline)
                 .font(.largeTitle.bold())
                 .multilineTextAlignment(.center)
                 .accessibilityAddTraits(.isHeader)
@@ -55,14 +61,20 @@ struct WinnerView: View {
 
             ForEach(winners) { player in
                 VStack(spacing: 8) {
-                    Text("🤖")
-                        .font(.largeTitle)
+                    PlayerAvatarView(avatarIndex: player.avatarIndex, state: .onTurn)
+                        .frame(height: 96)
                         .accessibilityHidden(true)
-                    Text(player.name)
-                        .font(.title2.bold())
-                        .multilineTextAlignment(.center)
+                    HStack(spacing: 6) {
+                        Text(player.kindEmoji)
+                            .accessibilityHidden(true)
+                        Text(player.name)
+                            .font(.title2.bold())
+                            .multilineTextAlignment(.center)
+                    }
                     CoinValueView(value: player.coins)
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("\(player.name), \(player.kindLabel), \(player.coins) coins")
                 .frame(maxWidth: .infinity)
                 .padding(20)
                 .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
@@ -78,15 +90,22 @@ struct WinnerView: View {
                 .accessibilityAddTraits(.isHeader)
 
             ForEach(runnersUp) { player in
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text("🤖")
-                            .accessibilityHidden(true)
-                        Text(player.name)
-                            .font(.headline)
+                HStack(spacing: 12) {
+                    PlayerAvatarView(avatarIndex: player.avatarIndex, state: .idle)
+                        .frame(height: 48)
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text(player.kindEmoji)
+                                .accessibilityHidden(true)
+                            Text(player.name)
+                                .font(.headline)
+                        }
+                        CoinValueView(value: player.coins)
                     }
-                    CoinValueView(value: player.coins)
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("\(player.name), \(player.kindLabel), \(player.coins) coins")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(16)
                 .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
@@ -96,12 +115,22 @@ struct WinnerView: View {
     }
 }
 
-#Preview("Solo winner") {
+#Preview("Human winner") {
     WinnerView(
-        winners: [WinnerPlayerModel(name: "Bot 1", coins: 120)],
+        winners: [WinnerPlayerModel(name: "You", coins: 120, isHuman: true, avatarIndex: 0)],
         runnersUp: [
-            WinnerPlayerModel(name: "Bot 2", coins: 95),
-            WinnerPlayerModel(name: "Bot 3", coins: 75)
+            WinnerPlayerModel(name: BotNames.name(forBot: 1), coins: 95, avatarIndex: 1),
+            WinnerPlayerModel(name: BotNames.name(forBot: 2), coins: 75, avatarIndex: 2)
+        ]
+    )
+}
+
+#Preview("Bot winner") {
+    WinnerView(
+        winners: [WinnerPlayerModel(name: BotNames.name(forBot: 2), coins: 120, avatarIndex: 2)],
+        runnersUp: [
+            WinnerPlayerModel(name: "You", coins: 95, isHuman: true, avatarIndex: 0),
+            WinnerPlayerModel(name: BotNames.name(forBot: 1), coins: 75, avatarIndex: 1)
         ]
     )
 }
@@ -109,9 +138,9 @@ struct WinnerView: View {
 #Preview("Tied winners") {
     WinnerView(
         winners: [
-            WinnerPlayerModel(name: "Bot 1", coins: 120),
-            WinnerPlayerModel(name: "Bot 2", coins: 120)
+            WinnerPlayerModel(name: BotNames.name(forBot: 1), coins: 120, avatarIndex: 1),
+            WinnerPlayerModel(name: "You", coins: 120, isHuman: true, avatarIndex: 0)
         ],
-        runnersUp: [WinnerPlayerModel(name: "Bot 3", coins: 75)]
+        runnersUp: [WinnerPlayerModel(name: BotNames.name(forBot: 3), coins: 75, avatarIndex: 3)]
     )
 }
