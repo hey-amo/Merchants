@@ -29,7 +29,7 @@ struct GoodsCardView: View {
                         .padding(cardInset)
                 }
             Text(good.displayName)
-                .font(.caption)
+                .font(.subheadline)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(good.displayName) goods card")

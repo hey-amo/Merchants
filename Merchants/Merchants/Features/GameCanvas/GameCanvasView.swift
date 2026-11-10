@@ -9,9 +9,9 @@ import SwiftUI
 
 // Display the main game canvas view
 
-// Structure
-// HUD with button (button is inactive for now)
-// Main canvas area
+// Structure:
+// - HUD with button (button is inactive for now)
+// - Main canvas area
 // - Current Phase: (label) (tiny) | Cards remaining: (label) or it could be a progress bar [----]?
 // - Game Message section
 // - Carousel section: {
@@ -24,8 +24,8 @@ import SwiftUI
 // } // :endCarousel
 // - Your ships (Carousel) section
 // - Your special cards (Carousel) section
-// - Your cards
-// Footer
+// - Your cards (hand of cards move left to right, selectable)
+// Footer (not used yet)
 
 struct GameCanvasView: View {
     var body: some View {
