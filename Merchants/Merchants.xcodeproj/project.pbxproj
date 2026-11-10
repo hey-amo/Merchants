@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4D05EAD030A1CD0F00ECB5A2 /* MerchantsGame in Frameworks */ = {isa = PBXBuildFile; productRef = 4D05EACF30A1CD0F00ECB5A2 /* MerchantsGame */; };
+		4DC3B8FA30A2F25E00A73534 /* GameSettingsPK in Frameworks */ = {isa = PBXBuildFile; productRef = 4DC3B8F930A2F25E00A73534 /* GameSettingsPK */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4DC3B8FA30A2F25E00A73534 /* GameSettingsPK in Frameworks */,
 				4D05EAD030A1CD0F00ECB5A2 /* MerchantsGame in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -96,6 +98,7 @@
 			name = Merchants;
 			packageProductDependencies = (
 				4D05EACF30A1CD0F00ECB5A2 /* MerchantsGame */,
+				4DC3B8F930A2F25E00A73534 /* GameSettingsPK */,
 			);
 			productName = Merchants;
 			productReference = 4D9CD9DB2FF296FC00B796FD /* Merchants.app */;
@@ -154,6 +157,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				4D05EACE30A1CD0F00ECB5A2 /* XCLocalSwiftPackageReference "../MerchantsGame" */,
+				4DC3B8F830A2F25E00A73534 /* XCLocalSwiftPackageReference "../../_Common/GameSettingsPK/GameSettingsPK" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4D9CD9DC2FF296FC00B796FD /* Products */;
@@ -488,12 +492,20 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../MerchantsGame;
 		};
+		4DC3B8F830A2F25E00A73534 /* XCLocalSwiftPackageReference "../../_Common/GameSettingsPK/GameSettingsPK" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../_Common/GameSettingsPK/GameSettingsPK;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		4D05EACF30A1CD0F00ECB5A2 /* MerchantsGame */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MerchantsGame;
+		};
+		4DC3B8F930A2F25E00A73534 /* GameSettingsPK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GameSettingsPK;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

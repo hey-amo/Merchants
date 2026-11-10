@@ -1,19 +1,19 @@
+// CoinValueView.swift
 import SwiftUI
 
-// A partial showing only coins
+// A partial view showing only the coins
+// Has adjustible font size
 struct CoinValueView: View {
     let value: Int
+    var fontSize: CGFloat = 24
 
     var body: some View {
         HStack(spacing: 6) {
-            Text("🪙")
-                .accessibilityHidden(true)
+            Image("coin-single")
             Text(value, format: .number)
+                .font(.system(size: fontSize))
                 .monospacedDigit()
-            Text("coins")
         }
-        .font(.subheadline.weight(.semibold))
-        .foregroundStyle(.secondary)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("Coins: \(value)"))
     }
@@ -21,5 +21,4 @@ struct CoinValueView: View {
 
 #Preview {
     CoinValueView(value: 120)
-        .padding()
 }
