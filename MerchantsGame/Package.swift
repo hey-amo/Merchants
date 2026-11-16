@@ -3,7 +3,7 @@
 
 import PackageDescription
 
-let configurationResourcesPath = "FR/FR1-game-configuration/Resources"
+let configurationResourcesPath = "Core/Resources"
 
 let package = Package(
     name: "MerchantsGame",
