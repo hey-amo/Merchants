@@ -1,4 +1,5 @@
 import Foundation
+import MerchantsGame
 
 struct PlayerViewModel: Identifiable {
     let id = UUID()
@@ -10,4 +11,5 @@ struct PlayerViewModel: Identifiable {
 
     var kindEmoji: String { isHuman ? "🧑" : "🤖" }
     var kindLabel: String { isHuman ? "Human" : "Bot" }
+    var state: PlayerState = .idle
 }

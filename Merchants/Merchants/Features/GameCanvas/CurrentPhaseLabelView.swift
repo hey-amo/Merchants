@@ -9,13 +9,18 @@ import SwiftUI
 import Foundation
 import MerchantsGame
 
-// Displays the current phase
+// Displays the current phase of the game
 struct CurrentPhaseLabelView: View {
+    let phaseLabel: String
     var body: some View {
-        Text("Current phase: <NAME.in.caps>")
+        HStack {
+            Text("Phase:")
+            Text(phaseLabel.uppercased())
+        }
     }
 }
 
 #Preview {
-    CurrentPhaseLabelView()
+    let phase = GamePhase.planning
+    CurrentPhaseLabelView(phaseLabel: phase.description)
 }

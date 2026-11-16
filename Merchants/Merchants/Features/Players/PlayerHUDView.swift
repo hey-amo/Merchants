@@ -2,33 +2,35 @@
 //  PlayerHUDView.swift
 //  Merchants
 //
-//  Created by Amarjit on 09/11/2026.
+//  Created by Amarjit on 10/11/2026.
 //
 
 import SwiftUI
 
-// Show a single player in a hud collection showing their coins and avatar
-// the avatar is clickable?
+// A view/card showing a single player for the top bar
+
 struct PlayerHUDView: View {
-    let coinValue: Int
-    let index: Int
-    let state: PlayerAvatarView.State
-        
+    let player: PlayerViewModel
+    
     var body: some View {
-        //VStack (alignment: .center, spacing: 8.0) {
-        VStack {
-            PlayerAvatarView(avatarIndex: index, state: state).frame(width:100)
-            CoinValueView(value: 50)
+        VStack(spacing: 8) {
+            
+            PlayerAvatarView(avatarIndex: player.avatarIndex, state: .onTurn)
+                .frame(height: 96)
+                .accessibilityHidden(true)
+            HStack(spacing: 6) {
+                Text(player.kindEmoji)
+                    .accessibilityHidden(true)
+                Text(player.name)
+                    .font(.title2.bold())
+                    .multilineTextAlignment(.center)
+            }
+            
+            CoinValueView(value: player.coins)
         }
     }
 }
 
 #Preview {
-    //PlayerHUDView()
-    HStack(spacing: 24) {
-        PlayerHUDView(coinValue: 50, index: 1, state: .onTurn)
-        PlayerHUDView(coinValue: 100, index: 1, state: .idle)
-    }
-    .padding()
-    .frame(height: 140)
+    PlayerHUDView( player: PlayerViewModel(name: "You", coins: 120, isHuman: true, avatarIndex: 0))
 }

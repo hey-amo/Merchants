@@ -10,9 +10,9 @@ import SwiftUI
 // Display the main game canvas view
 
 // Structure:
-// - HUD with button (button is inactive for now)
-// - Main canvas area
-// - Current Phase: (label) (tiny) | Cards remaining: (label) or it could be a progress bar [----]?
+// - sticky HUD with button (button is inactive for now)
+// - Main canvas area (scrollable)
+// - Current Phase: (label) (tiny) | Cards remaining: (label)
 // - Game Message section
 // - Carousel section: {
 // ---- Cubes in supply

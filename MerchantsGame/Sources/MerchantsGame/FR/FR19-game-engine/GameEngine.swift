@@ -8,6 +8,29 @@ public struct ActionRejection: Error, Equatable, Sendable, CustomStringConvertib
     public var errorDescription: String? { error.errorDescription }
 }
 
+public enum PlayerState: Int, Equatable, Hashable, Sendable, CustomStringConvertible {
+    case idle, thinking, playing
+    
+    public var description: String {
+        switch self {
+        case .idle: return "Waiting"
+        case .thinking: return "Thinking..."
+        case .playing: return "Playing"
+        }
+    }
+}
+
+public enum GamePhase: Int, Equatable, Hashable, Sendable, CustomStringConvertible {
+    case planning, delivery
+    
+    public var description: String {
+        switch self {
+        case .planning: return "Planning"
+        case .delivery: return "Delivery"
+        }
+    }
+}
+
 public enum GameEngine {
     public static func apply(
         _ action: GameAction, by player: PlayerID, to state: GameState

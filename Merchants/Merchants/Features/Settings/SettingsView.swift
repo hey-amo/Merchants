@@ -1,39 +1,20 @@
 //
-//  PreferenceView.swift
+//  SettingsView.swift
 //  Merchants
 //
-//  Created by Amarjit on 09/11/2026.
+//  Created by Amarjit on 16/11/2026.
 //
-
-import SwiftUI
 import GameSettingsPK
+import Foundation
+import SwiftUI
 
-// Lets the player toggle sound, music, haptics, dark mode and hints.
-// Designed to be presented in a sheet or drawer. In-memory only: nothing is saved or loaded yet.
+// Settings - list of in game settings
+// Structure
+// - Remove ads big button
+// - Sound/Music preferences
+// - 
 
-@MainActor
-@Observable
-final class PreferencesModel {
-    private(set) var enabled: Set<Setting>
-    private let settings: GameSettings
-
-    init(enabled: Set<Setting> = [.sound, .music, .haptic, .showHints]) {
-        self.enabled = enabled
-        settings = GameSettings(enabledSettings: enabled)
-    }
-
-    func binding(for setting: Setting) -> Binding<Bool> {
-        Binding(
-            get: { self.enabled.contains(setting) },
-            set: { isOn in
-                if isOn { self.enabled.insert(setting) } else { self.enabled.remove(setting) }
-                Task { await self.settings.setEnabled(isOn, for: setting) }
-            }
-        )
-    }
-}
-
-struct PreferencesView: View {
+struct SettingsView: View {
     @State private var model = PreferencesModel()
     @Environment(\.dismiss) private var dismiss
 
@@ -54,7 +35,7 @@ struct PreferencesView: View {
                     }
                 }
             }
-            .navigationTitle("Preferences")
+            .navigationTitle("Settings")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -69,5 +50,5 @@ struct PreferencesView: View {
 }
 
 #Preview {
-    PreferencesView()
+    SettingsView()
 }
