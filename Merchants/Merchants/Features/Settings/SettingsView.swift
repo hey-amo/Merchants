@@ -9,10 +9,12 @@ import Foundation
 import SwiftUI
 
 // Settings - list of in game settings
-// Structure
-// - Remove ads big button
+// Structure:
+// - Remove ads big chunky button area
 // - Sound/Music preferences
-// - 
+// - About
+// - Contact
+// - My other apps
 
 struct SettingsView: View {
     @State private var model = PreferencesModel()
