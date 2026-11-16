@@ -11,6 +11,8 @@ import SwiftUI
 struct ContactPartialView: View {
     var body: some View {
         VStack {
+            // Card view
+            // Picture
             Text("Hi I'm Amo and I make fun apps that I hope you'll love.")
             Text("I'm an independent developer & it would help me so much if you could share my app with friends & family as well as leave a review")
         }
@@ -20,7 +22,6 @@ struct ContactPartialView: View {
             Label("Send Feedback", systemImage: "bubble.fill")
             Label("Share <appname> with friends", systemImage: "bubble.fill")
             Label("Credits & Attribution", systemImage: "heart.fill")
-            Label("Name", systemImage: "heart.fill")
         }
     }
 }
