@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MerchantsGame
 
 // Display the main game canvas view
 
@@ -15,7 +16,7 @@ import SwiftUI
 // - Current Phase: (label) (tiny) | Cards remaining: (label)
 // - Game Message section
 // - Carousel section: {
-// ---- Cubes in supply
+// ---- Crates in supply
 // ---- Marketplace cards (default)
 // ---- Player 2 (quick overview)
 // ---- Player 3 (quick overview: if in the game)
@@ -27,12 +28,13 @@ import SwiftUI
 // - Your cards (hand of cards move left to right, selectable)
 // Footer (not used yet)
 
-struct GameCanvasView: View {
+struct GameCanvasView: View {        
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text("Hello world)")
     }
 }
 
 #Preview {
-    GameCanvasView()
+    GameCanvasView(
+    )
 }
