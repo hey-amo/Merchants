@@ -1,6 +1,7 @@
 // A validated, serializable non-negative coin balance.
 // Owns balance restoration and atomic add/subtract operations.
 // Does not know about players, banks, or reasons for coin changes.
+// Should this be an actor?
 
 public struct Coins: Codable, Equatable, Hashable, Sendable {
     public static let maximumBalance = 5_000
