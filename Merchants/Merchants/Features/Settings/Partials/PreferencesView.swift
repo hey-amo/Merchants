@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import GameSettingsPK
+import GameSettingsKit
 
 // Partial view: for managing preferences like sound, music, haptics, dark mode, hints, tutorials, notifications
 

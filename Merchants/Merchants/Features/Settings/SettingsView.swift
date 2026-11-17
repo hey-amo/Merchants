@@ -4,7 +4,7 @@
 //
 //  Created by Amarjit on 16/11/2026.
 //
-import GameSettingsPK
+import GameSettingsKit
 import Foundation
 import SwiftUI
 

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4D05EAD030A1CD0F00ECB5A2 /* MerchantsGame in Frameworks */ = {isa = PBXBuildFile; productRef = 4D05EACF30A1CD0F00ECB5A2 /* MerchantsGame */; };
+		4D1EED5E30ACBA0900A8BF66 /* GameSettingsKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4D1EED5D30ACBA0900A8BF66 /* GameSettingsKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D1EED5E30ACBA0900A8BF66 /* GameSettingsKit in Frameworks */,
 				4D05EAD030A1CD0F00ECB5A2 /* MerchantsGame in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -96,6 +98,7 @@
 			name = Merchants;
 			packageProductDependencies = (
 				4D05EACF30A1CD0F00ECB5A2 /* MerchantsGame */,
+				4D1EED5D30ACBA0900A8BF66 /* GameSettingsKit */,
 			);
 			productName = Merchants;
 			productReference = 4D9CD9DB2FF296FC00B796FD /* Merchants.app */;
@@ -154,7 +157,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				4D05EACE30A1CD0F00ECB5A2 /* XCLocalSwiftPackageReference "../MerchantsGame" */,
-				4DC3B8F830A2F25E00A73534 /* XCLocalSwiftPackageReference "../../_Common/GameSettingsPK/GameSettingsPK" */,
+				4D1EED5A30ACB95C00A8BF66 /* XCLocalSwiftPackageReference "../../_Common/GameSettingsKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4D9CD9DC2FF296FC00B796FD /* Products */;
@@ -347,19 +350,20 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.silentflute.Merchants;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = NO;
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3";
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
 			name = Debug;
@@ -387,19 +391,20 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.silentflute.Merchants;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = NO;
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3";
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
 			name = Release;
@@ -489,9 +494,9 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../MerchantsGame;
 		};
-		4DC3B8F830A2F25E00A73534 /* XCLocalSwiftPackageReference "../../_Common/GameSettingsPK/GameSettingsPK" */ = {
+		4D1EED5A30ACB95C00A8BF66 /* XCLocalSwiftPackageReference "../../_Common/GameSettingsKit" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../_Common/GameSettingsPK/GameSettingsPK;
+			relativePath = ../../_Common/GameSettingsKit;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -499,6 +504,10 @@
 		4D05EACF30A1CD0F00ECB5A2 /* MerchantsGame */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MerchantsGame;
+		};
+		4D1EED5D30ACBA0900A8BF66 /* GameSettingsKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GameSettingsKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
