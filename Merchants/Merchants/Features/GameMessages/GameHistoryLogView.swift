@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import GameMessagesKit
+import MerchantsGame
 
 // Show in-game messages in a lazy list
 // - can clear messages
