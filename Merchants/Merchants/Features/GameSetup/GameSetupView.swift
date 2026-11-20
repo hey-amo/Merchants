@@ -12,7 +12,12 @@ import SwiftUI
 ///
 struct GameSetupView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text("Local game").font(.caption)
+            Text("Create new game").font(.largeTitle)
+            Text("Select players").font(.title)
+        }
+        // List available captains
     }
 }
 
