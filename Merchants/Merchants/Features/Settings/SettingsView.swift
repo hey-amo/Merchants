@@ -53,6 +53,15 @@ struct SettingsView: View {
                 }
 
                 // Contact / hero section
+                Section("PRIVACY") {
+                    NavigationLink {
+                        PrivacyView()
+                    } label: {
+                        Label("Privacy", systemImage: "hand.raised.fill")
+                    }
+                }
+                
+                // Contact / hero section
                 Section("CONTACT & OTHER") {
                     ContactCard(
                         avatarImageName: "amo-avatar",
@@ -89,7 +98,6 @@ struct SettingsView: View {
                     } label: {
                         Label("Credits & Attribution", systemImage: "heart.circle")
                     }
-                    Label("Privacy Policy")
                 }
             }
             .listStyle(.insetGrouped)
