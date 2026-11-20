@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4D05EAD030A1CD0F00ECB5A2 /* MerchantsGame in Frameworks */ = {isa = PBXBuildFile; productRef = 4D05EACF30A1CD0F00ECB5A2 /* MerchantsGame */; };
 		4D1EED5E30ACBA0900A8BF66 /* GameSettingsKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4D1EED5D30ACBA0900A8BF66 /* GameSettingsKit */; };
+		4D2A433730B0930B009B24B5 /* GameOnboardingKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4D2A433630B0930B009B24B5 /* GameOnboardingKit */; };
 		4DAA7D7E30ACC1DE00DCB0C7 /* GameMessagesKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4DAA7D7D30ACC1DE00DCB0C7 /* GameMessagesKit */; };
 /* End PBXBuildFile section */
 
@@ -47,6 +48,7 @@
 			files = (
 				4D1EED5E30ACBA0900A8BF66 /* GameSettingsKit in Frameworks */,
 				4DAA7D7E30ACC1DE00DCB0C7 /* GameMessagesKit in Frameworks */,
+				4D2A433730B0930B009B24B5 /* GameOnboardingKit in Frameworks */,
 				4D05EAD030A1CD0F00ECB5A2 /* MerchantsGame in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -102,6 +104,7 @@
 				4D05EACF30A1CD0F00ECB5A2 /* MerchantsGame */,
 				4D1EED5D30ACBA0900A8BF66 /* GameSettingsKit */,
 				4DAA7D7D30ACC1DE00DCB0C7 /* GameMessagesKit */,
+				4D2A433630B0930B009B24B5 /* GameOnboardingKit */,
 			);
 			productName = Merchants;
 			productReference = 4D9CD9DB2FF296FC00B796FD /* Merchants.app */;
@@ -162,6 +165,7 @@
 				4D05EACE30A1CD0F00ECB5A2 /* XCLocalSwiftPackageReference "../MerchantsGame" */,
 				4D1EED5A30ACB95C00A8BF66 /* XCLocalSwiftPackageReference "../../_Common/GameSettingsKit" */,
 				4DAA7D7C30ACC1DE00DCB0C7 /* XCLocalSwiftPackageReference "../../_Common/GameMessagesKit" */,
+				4D2A433530B0930B009B24B5 /* XCLocalSwiftPackageReference "../../_Common/GameOnboardingKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4D9CD9DC2FF296FC00B796FD /* Products */;
@@ -502,6 +506,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../_Common/GameSettingsKit;
 		};
+		4D2A433530B0930B009B24B5 /* XCLocalSwiftPackageReference "../../_Common/GameOnboardingKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../_Common/GameOnboardingKit;
+		};
 		4DAA7D7C30ACC1DE00DCB0C7 /* XCLocalSwiftPackageReference "../../_Common/GameMessagesKit" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../_Common/GameMessagesKit;
@@ -516,6 +524,10 @@
 		4D1EED5D30ACBA0900A8BF66 /* GameSettingsKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = GameSettingsKit;
+		};
+		4D2A433630B0930B009B24B5 /* GameOnboardingKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GameOnboardingKit;
 		};
 		4DAA7D7D30ACC1DE00DCB0C7 /* GameMessagesKit */ = {
 			isa = XCSwiftPackageProductDependency;
