@@ -68,7 +68,7 @@ final class FleetTests: XCTestCase {
         try fleet.load(GoodsCube(good: .sugar), onto: 0)
         let data = try JSONEncoder().encode(fleet)
         XCTAssertEqual(try JSONDecoder().decode(Fleet.self, from: data), fleet)
-        let invalid = Data(#"{"kind":{"standard":{}},"cubes":[{"good":{"sugar":{}}},{"good":{"tea":{}}}]}"#.utf8)
+        let invalid = Data(#"{"kind":{"standard":{}},"cargo":[{"good":{"sugar":{}}},{"good":{"tea":{}}}]}"#.utf8)
         XCTAssertThrowsError(try JSONDecoder().decode(Ship.self, from: invalid)) {
             XCTAssertEqual($0 as? ShipError, .capacityExceeded)
         }

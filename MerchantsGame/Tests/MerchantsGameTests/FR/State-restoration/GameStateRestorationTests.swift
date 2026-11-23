@@ -46,9 +46,9 @@ struct GameStateRestorationTests {
         var fleet = try #require(fleets.first)
         var ships = try #require(fleet["ships"] as? [[String: Any]])
         var ship = try #require(ships.first)
-        var cubes = try #require(ship["cubes"] as? [[String: Any]])
-        cubes.append(try #require(cubes.first))
-        ship["cubes"] = cubes
+        var cargo = try #require(ship["cargo"] as? [[String: Any]])
+        cargo.append(try #require(cargo.first))
+        ship["cargo"] = cargo
         ships[0] = ship
         fleet["ships"] = ships
         fleets[0] = fleet
@@ -65,9 +65,9 @@ struct GameStateRestorationTests {
         var fleet = try #require(fleets.first)
         var ships = try #require(fleet["ships"] as? [[String: Any]])
         var ship = try #require(ships.first)
-        var cubes = try #require(ship["cubes"] as? [[String: Any]])
-        cubes.append(try #require(cubes.first))
-        ship["cubes"] = cubes
+        var cargo = try #require(ship["cargo"] as? [[String: Any]])
+        cargo.append(try #require(cargo.first))
+        ship["cargo"] = cargo
         ships[0] = ship
         fleet["ships"] = ships
         fleets[0] = fleet
