@@ -10,13 +10,14 @@ import MerchantsGame
 
 // Display the main game canvas view
 
-// Structure:
+// Structure: Full size screen (iPhone portrait)
 // Scrollview {
-// - sticky HUD with button (button is inactive for now)
-// - Main canvas area (scrollable)
+// - Sticky HUD bar [List players | notification bell | hamburger menu
+//
+// - (small spacing)
 // - Current Phase: (label) (tiny) | Cards remaining: (label)
-// - Game Message section
-// - Cards left
+// - Last game message section
+//
 // - Carousel section: {
 // ---- Crates in supply
 // ---- Marketplace cards (default)
@@ -25,8 +26,12 @@ import MerchantsGame
 // ---- Player 4 (quick overview: if in the game)
 // ---- General stats (if implemented)
 // } // :endCarousel
-// - Your ships (Carousel) section
-// - Your special cards (Carousel) section
+//
+// - Carousel section: {
+// ---- Your ships section
+// ---- Your special cards
+// }
+//
 // - Your cards (hand of cards move left to right, selectable)
 // Footer (not used yet)
 // }

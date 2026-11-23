@@ -6,9 +6,9 @@
 //
 
 import SwiftUI
+import MerchantsGame
 
-// A view/card showing a single player for the top bar
-
+// A view/card showing a single player for the sticky in-game top bar
 struct PlayerHUDView: View {
     let player: PlayerViewModel
     
@@ -16,14 +16,16 @@ struct PlayerHUDView: View {
         VStack(spacing: 8) {
             
             PlayerAvatarView(avatarIndex: player.avatarIndex, state: .onTurn)
-                .frame(height: 96)
+                .frame(height: 60)
                 .accessibilityHidden(true)
             HStack(spacing: 6) {
                 Text(player.kindEmoji)
                     .accessibilityHidden(true)
+                Text("🃏3")
+                /*
                 Text(player.name)
                     .font(.title2.bold())
-                    .multilineTextAlignment(.center)
+                    .multilineTextAlignment(.center)*/
             }
             
             CoinValueView(value: player.coins)

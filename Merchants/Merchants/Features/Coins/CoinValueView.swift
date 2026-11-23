@@ -5,11 +5,11 @@ import SwiftUI
 // Has adjustible font size
 struct CoinValueView: View {
     let value: Int
-    var fontSize: CGFloat = 24
+    var fontSize: CGFloat = 18
 
     var body: some View {
         HStack(spacing: 6) {
-            Image("coin-single")
+            Image("coin-single").resizable().frame(width:30, height: 30)
             Text(value, format: .number)
                 .font(.system(size: fontSize))
                 .monospacedDigit()
