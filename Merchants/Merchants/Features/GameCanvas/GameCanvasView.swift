@@ -11,10 +11,12 @@ import MerchantsGame
 // Display the main game canvas view
 
 // Structure:
+// Scrollview {
 // - sticky HUD with button (button is inactive for now)
 // - Main canvas area (scrollable)
 // - Current Phase: (label) (tiny) | Cards remaining: (label)
 // - Game Message section
+// - Cards left
 // - Carousel section: {
 // ---- Crates in supply
 // ---- Marketplace cards (default)
@@ -27,10 +29,18 @@ import MerchantsGame
 // - Your special cards (Carousel) section
 // - Your cards (hand of cards move left to right, selectable)
 // Footer (not used yet)
+// }
 
 struct GameCanvasView: View {        
     var body: some View {
         Text("Hello world)")
+    }
+}
+
+
+private struct CarouselView: View {
+    var body: some View {
+        Text("Hello world")
     }
 }
 

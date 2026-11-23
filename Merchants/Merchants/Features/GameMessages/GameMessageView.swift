@@ -34,6 +34,37 @@ extension GameMessageKind {
     }
 }
 
+
+struct GameMessageView: View {
+    let message: GameMessage
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: message.kind.systemImage)
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(message.kind.color)
+                .frame(width: 36, height: 36)
+                .background(message.kind.color.opacity(0.2), in: Circle())
+                .accessibilityHidden(true)
+
+            Text(message.text)
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(14)
+        .background(message.kind.color.opacity(0.12), in: RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(message.kind.color.opacity(0.5), lineWidth: 1)
+        )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(message.kind.accessibilityPrefix): \(message.text)")
+    }
+}
+
+
+/*
 // MARK: - Single message
 
 struct GameMessageView: View {
@@ -75,3 +106,4 @@ struct GameMessageView: View {
     .background(Color.black)
     .preferredColorScheme(.dark)
 }
+*/

@@ -24,8 +24,8 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let soundAndMusicRows: [SettingRow] = [
-        SettingRow(setting: .sound, title: "Card & dice sounds", icon: "speaker.wave.2.fill"),
-        SettingRow(setting: .music, title: "Game music", icon: "music.note"),
+        SettingRow(setting: .sound, title: "Sounds", icon: "speaker.wave.2.fill"),
+        SettingRow(setting: .music, title: "Music", icon: "music.note"),
         SettingRow(setting: .haptic, title: "Haptics", icon: "iphone.radiowaves.left.and.right"),
         SettingRow(setting: .darkMode, title: "Dark mode", icon: "moon.fill"),
         SettingRow(setting: .showHints, title: "Show hints", icon: "lightbulb.fill")

@@ -16,7 +16,7 @@ struct MarketplaceView: View {
     var body: some View {
         LazyVGrid(columns: columns, spacing: 12) {
             ForEach(Array(goods.enumerated()), id: \.offset) { _, good in
-                GoodsCardView(good: good)
+                GoodsCardView(good: good) // Convert this into an accessible button
             }
         }
         .padding()

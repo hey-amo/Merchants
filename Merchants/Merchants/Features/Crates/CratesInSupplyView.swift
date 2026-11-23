@@ -1,7 +1,11 @@
-//
-//  CratesInSupply.swift
+////
+//  CratesInSupplyView.swift
 //  Merchants
 //
+//  Created by AD on 23/11/2026.
+//
+
+
 
 import SwiftUI
 import MerchantsGame

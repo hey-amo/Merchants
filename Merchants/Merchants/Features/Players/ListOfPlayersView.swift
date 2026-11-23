@@ -1,5 +1,5 @@
 //
-//  HorzListOfPlayersView.swift
+//  ListOfPlayersView.swift
 //  Merchants
 //
 //  Created by Amarjit on 09/11/2026.
@@ -12,12 +12,14 @@ import SwiftUI
 // Fits narrow screens
 // the clicking of players can be disabled for interactions
 
-struct HorzListOfPlayersView: View {        
+struct ListOfPlayersView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        
+        // for each player in the game
+        CaptainAvatarImg(name: "captains", count: 5, index: 0).frame(height: 60)
     }
 }
 
 #Preview {
-    HorzListOfPlayersView()
+    ListOfPlayersView()
 }
