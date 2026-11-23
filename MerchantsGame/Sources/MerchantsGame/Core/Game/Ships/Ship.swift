@@ -12,36 +12,37 @@ public struct Ship: Codable, Equatable, Sendable {
     }
 
     public let kind: Kind
-    public private(set) var cubes: [GoodsCube]
+    public private(set) var cargo: [GoodsCube] // A ship has cargo of goods cubes (:crates)
 
-    public init(kind: Kind) {
+    public init(kind: Kind, cargo: [GoodsCube] = []) {
         self.kind = kind
-        self.cubes = []
+        self.cargo = []
     }
 
-    mutating func load(_ cube: GoodsCube) throws(ShipError) {
-        guard cubes.count < kind.capacity else { throw .capacityExceeded }
-        cubes.append(cube)
+    // add a crate to the ship
+    mutating func load(_ crate: GoodsCube) throws(ShipError) {
+        guard cargo.count < kind.capacity else { throw .capacityExceeded }
+        cargo.append(crate)
     }
 
     mutating func exchange(cubeIndex: Int, for cube: GoodsCube) throws(ShipError) -> GoodsCube {
-        guard cubes.indices.contains(cubeIndex) else { throw .cubeIndexOutOfRange }
-        let removed = cubes[cubeIndex]
+        guard cargo.indices.contains(cubeIndex) else { throw .cubeIndexOutOfRange }
+        let removed = cargo[cubeIndex]
         guard removed.good != cube.good else { throw .sameGood }
-        cubes[cubeIndex] = cube
+        cargo[cubeIndex] = cube
         return removed
     }
 
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let kind = try container.decode(Kind.self, forKey: .kind)
-        let cubes = try container.decode([GoodsCube].self, forKey: .cubes)
-        guard cubes.count <= kind.capacity else { throw ShipError.capacityExceeded }
+        let cargo = try container.decode([GoodsCube].self, forKey: .cargo)
+        guard cargo.count <= kind.capacity else { throw ShipError.capacityExceeded }
         self.kind = kind
-        self.cubes = cubes
+        self.cargo = cargo
     }
 
     private enum CodingKeys: String, CodingKey {
-        case kind, cubes
+        case kind, cargo
     }
 }
