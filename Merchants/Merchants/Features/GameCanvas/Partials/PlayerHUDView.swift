@@ -15,24 +15,28 @@ struct PlayerHUDView: View {
     var body: some View {
         VStack(spacing: 8) {
             
-            PlayerAvatarView(avatarIndex: player.avatarIndex, state: .onTurn)
-                .frame(height: 60)
-                .accessibilityHidden(true)
-            HStack(spacing: 6) {
+            ZStack {
+                PlayerAvatarView(avatarIndex: player.avatarIndex, state: .onTurn)
+                    .frame(height: 60)
+                    .accessibilityHidden(true)
+                
+                // BOT/AI
                 Text(player.kindEmoji)
                     .accessibilityHidden(true)
-                Text("🃏3")
-                /*
-                Text(player.name)
-                    .font(.title2.bold())
-                    .multilineTextAlignment(.center)*/
             }
-            
+                        
+            // Cards held (Count)
+            HStack {
+                Image("icon-cards-mini")
+                    .resizable().frame(width:35, height:35)
+                Text("\(player.cardCount)")
+            }
+        
             CoinValueView(value: player.coins)
         }
     }
 }
 
 #Preview {
-    PlayerHUDView( player: PlayerViewModel(name: "You", coins: 120, isHuman: true, avatarIndex: 0))
+    PlayerHUDView( player: PlayerViewModel(name: "You", coins: 120, cardCount: 3, isHuman: true, avatarIndex: 0))
 }

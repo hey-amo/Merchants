@@ -219,10 +219,10 @@ struct WinnerView: View {
 #Preview("Human winner") {
     NavigationStack {
         WinnerView(
-            winners: [PlayerViewModel(name: "You", coins: 120, isHuman: true, avatarIndex: 0)],
+            winners: [PlayerViewModel(name: "You", coins: 120, cardCount: 3, isHuman: true, avatarIndex: 0)],
             runnersUp: [
-                PlayerViewModel(name: BotNames.name(forBot: 1), coins: 95, avatarIndex: 1),
-                PlayerViewModel(name: BotNames.name(forBot: 2), coins: 75, avatarIndex: 2)
+                PlayerViewModel(name: BotNames.name(forBot: 1), coins: 95, cardCount: 2, avatarIndex: 1),
+                PlayerViewModel(name: BotNames.name(forBot: 2), coins: 75, cardCount: 1, avatarIndex: 2)
             ]
         )
     }
@@ -231,27 +231,27 @@ struct WinnerView: View {
 #Preview("Bot winner") {
     NavigationStack {
         WinnerView(
-            winners: [PlayerViewModel(name: BotNames.name(forBot: 2), coins: 120, avatarIndex: 2)],
+            winners: [PlayerViewModel(name: BotNames.name(forBot: 2), coins: 120, cardCount: 2, avatarIndex: 2)],
             runnersUp: [
-                PlayerViewModel(name: "You", coins: 95, isHuman: true, avatarIndex: 0),
-                PlayerViewModel(name: BotNames.name(forBot: 1), coins: 75, avatarIndex: 1)
+                PlayerViewModel(name: "You", coins: 95, cardCount:0, isHuman: true, avatarIndex: 0),
+                PlayerViewModel(name: BotNames.name(forBot: 1), coins: 75, cardCount: 3, avatarIndex: 1)
             ]
         )
     }
 }
 
 private let tiedWinners = [
-    PlayerViewModel(name: "You", coins: 120, isHuman: true, avatarIndex: 0),
-    PlayerViewModel(name: BotNames.name(forBot: 1), coins: 120, avatarIndex: 1),
-    PlayerViewModel(name: BotNames.name(forBot: 2), coins: 120, avatarIndex: 2),
-    PlayerViewModel(name: BotNames.name(forBot: 3), coins: 120, avatarIndex: 2)
+    PlayerViewModel(name: "You", coins: 120, cardCount: 2, isHuman: true, avatarIndex: 0),
+    PlayerViewModel(name: BotNames.name(forBot: 1), coins: 120, cardCount: 1, avatarIndex: 1),
+    PlayerViewModel(name: BotNames.name(forBot: 2), coins: 120, cardCount: 4, avatarIndex: 2),
+    PlayerViewModel(name: BotNames.name(forBot: 3), coins: 120, cardCount: 0, avatarIndex: 2)
 ]
 
 #Preview("Tied winners - carousel") {
     NavigationStack {
         WinnerView(
             winners: tiedWinners,
-            runnersUp: [PlayerViewModel(name: BotNames.name(forBot: 3), coins: 75, avatarIndex: 3)],
+            runnersUp: [PlayerViewModel(name: BotNames.name(forBot: 3), coins: 75, cardCount: 3, avatarIndex: 3)],
             tieStyle: .carousel
         )
     }
@@ -261,7 +261,7 @@ private let tiedWinners = [
     NavigationStack {
         WinnerView(
             winners: tiedWinners,
-            runnersUp: [PlayerViewModel(name: BotNames.name(forBot: 3), coins: 75, avatarIndex: 3)],
+            runnersUp: [PlayerViewModel(name: BotNames.name(forBot: 3), coins: 75, cardCount: 0, avatarIndex: 3)],
             tieStyle: .combined
         )
     }

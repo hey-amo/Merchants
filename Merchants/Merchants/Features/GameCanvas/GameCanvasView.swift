@@ -24,7 +24,7 @@ import MerchantsGame
 // ---- Player 2 (quick overview)
 // ---- Player 3 (quick overview: if in the game)
 // ---- Player 4 (quick overview: if in the game)
-// ---- General stats (if implemented)
+// ---- General stats
 // } // :endCarousel
 //
 // - Carousel section: {
@@ -119,27 +119,10 @@ struct GameCanvasView: View {
 #Preview("Game canvas") {
     GameCanvasView(
         players: [
-            PlayerViewModel(name: "You", coins: 120, isHuman: true, avatarIndex: 0),
-            PlayerViewModel(name: "Ada", coins: 85, isHuman: false, avatarIndex: 1),
-            PlayerViewModel(name: "Byron", coins: 40, isHuman: false, avatarIndex: 2),
-            PlayerViewModel(name: "Cleo", coins: 200, isHuman: false, avatarIndex: 3)
-        ],
-        phaseName: "Buy phase",
-        cardsLeft: 30,
-        message: "Ada bought the Harbour crate",
-        carousel: CarouselController()
-    )
-}
-
-// MARK: - Preview
-
-#Preview("Game canvas") {
-    GameCanvasView(
-        players: [
-            PlayerViewModel(name: "You", coins: 120, isHuman: true, avatarIndex: 0),
-            PlayerViewModel(name: "Ada", coins: 85, isHuman: false, avatarIndex: 1),
-            PlayerViewModel(name: "Byron", coins: 40, isHuman: false, avatarIndex: 2),
-            PlayerViewModel(name: "Cleo", coins: 200, isHuman: false, avatarIndex: 3)
+            PlayerViewModel(name: "You", coins: 120, cardCount: 3, isHuman: true, avatarIndex: 0),
+            PlayerViewModel(name: "Ada", coins: 85, cardCount: 0, isHuman: false, avatarIndex: 1),
+            PlayerViewModel(name: "Byron", coins: 40, cardCount: 4, isHuman: false, avatarIndex: 2),
+            PlayerViewModel(name: "Cleo", coins: 200, cardCount: 5, isHuman: false, avatarIndex: 3)
         ],
         phaseName: "Buy phase",
         cardsLeft: 30,

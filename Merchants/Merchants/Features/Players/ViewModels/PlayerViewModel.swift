@@ -5,6 +5,7 @@ struct PlayerViewModel: Identifiable {
     let id = UUID()
     let name: String
     let coins: Int
+    let cardCount: Int 
     var isHuman: Bool = false
     /// 0-based captain in the `captains` sprite sheet.
     var avatarIndex: Int = 0

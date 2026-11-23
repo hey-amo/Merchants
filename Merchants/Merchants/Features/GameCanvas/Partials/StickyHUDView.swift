@@ -23,13 +23,17 @@ struct StickyHUDView: View {
     var body: some View {
         HStack(spacing: 12) {
             playerStrip
-
-            iconButton(systemImage: "bell.fill", label: "Notifications") {
-                hudLogger.info("Notifications button tapped")
-            }
-
-            iconButton(systemImage: "line.3.horizontal", label: "Menu") {
-                hudLogger.info("Menu button tapped")
+            
+            VStack {
+                
+                iconButton(systemImage: "bell.fill", label: "Notifications") {
+                    hudLogger.info("Notifications button tapped")
+                }
+                
+                iconButton(systemImage: "line.3.horizontal", label: "Menu") {
+                    hudLogger.info("Menu button tapped")
+                }
+                
             }
         }
         .padding(.horizontal, 12)
@@ -66,10 +70,10 @@ struct StickyHUDView: View {
 
 #Preview {
     StickyHUDView(players: [
-        PlayerViewModel(name: "You", coins: 120, isHuman: true, avatarIndex: 0),
-        PlayerViewModel(name: "Ada", coins: 85, isHuman: false, avatarIndex: 1),
-        PlayerViewModel(name: "Byron", coins: 40, isHuman: false, avatarIndex: 2),
-        PlayerViewModel(name: "Cleo", coins: 200, isHuman: false, avatarIndex: 3)
+        PlayerViewModel(name: "You", coins: 120, cardCount: 3, isHuman: true, avatarIndex: 0),
+        PlayerViewModel(name: "Ada", coins: 85, cardCount: 0, isHuman: false, avatarIndex: 1),
+        PlayerViewModel(name: "Byron", coins: 40, cardCount: 5, isHuman: false, avatarIndex: 2),
+        PlayerViewModel(name: "Cleo", coins: 200, cardCount: 1, isHuman: false, avatarIndex: 3)
     ])
     .frame(height: 170)
 }
