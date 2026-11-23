@@ -539,10 +539,10 @@ public struct AIStrategist: BotStrategy {
         in observation: StrategistObservation
     ) -> [GoodType: Int]? {
         guard observation.ownPlayer.fleet.ships.indices.contains(ship),
-              observation.ownPlayer.fleet.ships[ship].cubes.indices.contains(cubeIndex) else {
+              observation.ownPlayer.fleet.ships[ship].cargo.indices.contains(cubeIndex) else {
             return nil
         }
-        let oldGood = observation.ownPlayer.fleet.ships[ship].cubes[cubeIndex].good
+        let oldGood = observation.ownPlayer.fleet.ships[ship].cargo[cubeIndex].good
         guard oldGood != good else { return nil }
         return [oldGood: -1, good: 1]
     }
@@ -579,8 +579,8 @@ public struct AIStrategist: BotStrategy {
         observation: StrategistObservation
     ) -> Bool {
         guard observation.ownPlayer.fleet.ships.indices.contains(ship),
-              observation.ownPlayer.fleet.ships[ship].cubes.indices.contains(cubeIndex),
-              observation.ownPlayer.fleet.ships[ship].cubes[cubeIndex].good != good else {
+              observation.ownPlayer.fleet.ships[ship].cargo.indices.contains(cubeIndex),
+              observation.ownPlayer.fleet.ships[ship].cargo[cubeIndex].good != good else {
             return false
         }
         return observation.supply.available(of: good) > 0

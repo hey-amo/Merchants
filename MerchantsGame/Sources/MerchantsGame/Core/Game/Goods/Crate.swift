@@ -1,7 +1,7 @@
 // Shared good vocabulary used by cards, cubes, and transaction reasons.
 // Colour mapping belongs to the presentation layer.
 
-public enum GoodsCube: CaseIterable, Codable, Sendable, Comparable {
+public enum Crate: CaseIterable, Codable, Sendable, Comparable {
     case sugar
     case indigo
     case spices

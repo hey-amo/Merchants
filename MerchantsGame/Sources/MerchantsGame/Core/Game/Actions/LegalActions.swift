@@ -23,7 +23,7 @@ extension GameState {
         } else {
             candidates.append(contentsOf: [.passPlanning, .endPlanning, .drawCards, .skipTrading])
             for (ship, value) in fleets[seat].ships.enumerated() {
-                for index in value.cubes.indices {
+                for index in value.cargo.indices {
                     for good in GoodType.allCases {
                         candidates.append(.exchangeCube(ship: ship, cubeIndex: index, good: good))
                     }

@@ -14,7 +14,7 @@ public struct Ship: Codable, Equatable, Sendable {
     public let kind: Kind
     public private(set) var cargo: [GoodsCube] // A ship has cargo of goods cubes (:crates)
 
-    public init(kind: Kind, cargo: [GoodsCube] = []) {
+    public init(kind: Kind, cargo: [GoodsCube] = [GoodsCube]()) {
         self.kind = kind
         self.cargo = []
     }

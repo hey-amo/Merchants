@@ -20,8 +20,8 @@ struct GameReplayTests {
         }
         for fleet in state.fleets {
             for ship in fleet.ships {
-                #expect(ship.cubes.count <= ship.kind.capacity)
-                if state.turn != nil { #expect(!ship.cubes.isEmpty) }
+                #expect(ship.cargo.count <= ship.kind.capacity)
+                if state.turn != nil { #expect(!ship.cargo.isEmpty) }
             }
         }
         #expect(state.deck.remaining + state.hands.reduce(0) { $0 + $1.count } + state.marketplace.totalCardCount == 60)
@@ -246,7 +246,7 @@ struct GameReplayTests {
             #expect(state.bank.standings.values.allSatisfy { $0.available == 0 })
             while state.turn == nil {
                 let seat = try state.draft.nextSeat()
-                let ship = try #require(state.fleets[seat].ships.firstIndex { $0.cubes.isEmpty })
+                let ship = try #require(state.fleets[seat].ships.firstIndex { $0.cargo.isEmpty })
                 let good: GoodType = seat == 0 ? .tea : .sugar
                 let availableGood: GoodType = state.supply.available(of: good) > 0 ? good : .silk
                 (state, _) = try GameEngine.apply(
@@ -254,7 +254,7 @@ struct GameReplayTests {
                 )
                 try verifyState(state)
             }
-            #expect(state.fleets[0].ships.map { $0.cubes[0].good } == [.tea, .tea])
+            #expect(state.fleets[0].ships.map { $0.cargo[0].good } == [.tea, .tea])
             let purchase = GameAction.buySpecialCard(kind: .office, loadCubes: [])
             #expect(throws: ActionRejection(
                 error: .banking(.coin(player: .insufficientFunds(required: 8, available: 0))),

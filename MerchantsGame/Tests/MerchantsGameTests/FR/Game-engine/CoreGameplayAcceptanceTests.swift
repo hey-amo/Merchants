@@ -40,7 +40,7 @@ struct CoreGameplayAcceptanceTests {
             .exchangeCube(ship: 0, cubeIndex: 0, good: .silk), by: players[0], to: bought
         )
         #expect(exchangeEvents == [.cubeExchanged(player: players[0], ship: 0, cubeIndex: 0, good: .silk)])
-        #expect(exchanged.fleets[0].ships[0].cubes[0].good == .silk)
+        #expect(exchanged.fleets[0].ships[0].cargo[0].good == .silk)
         #expect(exchanged.turn?.status == .active(.trading))
     }
 
@@ -211,7 +211,7 @@ struct CoreGameplayAcceptanceTests {
         let purchase = GameAction.buySpecialCard(kind: .largeShip, loadCubes: goods)
         #expect(try state.legalActions(for: players[0]).contains(purchase))
         (state, _) = try GameEngine.apply(purchase, by: players[0], to: state)
-        #expect(state.fleets[0].ships[2].cubes.map(\.good) == goods)
+        #expect(state.fleets[0].ships[2].cargo.map(\.good) == goods)
         #expect(state.turn?.status == .active(.trading))
         let restored = try JSONDecoder().decode(GameState.self, from: JSONEncoder().encode(state))
         #expect(restored == state)
@@ -221,8 +221,8 @@ struct CoreGameplayAcceptanceTests {
         let exchange = GameAction.exchangeCube(ship: 2, cubeIndex: goods.count - 1, good: .indigo)
         #expect(try state.legalActions(for: players[0]).contains(exchange))
         let (next, events) = try GameEngine.apply(exchange, by: players[0], to: state)
-        #expect(next.fleets[0].ships[2].cubes.count == goods.count)
-        #expect(next.fleets[0].ships[2].cubes.last?.good == .indigo)
+        #expect(next.fleets[0].ships[2].cargo.count == goods.count)
+        #expect(next.fleets[0].ships[2].cargo.last?.good == .indigo)
         #expect(events == [.cubeExchanged(player: players[0], ship: 2, cubeIndex: goods.count - 1, good: .indigo)])
         #expect(try JSONDecoder().decode(GameState.self, from: JSONEncoder().encode(next)) == next)
     }

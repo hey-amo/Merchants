@@ -6,7 +6,7 @@ final class FleetTests: XCTestCase {
     func testStartingFleetAndCapacity() throws {
         var fleet = Fleet()
         XCTAssertEqual(fleet.ships.map(\.kind), [.standard, .standard])
-        XCTAssertTrue(fleet.ships.allSatisfy { $0.cubes.isEmpty })
+        XCTAssertTrue(fleet.ships.allSatisfy { $0.cargo.isEmpty })
         try fleet.load(GoodsCube(good: .sugar), onto: 0)
         let original = fleet
         XCTAssertThrowsError(try fleet.load(GoodsCube(good: .tea), onto: 0)) {
@@ -35,7 +35,7 @@ final class FleetTests: XCTestCase {
         try fleet.load(GoodsCube(good: .sugar), onto: 2)
         try fleet.load(GoodsCube(good: .tea), onto: 2)
         for index in 0...1 {
-            let good = fleet.ships[2].cubes[index].good
+            let good = fleet.ships[2].cargo[index].good
             let original = fleet
             XCTAssertThrowsError(try fleet.exchange(shipIndex: 2, cubeIndex: index, for: GoodsCube(good: good))) {
                 XCTAssertEqual($0 as? ShipError, .sameGood)

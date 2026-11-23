@@ -32,7 +32,7 @@ public struct CubeDraft: Codable, Equatable, Sendable {
     public mutating func pick(by seat: Int, good: GoodType, ship: Int) throws(CubeDraftError) {
         guard seat == (try nextSeat()) else { throw .notDraftingSeat }
         guard fleets[seat].ships.indices.contains(ship) else { throw .ship(.shipNotFound) }
-        guard fleets[seat].ships[ship].cubes.isEmpty else { throw .shipNotEmpty }
+        guard fleets[seat].ships[ship].cargo.isEmpty else { throw .shipNotEmpty }
         var updatedSupply = supply
         var updatedFleet = fleets[seat]
         let cube: GoodsCube
@@ -70,7 +70,7 @@ public struct CubeDraft: Codable, Equatable, Sendable {
         for seat in 0..<order.count {
             let ships = fleets[seat].ships
             guard ships.count == 2, ships.allSatisfy({ $0.kind == .standard }),
-                  ships.reduce(0, { $0 + $1.cubes.count }) == expected[seat] else {
+                  ships.reduce(0, { $0 + $1.cargo.count }) == expected[seat] else {
                 throw CubeDraftError.invalidState
             }
         }

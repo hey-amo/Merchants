@@ -86,7 +86,7 @@ struct SmokeGameRunner {
                 "\(String(describing: $0).capitalized): \(view.supply.available(of: $0))"
             }.joined(separator: ", ")
             let ships = view.fleets[seat].ships.enumerated().map { index, ship in
-                let cubes = ship.cubes.map { String(describing: $0.good).capitalized }
+                let cubes = ship.cargo.map { String(describing: $0.good).capitalized }
                 return "  Ship \(index + 1) (\(String(describing: ship.kind))): \(cubes.isEmpty ? "empty" : cubes.joined(separator: ", "))"
             }.joined(separator: "\n")
             let hand = view.hand.map { String(describing: $0.good).capitalized }.joined(separator: ", ")

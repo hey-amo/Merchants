@@ -55,7 +55,7 @@ public enum GameInvariants {
         }
 
         for fleet in state.fleets {
-            guard fleet.ships.allSatisfy({ $0.cubes.count <= $0.kind.capacity }) else {
+            guard fleet.ships.allSatisfy({ $0.cargo.count <= $0.kind.capacity }) else {
                 throw .shipOverCapacity
             }
         }
@@ -134,7 +134,7 @@ public enum GameInvariants {
             throw .invalidTurnState
         }
         guard state.fleets.allSatisfy({
-            $0.ships.allSatisfy { !$0.cubes.isEmpty }
+            $0.ships.allSatisfy { !$0.cargo.isEmpty }
         }) else {
             throw .shipNotFull
         }

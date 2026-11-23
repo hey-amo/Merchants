@@ -143,7 +143,7 @@ final class GameRulesTests: XCTestCase {
 
         XCTAssertEqual(try purchased.bank.balance(of: players[0]).available, 0)
         XCTAssertEqual(purchased.fleets[0].ships.last?.kind, .large)
-        XCTAssertEqual(purchased.fleets[0].ships.last?.cubes.map(\.good), [.sugar, .tea])
+        XCTAssertEqual(purchased.fleets[0].ships.last?.cargo.map(\.good), [.sugar, .tea])
 
         let short = try planningState(players: players, rules: rules, balance: 19)
         XCTAssertThrowsError(

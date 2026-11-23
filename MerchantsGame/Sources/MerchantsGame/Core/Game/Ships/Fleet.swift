@@ -25,7 +25,7 @@ public struct Fleet: Codable, Equatable, Sendable {
 
     public func cubeCount(of good: GoodType) -> Int {
         ships.reduce(0) { count, ship in
-            count + ship.cubes.filter { $0.good == good }.count
+            count + ship.cargo.filter { $0.good == good }.count
         }
     }
 }

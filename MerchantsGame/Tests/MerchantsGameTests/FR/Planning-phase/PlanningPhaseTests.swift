@@ -37,7 +37,7 @@ final class PlanningPhaseTests: XCTestCase {
             XCTAssertEqual(result.tableaus[0].count(of: kind), 1)
             XCTAssertEqual(result.stock.available(of: kind), before.stock.available(of: kind) - 1)
             if kind == .ship || kind == .largeShip {
-                XCTAssertEqual(result.fleets[0].ships.last?.cubes.count, goods.count)
+                XCTAssertEqual(result.fleets[0].ships.last?.cargo.count, goods.count)
             }
         }
     }
@@ -70,7 +70,7 @@ final class PlanningPhaseTests: XCTestCase {
         guard case .active(.planning) = one.turn.status else { return XCTFail("Expected an optional exchange") }
         let two = try PlanningPhaseRules.apply(.exchange(ship: 1, cubeIndex: 0, good: .spices), by: players[0], to: one)
         XCTAssertEqual(two.turn.status, .active(.trading))
-        XCTAssertEqual(two.fleets[0].ships.map { $0.cubes[0].good }, [.silk, .spices])
+        XCTAssertEqual(two.fleets[0].ships.map { $0.cargo[0].good }, [.silk, .spices])
     }
 
     func testEC10EC21CranePurchaseGrantsOnlyOneOptionalExchange() throws {
@@ -97,7 +97,7 @@ final class PlanningPhaseTests: XCTestCase {
         XCTAssertThrowsError(try PlanningPhaseRules.apply(.pass, by: players[1], to: original)) {
             XCTAssertEqual($0 as? PlanningError, .turn(.notYourTurn))
         }
-        XCTAssertEqual(original.fleets[0].ships[0].cubes[0].good, .tea)
+        XCTAssertEqual(original.fleets[0].ships[0].cargo[0].good, .tea)
     }
 
     func testEC12ShipPurchasesRejectUnavailableCubesAndWrongLoadCount() throws {
@@ -128,7 +128,7 @@ final class PlanningPhaseTests: XCTestCase {
         }
         XCTAssertEqual(initial, snapshot)
         let result = try PlanningPhaseRules.apply(.buy(.largeShip, loadCubes: [.silk]), by: players[0], to: initial)
-        XCTAssertEqual(result.fleets[0].ships.last?.cubes.map(\.good), [.silk])
+        XCTAssertEqual(result.fleets[0].ships.last?.cargo.map(\.good), [.silk])
         XCTAssertEqual(result.supply.available(of: .silk), 0)
         XCTAssertEqual(try result.bank.balance(of: players[0]).available, 0)
     }
@@ -170,7 +170,7 @@ final class PlanningPhaseTests: XCTestCase {
         let result = try PlanningPhaseRules.apply(
             .exchange(ship: 2, cubeIndex: 1, good: .silk), by: players[0], to: initial
         )
-        XCTAssertEqual(result.fleets[0].ships[2].cubes.map(\.good), [.indigo, .silk])
+        XCTAssertEqual(result.fleets[0].ships[2].cargo.map(\.good), [.indigo, .silk])
         XCTAssertEqual(result.supply.available(of: .lumber), initial.supply.available(of: .lumber) + 1)
         XCTAssertEqual(result.supply.available(of: .silk), initial.supply.available(of: .silk) - 1)
     }

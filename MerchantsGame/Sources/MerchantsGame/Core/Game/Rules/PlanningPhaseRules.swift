@@ -74,8 +74,8 @@ public enum PlanningPhaseRules {
             catch { throw .turn(error) }
             guard result.fleets[seat].ships.indices.contains(ship) else { throw .ship(.shipNotFound) }
             let shipValue = result.fleets[seat].ships[ship]
-            guard shipValue.cubes.indices.contains(cubeIndex) else { throw .ship(.cubeIndexOutOfRange) }
-            guard shipValue.cubes[cubeIndex].good != good else { throw .ship(.sameGood) }
+            guard shipValue.cargo.indices.contains(cubeIndex) else { throw .ship(.cubeIndexOutOfRange) }
+            guard shipValue.cargo[cubeIndex].good != good else { throw .ship(.sameGood) }
             let cube: GoodsCube
             do { cube = try result.supply.take(good) } catch { throw .supply(error) }
             let removed: GoodsCube
@@ -120,7 +120,7 @@ public enum PlanningPhaseRules {
               progress.baseAction != .none else { return }
         let possible = state.fleets[seat].ships.enumerated().contains { index, ship in
             !progress.shipsExchanged.contains(index) && !progress.shipsAddedThisTurn.contains(index) &&
-                ship.cubes.contains { cube in
+                ship.cargo.contains { cube in
                     GoodType.allCases.contains { $0 != cube.good && state.supply.available(of: $0) > 0 }
                 }
         }

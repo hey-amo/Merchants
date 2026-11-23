@@ -15,7 +15,7 @@ final class CubeDraftTests: XCTestCase {
             XCTAssertTrue(draft.isComplete)
             for fleet in draft.fleets {
                 XCTAssertEqual(fleet.ships.count, 2)
-                XCTAssertTrue(fleet.ships.allSatisfy { $0.cubes.count == 1 })
+                XCTAssertTrue(fleet.ships.allSatisfy { $0.cargo.count == 1 })
             }
             let flow = try draft.startTurns()
             XCTAssertEqual(flow.currentSeat, 1)
