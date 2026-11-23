@@ -14,14 +14,16 @@ struct MarketplaceView: View {
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 3)
 
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 12) {
-            ForEach(Array(goods.enumerated()), id: \.offset) { _, good in
-                GoodsCardView(good: good) // Convert this into an accessible button
+        SlideCard(title: "Marketplace", systemImage: "storefront.fill") {
+            LazyVGrid(columns: columns, spacing: 12) {
+                ForEach(Array(goods.enumerated()), id: \.offset) { _, good in
+                    GoodsCardView(good: good) // Convert this into an accessible button
+                }
             }
+            .padding()
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel("Marketplace")
         }
-        .padding()
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Marketplace")
     }
 }
 
