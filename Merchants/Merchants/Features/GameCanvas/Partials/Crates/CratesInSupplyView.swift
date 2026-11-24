@@ -10,6 +10,15 @@
 import SwiftUI
 import MerchantsGame
 
+struct CratesInSupplyView: View {
+    let supply: CubeSupply
+    
+    var body: some View {
+        Text("Crates in supply")
+    }
+}
+
+/**
 // Display all crates in supply in a flexible grid.
 // Every good is always shown; an empty stock is greyed out.
 struct CratesInSupplyView: View {
@@ -56,3 +65,4 @@ struct CratesInSupplyView: View {
     _ = try? supply.take(.silk)
     return CratesInSupplyView(supply: supply)
 }
+**/
