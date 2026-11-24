@@ -15,7 +15,7 @@ import MerchantsGame
 struct CratesInSupplyView: View {
     let supply: CubeSupply
     /// Called when the player taps a crate (phase 1 exchange selection, not yet implemented).
-    var onSelect: (Crate) -> Void = { _ in }
+    var onSelect: (GoodsCube) -> Void = { _ in }
 
     private let columns = [GridItem(.adaptive(minimum: 72), spacing: 12)]
 
@@ -23,7 +23,7 @@ struct CratesInSupplyView: View {
         
         SlideCard(title: "20 Crates in stock", systemImage: "shippingbox.fill") {
             LazyVGrid(columns: columns, spacing: 12) {
-                ForEach(Crate.allCases, id: \.self) { good in
+                ForEach(GoodType.allCases, id: \.self) { good in
                     let count = max(supply.available(of: good), 0)
                     Button { onSelect(good) } label: {
                         VStack(spacing: 4) {

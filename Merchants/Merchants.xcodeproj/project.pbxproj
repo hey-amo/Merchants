@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		4D05EAD030A1CD0F00ECB5A2 /* MerchantsGame in Frameworks */ = {isa = PBXBuildFile; productRef = 4D05EACF30A1CD0F00ECB5A2 /* MerchantsGame */; };
-		4D1EED5E30ACBA0900A8BF66 /* GameSettingsKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4D1EED5D30ACBA0900A8BF66 /* GameSettingsKit */; };
 		4D2A433730B0930B009B24B5 /* GameOnboardingKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4D2A433630B0930B009B24B5 /* GameOnboardingKit */; };
-		4DAA7D7E30ACC1DE00DCB0C7 /* GameMessagesKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4DAA7D7D30ACC1DE00DCB0C7 /* GameMessagesKit */; };
+		4DC054B730B59BCD005BEB17 /* GameMessagesKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4DC054B630B59BCD005BEB17 /* GameMessagesKit */; };
+		4DC054BA30B59BE5005BEB17 /* GameSettingsKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4DC054B930B59BE5005BEB17 /* GameSettingsKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,9 +46,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D1EED5E30ACBA0900A8BF66 /* GameSettingsKit in Frameworks */,
-				4DAA7D7E30ACC1DE00DCB0C7 /* GameMessagesKit in Frameworks */,
 				4D2A433730B0930B009B24B5 /* GameOnboardingKit in Frameworks */,
+				4DC054B730B59BCD005BEB17 /* GameMessagesKit in Frameworks */,
+				4DC054BA30B59BE5005BEB17 /* GameSettingsKit in Frameworks */,
 				4D05EAD030A1CD0F00ECB5A2 /* MerchantsGame in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -105,6 +105,8 @@
 				4D1EED5D30ACBA0900A8BF66 /* GameSettingsKit */,
 				4DAA7D7D30ACC1DE00DCB0C7 /* GameMessagesKit */,
 				4D2A433630B0930B009B24B5 /* GameOnboardingKit */,
+				4DC054B630B59BCD005BEB17 /* GameMessagesKit */,
+				4DC054B930B59BE5005BEB17 /* GameSettingsKit */,
 			);
 			productName = Merchants;
 			productReference = 4D9CD9DB2FF296FC00B796FD /* Merchants.app */;
@@ -163,9 +165,9 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				4D05EACE30A1CD0F00ECB5A2 /* XCLocalSwiftPackageReference "../MerchantsGame" */,
-				4D1EED5A30ACB95C00A8BF66 /* XCLocalSwiftPackageReference "../../_Common/GameSettingsKit" */,
-				4DAA7D7C30ACC1DE00DCB0C7 /* XCLocalSwiftPackageReference "../../_Common/GameMessagesKit" */,
 				4D2A433530B0930B009B24B5 /* XCLocalSwiftPackageReference "../../_Common/GameOnboardingKit" */,
+				4DC054B530B59BCD005BEB17 /* XCLocalSwiftPackageReference "../../_Common/GameMessagesKit" */,
+				4DC054B830B59BE5005BEB17 /* XCLocalSwiftPackageReference "../../_Common/GameSettingsKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4D9CD9DC2FF296FC00B796FD /* Products */;
@@ -502,17 +504,17 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../MerchantsGame;
 		};
-		4D1EED5A30ACB95C00A8BF66 /* XCLocalSwiftPackageReference "../../_Common/GameSettingsKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../_Common/GameSettingsKit;
-		};
 		4D2A433530B0930B009B24B5 /* XCLocalSwiftPackageReference "../../_Common/GameOnboardingKit" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../_Common/GameOnboardingKit;
 		};
-		4DAA7D7C30ACC1DE00DCB0C7 /* XCLocalSwiftPackageReference "../../_Common/GameMessagesKit" */ = {
+		4DC054B530B59BCD005BEB17 /* XCLocalSwiftPackageReference "../../_Common/GameMessagesKit" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../_Common/GameMessagesKit;
+		};
+		4DC054B830B59BE5005BEB17 /* XCLocalSwiftPackageReference "../../_Common/GameSettingsKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../_Common/GameSettingsKit;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -532,6 +534,14 @@
 		4DAA7D7D30ACC1DE00DCB0C7 /* GameMessagesKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = GameMessagesKit;
+		};
+		4DC054B630B59BCD005BEB17 /* GameMessagesKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GameMessagesKit;
+		};
+		4DC054B930B59BE5005BEB17 /* GameSettingsKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GameSettingsKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

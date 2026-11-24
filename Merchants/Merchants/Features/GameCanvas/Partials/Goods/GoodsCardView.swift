@@ -10,7 +10,7 @@ import MerchantsGame
 
 // Single goods card with its name underneath. Read-only: cards are never tapped.
 struct GoodsCardView: View {
-    let good: Crate
+    let good: GoodType
 
     // Space between the card edge and the goods artwork.
     private let cardInset: CGFloat = 10

@@ -7,6 +7,7 @@
 import GameSettingsKit
 import Foundation
 import SwiftUI
+import StoreKit
 
 // Settings - list of in game settings
 // Structure:
@@ -14,8 +15,6 @@ import SwiftUI
 // - Sound/Music preferences
 // - Contact with hero section, text
 // - My other apps list with thumbnails
-
-import StoreKit
 
 // MARK: - Settings screen
 

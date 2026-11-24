@@ -44,7 +44,7 @@ struct BotGameBoardView: View {
 
     private func shipContents(at seat: Int) -> String {
         state.fleets[seat].ships.map { ship in
-            let goods = ship.cubes.map { String(describing: $0.good).capitalized }
+            let goods = ship.cargo.map { String(describing: $0.good).capitalized }
             return goods.isEmpty ? "Empty" : goods.joined(separator: " + ")
         }.joined(separator: ", ")
     }

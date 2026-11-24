@@ -10,6 +10,42 @@
 import SwiftUI
 import UserNotifications
 
+// MARK: - Data model
+
+enum PrivacyHandling {
+    case onDevice
+    case notCollected
+    case thirdParty
+    case optional
+
+    var systemImage: String {
+        switch self {
+        case .onDevice: "iphone"
+        case .notCollected: "checkmark.circle.fill"
+        case .thirdParty: "person.2.circle.fill"
+        case .optional: "bell.circle.fill"
+        }
+    }
+
+    var tint: Color {
+        switch self {
+        case .onDevice: .blue
+        case .notCollected: .green
+        case .thirdParty: .orange
+        case .optional: .gray
+        }
+    }
+}
+
+struct PrivacyDataItem: Identifiable {
+    let title: LocalizedStringKey
+    let detail: LocalizedStringKey
+    let handling: PrivacyHandling
+
+    var id: String { "\(title)" }
+}
+
+
 // MARK: - Privacy view
 
 struct PrivacyView: View {
@@ -128,42 +164,6 @@ struct PrivacyView: View {
         }
     }
 }
-
-// MARK: - Data model
-
-enum PrivacyHandling {
-    case onDevice
-    case notCollected
-    case thirdParty
-    case optional
-
-    var systemImage: String {
-        switch self {
-        case .onDevice: "iphone"
-        case .notCollected: "checkmark.circle.fill"
-        case .thirdParty: "person.2.circle.fill"
-        case .optional: "bell.circle.fill"
-        }
-    }
-
-    var tint: Color {
-        switch self {
-        case .onDevice: .blue
-        case .notCollected: .green
-        case .thirdParty: .orange
-        case .optional: .gray
-        }
-    }
-}
-
-struct PrivacyDataItem: Identifiable {
-    let title: LocalizedStringKey
-    let detail: LocalizedStringKey
-    let handling: PrivacyHandling
-
-    var id: String { "\(title)" }
-}
-
 // MARK: - Row
 
 struct PrivacyRow: View {
@@ -189,6 +189,8 @@ struct PrivacyRow: View {
         .accessibilityElement(children: .combine)
     }
 }
+
+// MARK: - Preview
 
 #Preview {
     NavigationStack {
