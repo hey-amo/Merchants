@@ -132,11 +132,18 @@ Cards played MUST played on top of existing cards in the marketplace, and may ne
 
 #### Triggering scoring
 
+The player may play any number of good cards of a single colour from his hand onto the goods cards in the centre of the table (marketplace) and thus change the current demand.  He overlays goods cards onto existing goods cards.   
+
+All players who have this colour goods cube on their ships gain 1 coin per matching cube for each goods card of this colour now showing.
+
+Example: Two blue cards are played, resulting in 3 blue cards in the amerket.  All players get gold coins for each blue goods cube in their ships as this is the good that was delivered.
+
+<!--
 When cards are `delivered` to the marketplace, it triggers scoring, and *all* players get paid out, dependent upon the colour good cubes they have on their ships.
 
 Every player with the same colour goods cube on their ships gets 1 coin per goods cube per matching goods card in the marketplace.
 
-*Example: The marketplace currently shows 1 Green, 2 Yellow, 1 Blue, 1 Red, 1 Brown.  Tom, plays 2 blue cards from his hand and places them on top of 1 Red, 1 Brown respectively, and now the marketplace shows 3 blue cards.  All players get 3 coins for each blue goods cube located on their ships.*
+*Example: The marketplace currently shows 1 Green, 2 Yellow, 1 Blue, 1 Red, 1 Brown.  Tom, plays 2 blue cards from his hand and places them on top of 1 Red, 1 Brown respectively, and now the marketplace shows 3 blue cards.  All players get 3 coins for each blue goods cube located on their ships.*-->
 
 ### Drawing two new good cards
 
@@ -161,6 +168,12 @@ The player may exchange an extra goods cube in Phase 1, regardless of the action
 When scoring is triggered and the owner of the trade agreement receives gold, he may take 2 additional coins
 
 > Example: The owner of two "trade agreement" special cards will receive four additional gold coins each time he scores instead of two.
+
+## Warehouse (cost: 15 coins)
+You may now hold +2 more cards
+
+
+
 
 # Game end
 
